@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Forum ComAutis</title>
+<link rel="stylesheet" href="{% static 'forum/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Forum ComAutis</h1>
+    </header>
+
+    {% if user.is_authenticated %}
+    <section class="new-topic">
+        <h2>Créer un nouveau sujet</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Créer le sujet</button>
+        </form>
+    </section>
+    {% else %}
+    <p class="login-msg">Vous devez être connecté pour créer un sujet.</p>
+    {% endif %}
+
+    <section class="topics-list">
+        <h2>Liste des sujets</h2>
+        <div class="grid-container">
+            {% for topic in topics %}
+            <div class="card">
+                {% if topic.icon %}
+                <img src="{% static 'forum/icons/' %}{{ topic.icon }}.png" alt="Icône" class="icon">
+                {% endif %}
+                <div>
+                    <h3><a href="{% url 'forum:topic_detail' topic.id %}">{{ topic.title }}</a></h3>
+                    <p class="creator">Créé par {{ topic.created_by.username }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>Aucun sujet pour le moment.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+</body>
+</html>
