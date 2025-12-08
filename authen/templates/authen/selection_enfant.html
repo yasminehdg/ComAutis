@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComAutiste - Qui veut jouer ?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #ffd3b6 50%, #ffaaa5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Animations de bulles flottantes */
+        .bubble {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 15s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+            25% { transform: translateY(-100px) translateX(50px) rotate(90deg); }
+            50% { transform: translateY(-200px) translateX(-50px) rotate(180deg); }
+            75% { transform: translateY(-100px) translateX(100px) rotate(270deg); }
+        }
+
+        .bubble1 { width: 80px; height: 80px; background: rgba(255, 179, 186, 0.5); top: 10%; left: 10%; animation-delay: 0s; }
+        .bubble2 { width: 120px; height: 120px; background: rgba(255, 223, 186, 0.5); top: 20%; right: 15%; animation-delay: 2s; }
+        .bubble3 { width: 100px; height: 100px; background: rgba(186, 225, 255, 0.5); bottom: 15%; left: 20%; animation-delay: 4s; }
+        .bubble4 { width: 60px; height: 60px; background: rgba(186, 255, 201, 0.5); top: 50%; right: 10%; animation-delay: 6s; }
+        .bubble5 { width: 90px; height: 90px; background: rgba(255, 218, 185, 0.5); bottom: 20%; right: 25%; animation-delay: 8s; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: bounceIn 1s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .logo-big {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            margin: 0 auto 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: rotate 4s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-10deg) scale(1.1); }
+            50% { transform: rotate(10deg) scale(1); }
+            75% { transform: rotate(-10deg) scale(1.1); }
+        }
+
+        .header h1 {
+            font-size: 60px;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 28px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .children-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .child-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .child-card:nth-child(1) { animation-delay: 0.1s; }
+        .child-card:nth-child(2) { animation-delay: 0.2s; }
+        .child-card:nth-child(3) { animation-delay: 0.3s; }
+        .child-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .child-card::before {
+            content: '✨';
+            position: absolute;
+            font-size: 40px;
+            top: 15px;
+            right: 15px;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s;
+        }
+
+        .child-card:hover::before {
+            opacity: 1;
+            transform: scale(1) rotate(20deg);
+        }
+
+        .child-card:hover {
+            transform: translateY(-20px) scale(1.05);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        }
+
+        .child-card:active {
+            transform: translateY(-15px) scale(1.02);
+        }
+
+        .child-avatar-big {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+
+        .child-card:hover .child-avatar-big {
+            transform: rotate(360deg) scale(1.1);
+        }
+
+        .avatar-boy {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+        }
+
+        .avatar-girl {
+            background: linear-gradient(135deg, #fbc2eb 0%, #ff9a9e 100%);
+        }
+
+        .avatar-other {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .child-name-big {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .child-age {
+            font-size: 22px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 30px;
+            padding: 80px 40px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            animation: bounceIn 1s ease-out;
+        }
+
+        .empty-state-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: swing 2s ease-in-out infinite;
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+
+        .empty-state h2 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 22px;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .add-child-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            transition: all 0.3s;
+        }
+
+        .add-child-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.6);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            z-index: 100;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .stars {
+            position: fixed;
+            font-size: 30px;
+            animation: twinkle 2s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.2); }
+        }
+
+        .star1 { top: 15%; left: 5%; animation-delay: 0s; }
+        .star2 { top: 25%; right: 8%; animation-delay: 0.5s; }
+        .star3 { bottom: 30%; left: 12%; animation-delay: 1s; }
+        .star4 { top: 60%; right: 15%; animation-delay: 1.5s; }
+        .star5 { bottom: 15%; right: 5%; animation-delay: 2s; }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 40px;
+            }
+
+            .header p {
+                font-size: 20px;
+            }
+
+            .logo-big {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
+
+            .children-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .child-card {
+                padding: 30px 20px;
+            }
+
+            .back-btn {
+                top: 15px;
+                left: 15px;
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bulles décoratives -->
+    <div class="bubble bubble1"></div>
+    <div class="bubble bubble2"></div>
+    <div class="bubble bubble3"></div>
+    <div class="bubble bubble4"></div>
+    <div class="bubble bubble5"></div>
+
+    <!-- Étoiles scintillantes -->
+    <div class="stars star1">⭐</div>
+    <div class="stars star2">✨</div>
+    <div class="stars star3">🌟</div>
+    <div class="stars star4">💫</div>
+    <div class="stars star5">⭐</div>
+
+    <!-- Bouton retour -->
+    <a href="/dashboard/" class="back-btn">
+        ⬅️ Retour
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo-big">🎮</div>
+            <h1>Qui veut jouer ? 🎉</h1>
+            <p>Choisis ton prénom pour commencer !</p>
+        </div>
+
+        {% if enfants %}
+            <div class="children-grid">
+                {% for enfant in enfants %}
+                <div class="child-card" onclick="window.location.href='/enfant/{{ enfant.id }}/dashboard/'">
+                    <div class="child-avatar-big {% if enfant.genre == 'M' %}avatar-boy{% elif enfant.genre == 'F' %}avatar-girl{% else %}avatar-other{% endif %}">
+                        {% if enfant.genre == 'M' %}
+                            👦
+                        {% elif enfant.genre == 'F' %}
+                            👧
+                        {% else %}
+                            👤
+                        {% endif %}
+                    </div>
+                    <h2 class="child-name-big">{{ enfant.prenom }}</h2>
+                    <p class="child-age">{{ enfant.age }} ans 🎂</p>
+                    <button class="play-btn">
+                        🎮 Jouer !
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">😊</div>
+                <h2>Aucun enfant enregistré</h2>
+                <p>Ajoutez un enfant pour qu'il puisse jouer et apprendre !</p>
+                <a href="/ajouter-enfant/" class="add-child-btn">
+                    ➕ Ajouter un enfant
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Effet sonore au survol (optionnel)
+        const cards = document.querySelectorAll('.child-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 10);
+            });
+        });
+    </script>
+</body>
+</html>

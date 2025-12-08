@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComAutiste - Supprimer un enfant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .confirmation-container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 550px;
+            overflow: hidden;
+            animation: shake 0.6s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .confirmation-header {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            padding: 50px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .warning-icon {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .confirmation-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .confirmation-header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .confirmation-body {
+            padding: 40px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-box p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .child-recap {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .child-recap h3 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .child-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .child-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .child-info-item label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .child-info-item .value {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .danger-box {
+            background: #fee;
+            border-left: 4px solid #e74c3c;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .danger-box h3 {
+            color: #c0392b;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .danger-box ul {
+            color: #c0392b;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+        }
+
+        .danger-box ul li {
+            margin-bottom: 5px;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(231, 76, 60, 0.5);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-cancel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(39, 174, 96, 0.5);
+        }
+
+        .checkbox-confirm {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff;
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+        }
+
+        .checkbox-confirm input[type="checkbox"] {
+            margin-top: 3px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .checkbox-confirm label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #c0392b;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .confirmation-container {
+                margin: 10px 0;
+            }
+
+            .confirmation-header {
+                padding: 40px 25px;
+            }
+
+            .confirmation-body {
+                padding: 30px 20px;
+            }
+
+            .confirmation-actions {
+                flex-direction: column-reverse;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="confirmation-header">
+            <div class="warning-icon">⚠️</div>
+            <h1>Supprimer un enfant</h1>
+            <p>Cette action est irréversible !</p>
+        </div>
+
+        <div class="confirmation-body">
+            <div class="warning-box">
+                <h3>⚠️ Attention</h3>
+                <p>
+                    Vous êtes sur le point de supprimer définitivement le profil de votre enfant. 
+                    Veuillez lire attentivement les informations ci-dessous.
+                </p>
+            </div>
+
+            <div class="child-recap">
+                <h3>👤 Informations de l'enfant</h3>
+                <div class="child-info-item">
+                    <label>Prénom et Nom</label>
+                    <span class="value">{{ enfant.prenom }} {{ enfant.nom }}</span>
+                </div>
+                <div class="child-info-item">
+                    <label>Âge</label>
+                    <span class="value">{{ enfant.age }} ans</span>
+                </div>
+                <div class="child-info-item">
+                    <label>Genre</label>
+                    <span class="value">{{ enfant.get_genre_display }}</span>
+                </div>
+                <div class="child-info-item">
+                    <label>Niveau d'autonomie</label>
+                    <span class="value">{{ enfant.get_niveau_autonomie_display }}</span>
+                </div>
+            </div>
+
+            <div class="danger-box">
+                <h3>🚨 Ce qui sera perdu définitivement :</h3>
+                <ul>
+                    <li>Toutes les informations personnelles de {{ enfant.prenom }}</li>
+                    <li>L'historique de ses activités et progrès</li>
+                    <li>Ses préférences et paramètres personnalisés</li>
+                    <li>Toutes les données associées à ce profil</li>
+                </ul>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="checkbox-confirm">
+                    <input type="checkbox" id="confirm-delete" required>
+                    <label for="confirm-delete">
+                        Je comprends que cette action est irréversible et que toutes les données de 
+                        <strong>{{ enfant.prenom }} {{ enfant.nom }}</strong> seront définitivement supprimées.
+                    </label>
+                </div>
+
+                <div class="confirmation-actions">
+                    <a href="/profil-famille/" class="btn btn-cancel">✅ Non, annuler</a>
+                    <button type="submit" class="btn btn-delete" id="delete-btn" disabled>
+                        🗑️ Oui, supprimer définitivement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const checkbox = document.getElementById('confirm-delete');
+        const deleteBtn = document.getElementById('delete-btn');
+
+        checkbox.addEventListener('change', function() {
+            deleteBtn.disabled = !this.checked;
+            if (this.checked) {
+                deleteBtn.style.opacity = '1';
+                deleteBtn.style.cursor = 'pointer';
+            } else {
+                deleteBtn.style.opacity = '0.5';
+                deleteBtn.style.cursor = 'not-allowed';
+            }
+        });
+
+        // Confirmation supplémentaire avant suppression
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (!confirm('⚠️ DERNIÈRE CONFIRMATION ⚠️\n\nÊtes-vous absolument certain(e) de vouloir supprimer {{ enfant.prenom }} ?\n\nCette action est IRRÉVERSIBLE !')) {
+                e.preventDefault();
+            }
+        });
+
+        // Style initial du bouton
+        deleteBtn.style.opacity = '0.5';
+        deleteBtn.style.cursor = 'not-allowed';
+    </script>
+</body>
+</html>

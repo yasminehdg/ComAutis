@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComAutiste - Compte en attente de validation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .pending-container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 60px 40px;
+            text-align: center;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 18px;
+            color: #7f8c8d;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        .info-box h3 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 10px 0;
+            color: #555;
+            font-size: 16px;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .info-box li::before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .user-details p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .user-details strong {
+            color: #27ae60;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            transform: translateY(-3px);
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .warning-box p {
+            color: #856404;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .pending-container {
+                padding: 40px 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pending-container">
+        <div class="icon">⏳</div>
+        <h1>Inscription en attente de validation</h1>
+        
+        <p class="message">
+            Merci pour votre inscription en tant qu'éducateur ! Votre compte a été créé avec succès, mais nécessite une validation par notre équipe avant activation.
+        </p>
+
+        <div class="user-details">
+            <p><strong>👤 Nom d'utilisateur :</strong> {{ username }}</p>
+            <p><strong>📧 Email :</strong> {{ email }}</p>
+            <p><strong>👨‍🏫 Type de compte :</strong> Éducateur</p>
+        </div>
+
+        <div class="info-box">
+            <h3>📋 Prochaines étapes</h3>
+            <ul>
+                <li>Notre équipe va vérifier vos informations</li>
+                <li>Vous recevrez un email de confirmation dans les 24-48h</li>
+                <li>Une fois validé, vous pourrez vous connecter normalement</li>
+                <li>Vous aurez alors accès à toutes les fonctionnalités éducateur</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <p>
+                <strong>⚠️ Important :</strong> Vous ne pouvez pas vous connecter tant que votre compte n'est pas validé. Si vous n'avez pas de nouvelles sous 48h, contactez-nous à <strong>support@comautiste.fr</strong>
+            </p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">Retour à l'accueil</a>
+            <a href="/login/" class="btn btn-secondary">Essayer de se connecter</a>
+        </div>
+    </div>
+</body>
+</html>

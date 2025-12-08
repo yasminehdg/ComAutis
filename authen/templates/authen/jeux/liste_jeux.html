@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Tous les Jeux - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 22px;
+            color: #7f8c8d;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5);
+        }
+
+        .categories {
+            display: grid;
+            gap: 40px;
+        }
+
+        .category-section {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-title {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .game-icon {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .game-card:hover .game-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .game-card h3 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .game-card p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .difficulty-facile {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-moyen {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-difficile {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-new {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b9d;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-soon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #feca57;
+            color: #2c3e50;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-section {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard/" class="back-btn">⬅️ Retour au Dashboard</a>
+
+        <div class="header">
+            <h1>🎮 Tous les Jeux 🎮</h1>
+            <p>Choisis un jeu pour t'amuser et apprendre !</p>
+        </div>
+
+        <div class="categories">
+            <!-- Catégorie : Jeux de Mémoire -->
+            <div class="category-section">
+                <h2 class="category-title">🧠 Jeux de Mémoire</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="window.location.href='/jeux/memory/'">
+                        <span class="badge-new">NOUVEAU</span>
+                        <div class="game-icon">🎴</div>
+                        <h3>Memory Animaux</h3>
+                        <p>Trouve les paires d'animaux</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🍎</div>
+                        <h3>Memory Fruits</h3>
+                        <p>Trouve les paires de fruits</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🎨</div>
+                        <h3>Memory Couleurs</h3>
+                        <p>Trouve les paires de couleurs</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie : Apprendre les Nombres -->
+            <div class="category-section">
+                <h2 class="category-title">🔢 Apprendre les Nombres</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="window.location.href='/jeux/compter-3/'">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">1️⃣</div>
+                        <h3>Compter jusqu'à 3</h3>
+                        <p>Apprends à compter 1, 2, 3</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🔟</div>
+                        <h3>Compter jusqu'à 10</h3>
+                        <p>Compte les objets de 1 à 10</p>
+                        <span class="difficulty difficulty-moyen">Moyen</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">➕</div>
+                        <h3>Additions Simples</h3>
+                        <p>Apprends à additionner</p>
+                        <span class="difficulty difficulty-difficile">Difficile</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie : Apprendre les Concepts -->
+            <div class="category-section">
+                <h2 class="category-title">🎨 Concepts de Base</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🌈</div>
+                        <h3>Les Couleurs</h3>
+                        <p>Apprends toutes les couleurs</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">😊</div>
+                        <h3>Les Émotions</h3>
+                        <p>Reconnais les émotions</p>
+                        <span class="difficulty difficulty-moyen">Moyen</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🐘</div>
+                        <h3>Les Animaux</h3>
+                        <p>Découvre les animaux</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie : Apprendre le Quotidien -->
+            <div class="category-section">
+                <h2 class="category-title">📅 Le Quotidien</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">📆</div>
+                        <h3>Jours de la Semaine</h3>
+                        <p>Lundi, Mardi, Mercredi...</p>
+                        <span class="difficulty difficulty-moyen">Moyen</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🍂</div>
+                        <h3>Les Saisons</h3>
+                        <p>Printemps, Été, Automne, Hiver</p>
+                        <span class="difficulty difficulty-moyen">Moyen</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🥕</div>
+                        <h3>Les Légumes</h3>
+                        <p>Apprends les légumes</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🍓</div>
+                        <h3>Les Fruits</h3>
+                        <p>Découvre les fruits</p>
+                        <span class="difficulty difficulty-facile">Facile</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie : Jeux d'Adresse -->
+            <div class="category-section">
+                <h2 class="category-title">🎯 Jeux d'Adresse</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🧩</div>
+                        <h3>Puzzle</h3>
+                        <p>Assemble les pièces</p>
+                        <span class="difficulty difficulty-moyen">Moyen</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🌀</div>
+                        <h3>Labyrinthe</h3>
+                        <p>Trouve le chemin</p>
+                        <span class="difficulty difficulty-difficile">Difficile</span>
+                    </div>
+
+                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
+                        <span class="badge-soon">Bientôt</span>
+                        <div class="game-icon">🎯</div>
+                        <h3>Viser la Cible</h3>
+                        <p>Clique sur la cible</p>
+                        <span class="difficulty difficulty-moyen">Moyen</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

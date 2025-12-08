@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComAutiste - Inscription</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 550px;
+            overflow: hidden;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #ffd89b 0%, #ff6b9d 100%);
+            padding: 50px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo-circle {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: rotate 3s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .register-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .register-header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .register-body {
+            padding: 40px;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-text h2 {
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: #fee;
+            border-left: 4px solid #e74c3c;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .user-type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .type-option {
+            padding: 25px 20px;
+            border: 3px solid #ecf0f1;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .type-option:hover {
+            border-color: #ff6b9d;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.2);
+        }
+
+        .type-option.selected {
+            border-color: #ff6b9d;
+            background: linear-gradient(135deg, #fff5f8 0%, #ffe8f0 100%);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .type-option .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .type-option .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .type-option .description {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label .required {
+            color: #ff6b9d;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #7f8c8d;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: 2px solid #ecf0f1;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 6px;
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #7f8c8d;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #ff6b9d;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #ecf0f1;
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+
+        .strength-weak { width: 33%; background: #e74c3c; }
+        .strength-medium { width: 66%; background: #f39c12; }
+        .strength-strong { width: 100%; background: #27ae60; }
+
+        .checkbox-group {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 3px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 14px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .checkbox-group a {
+            color: #ff6b9d;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #ecf0f1;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .login-link p {
+            color: #7f8c8d;
+            font-size: 15px;
+        }
+
+        .login-link a {
+            color: #ff6b9d;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .login-link a:hover {
+            color: #f5576c;
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: #7f8c8d;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .back-home a:hover {
+            color: #ff6b9d;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .register-container {
+                margin: 10px 0;
+            }
+
+            .register-header {
+                padding: 40px 25px;
+            }
+
+            .register-body {
+                padding: 30px 20px;
+            }
+
+            .welcome-text h2 {
+                font-size: 22px;
+            }
+
+            .user-type-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <div class="logo-circle">✨</div>
+            <h1>ComAutiste</h1>
+            <p>Créez votre compte en quelques clics</p>
+        </div>
+
+        <div class="register-body">
+            <div class="welcome-text">
+                <h2>Rejoignez-nous !</h2>
+                <p>Choisissez votre profil pour commencer</p>
+            </div>
+
+            <!-- Message d'erreur si présent -->
+            {% if error %}
+            <div class="error-message">
+                ❌ {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" onsubmit="return validateForm()">
+                {% csrf_token %}
+                
+                <!-- Sélection du type d'utilisateur -->
+                <div class="user-type-selector">
+                    <div class="type-option" onclick="selectUserType('parent')">
+                        <div class="icon">👨‍👩‍👧</div>
+                        <div class="title">Parent</div>
+                        <div class="description">Pour suivre votre enfant</div>
+                    </div>
+                    <div class="type-option" onclick="selectUserType('educator')">
+                        <div class="icon">👨‍🏫</div>
+                        <div class="title">Éducateur</div>
+                        <div class="description">Pour accompagner plusieurs enfants</div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="user_type" name="user_type" required>
+
+                <!-- Informations personnelles -->
+                <div class="form-group">
+                    <label for="fullname">Nom complet <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="fullname" name="fullname" placeholder="Jean Dupont" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🆔</span>
+                        <input type="text" id="username" name="username" placeholder="jeandupont" required>
+                    </div>
+                    <small>Ce nom sera utilisé pour vous connecter</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Adresse email <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📧</span>
+                        <input type="email" id="email" name="email" placeholder="votre.email@exemple.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Numéro de téléphone <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="phone" name="phone" placeholder="+33 6 12 34 56 78" required>
+                    </div>
+                </div>
+
+                <!-- Champ établissement (uniquement pour les éducateurs) -->
+                <div class="form-group hidden" id="institution-field">
+                    <label for="institution">Établissement <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🏫</span>
+                        <input type="text" id="institution" name="institution" placeholder="Nom de votre établissement">
+                    </div>
+                    <small>Obligatoire pour les éducateurs</small>
+                </div>
+
+                <!-- Code d'accès éducateur (uniquement pour les éducateurs) -->
+                <div class="form-group hidden" id="educator-code-field">
+                    <label for="educator_code">Code d'accès éducateur <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔑</span>
+                        <input type="text" id="educator_code" name="educator_code" placeholder="Entrez le code fourni">
+                    </div>
+                    <small>⚠️ Ce code est fourni uniquement aux éducateurs certifiés</small>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="form-group">
+                    <label for="password">Mot de passe <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required oninput="checkPasswordStrength()">
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">👁️</button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="strength-bar"></div>
+                    </div>
+                    <small id="strength-text">Minimum 8 caractères</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirmer le mot de passe <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">👁️</button>
+                    </div>
+                </div>
+
+                <!-- Conditions d'utilisation -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="accept-terms" required>
+                    <label for="accept-terms">
+                        J'accepte les <a href="#" onclick="alert('Conditions en cours de rédaction'); return false;">conditions d'utilisation</a> et la <a href="#" onclick="alert('Politique en cours de rédaction'); return false;">politique de confidentialité</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn" disabled>Créer mon compte</button>
+            </form>
+
+            <div class="divider">
+                <span>Déjà membre ?</span>
+            </div>
+
+            <div class="login-link">
+                <p>Vous avez déjà un compte ?</p>
+                <a href="/login/">Se connecter →</a>
+            </div>
+
+            <div class="back-home">
+                <a href="/">← Retour à l'accueil</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedType = null;
+
+        function selectUserType(type) {
+            selectedType = type;
+            document.getElementById('user_type').value = type;
+            
+            // Mise à jour visuelle
+            document.querySelectorAll('.type-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            // Afficher/masquer les champs pour éducateurs
+            const institutionField = document.getElementById('institution-field');
+            const institutionInput = document.getElementById('institution');
+            const educatorCodeField = document.getElementById('educator-code-field');
+            const educatorCodeInput = document.getElementById('educator_code');
+            
+            if (type === 'educator') {
+                institutionField.classList.remove('hidden');
+                institutionInput.required = true;
+                educatorCodeField.classList.remove('hidden');
+                educatorCodeInput.required = true;
+            } else {
+                institutionField.classList.add('hidden');
+                institutionInput.required = false;
+                institutionInput.value = '';
+                educatorCodeField.classList.add('hidden');
+                educatorCodeInput.required = false;
+                educatorCodeInput.value = '';
+            }
+
+            checkFormValidity();
+        }
+
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleBtn = passwordInput.nextElementSibling;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('strength-bar');
+            const strengthText = document.getElementById('strength-text');
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+            strengthBar.className = 'password-strength-bar';
+            
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                strengthText.textContent = 'Minimum 8 caractères';
+                strengthText.style.color = '#7f8c8d';
+            } else if (strength <= 1) {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = 'Mot de passe faible';
+                strengthText.style.color = '#e74c3c';
+            } else if (strength === 2 || strength === 3) {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = 'Mot de passe moyen';
+                strengthText.style.color = '#f39c12';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = 'Mot de passe fort';
+                strengthText.style.color = '#27ae60';
+            }
+
+            checkFormValidity();
+        }
+
+        function checkFormValidity() {
+            const userType = document.getElementById('user_type').value;
+            const fullname = document.getElementById('fullname').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const acceptTerms = document.getElementById('accept-terms').checked;
+            const institution = document.getElementById('institution').value;
+            const educatorCode = document.getElementById('educator_code').value;
+            
+            const institutionValid = selectedType === 'parent' || (selectedType === 'educator' && institution && educatorCode);
+            
+            const isValid = userType && fullname && username && email && phone && 
+                          password.length >= 8 && password === confirmPassword && 
+                          acceptTerms && institutionValid;
+            
+            document.getElementById('submit-btn').disabled = !isValid;
+        }
+
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const userType = document.getElementById('user_type').value;
+
+            if (!userType) {
+                alert('⚠️ Veuillez sélectionner un type de compte !');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                alert('❌ Les mots de passe ne correspondent pas !');
+                return false;
+            }
+
+            if (password.length < 8) {
+                alert('❌ Le mot de passe doit contenir au moins 8 caractères !');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Vérifier la validité à chaque changement
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', checkFormValidity);
+            input.addEventListener('change', checkFormValidity);
+        });
+    </script>
+</body>
+</html>
