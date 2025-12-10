@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil de {{ profile_user.username }} - ComAutis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 50%, #ffd3b6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f9b89e 0%, #f08a5d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #f08a5d;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .badges-section {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .badge-card {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            animation: badgeAppear 0.5s ease-out;
+        }
+
+        @keyframes badgeAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .badge-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(253, 203, 110, 0.4);
+        }
+
+        .badge-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .badge-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .badge-description {
+            font-size: 13px;
+            color: #636e72;
+        }
+
+        .badge-date {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .no-badges {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .no-badges-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .badges-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/forum/" class="back-btn">← Retour au forum</a>
+
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ profile_user.username|first|upper }}
+            </div>
+            <h1 class="profile-name">{{ profile_user.first_name|default:profile_user.username }}</h1>
+            <p style="color: #7f8c8d; font-size: 16px;">Membre depuis {{ profile_user.date_joined|date:"F Y" }}</p>
+
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ user_badges|length }}</div>
+                    <div class="stat-label">Badges</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ topic_count }}</div>
+                    <div class="stat-label">Sujets créés</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_posts }}</div>
+                    <div class="stat-label">Messages</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="badges-section">
+            <h2 class="section-title">🏆 Badges Obtenus</h2>
+            
+            {% if user_badges %}
+                <div class="badges-grid">
+                    {% for user_badge in user_badges %}
+                    <div class="badge-card">
+                        <div class="badge-icon">{{ user_badge.badge.icon }}</div>
+                        <div class="badge-name">{{ user_badge.badge.get_name_display }}</div>
+                        <div class="badge-description">{{ user_badge.badge.description }}</div>
+                        <div class="badge-date">Obtenu le {{ user_badge.earned_at|date:"d M Y" }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-badges">
+                    <div class="no-badges-icon">🌱</div>
+                    <p style="font-size: 18px; margin-bottom: 10px;">Aucun badge pour le moment</p>
+                    <p>Participez au forum pour débloquer vos premiers badges !</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

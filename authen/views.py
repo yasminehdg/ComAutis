@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
-from .models import UserProfile, Enfant
+from .models import UserProfile, Enfant, Badge, UserBadge, Notification
 from datetime import datetime
 
 def index(request):
@@ -69,6 +69,11 @@ def register(request):
             institution=institution
         )
         
+        # Attribuer le badge "Nouveau Parent" automatiquement
+        if user_type == 'parent':
+            from authen.badge_manager import check_and_award_badges
+            check_and_award_badges(user)
+        
         # Redirection selon le type
         if user_type == 'educator':
             # Message de validation en attente pour éducateur
@@ -121,33 +126,23 @@ def dashboard(request):
         user_profile = UserProfile.objects.create(user=request.user, user_type='parent')
         user_type = 'parent'
     
+    # Récupérer les notifications non lues
+    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).count()
+    
     # Rediriger vers le bon dashboard selon le type
     if user_type == 'educator':
         return render(request, 'authen/dashboard_educator.html', {
             'user': request.user,
-            'profile': user_profile
+            'profile': user_profile,
+            'unread_notifications': unread_notifications
         })
     else:  # parent
         return render(request, 'authen/dashboard_parent.html', {
             'user': request.user,
-            'profile': user_profile
+            'profile': user_profile,
+            'unread_notifications': unread_notifications
         })
 
-
-# Nouvelle vue pour voir tous les utilisateurs (à protéger en production!)
-@login_required
-def users_list(request):
-    # Récupérer tous les utilisateurs
-    all_users = User.objects.all().order_by('-date_joined')
-    
-    # Compter les utilisateurs
-    total_users = all_users.count()
-    
-    context = {
-        'users': all_users,
-        'total_users': total_users,
-    }
-    return render(request, 'authen/users_list.html', context)
 
 @login_required
 def profil_famille(request):
@@ -169,7 +164,6 @@ def profil_famille(request):
     return render(request, 'authen/profil_famille.html', context)
 
 
-# ✨ NOUVELLE VUE : Ajouter un enfant
 @login_required
 def ajouter_enfant(request):
     if request.method == 'POST':
@@ -201,7 +195,6 @@ def ajouter_enfant(request):
     return render(request, 'authen/ajouter_enfant.html')
 
 
-# ✨ NOUVELLE VUE : Modifier un enfant
 @login_required
 def modifier_enfant(request, enfant_id):
     enfant = get_object_or_404(Enfant, id=enfant_id, parent=request.user)
@@ -241,6 +234,7 @@ def supprimer_enfant(request, enfant_id):
     
     return render(request, 'authen/supprimer_enfant.html', context)
 
+
 @login_required
 def selection_enfant(request):
     """Page de sélection de l'enfant qui veut jouer"""
@@ -267,6 +261,7 @@ def dashboard_enfant(request, enfant_id):
     }
     
     return render(request, 'authen/dashboard_enfant.html', context)
+
 
 @login_required
 def jeux_enfant(request, enfant_id):
@@ -295,14 +290,6 @@ def users_list(request):
     return render(request, 'authen/users_list.html', context)
 
 
-# VUES POUR LES JEUX
-@login_required
-def liste_jeux(request):
-    """Page listant tous les jeux disponibles"""
-    return render(request, 'authen/jeux/liste_jeux.html')
-
-
-# VUES POUR LES JEUX
 @login_required
 def liste_jeux(request):
     """Page listant tous les jeux disponibles"""
@@ -314,7 +301,61 @@ def jeu_memory(request):
     """Jeu Memory"""
     return render(request, 'authen/jeux/memory.html')
 
+
 @login_required
 def jeu_compter_3(request):
     """Jeu pour apprendre à compter jusqu'à 3"""
     return render(request, 'authen/jeux/compter_3.html')
+
+
+# ========== VUES BADGES ET NOTIFICATIONS ==========
+
+@login_required
+def user_profile(request, username):
+    """Profil public d'un utilisateur avec ses badges"""
+    profile_user = get_object_or_404(User, username=username)
+    user_badges = UserBadge.objects.filter(user=profile_user).select_related('badge')
+    
+    # Statistiques
+    from forum.models import Topic, Post
+    topic_count = Topic.objects.filter(created_by=profile_user).count()
+    post_count = Post.objects.filter(created_by=profile_user).count()
+    
+    context = {
+        'profile_user': profile_user,
+        'user_badges': user_badges,
+        'topic_count': topic_count,
+        'post_count': post_count,
+        'total_posts': topic_count + post_count,
+    }
+    
+    return render(request, 'authen/user_profile.html', context)
+
+
+@login_required
+def notifications_list(request):
+    """Liste des notifications de l'utilisateur"""
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:50]
+    
+    # Marquer toutes les notifications comme lues
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    
+    context = {
+        'notifications': notifications,
+    }
+    
+    return render(request, 'authen/notifications.html', context)
+
+
+@login_required
+def mark_notification_read(request, notification_id):
+    """Marquer une notification comme lue"""
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    
+    # Rediriger vers le lien de la notification si présent
+    if notification.link:
+        return redirect(notification.link)
+    else:
+        return redirect('notifications')

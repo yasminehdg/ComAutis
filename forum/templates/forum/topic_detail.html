@@ -3,34 +3,58 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ topic.title }} - Forum ComAutis</title>
 <link rel="stylesheet" href="{% static 'forum/style.css' %}">
 </head>
 <body>
+    <!-- Bouton retour -->
+<a href="/forum/" style="position: fixed; top: 20px; left: 20px; background: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; color: #2c3e50; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 1000; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)';">
+    ← Retour au forum
+</a>
 <div class="container">
-    <header>
-        <h1>Forum ComAutis</h1>
-    </header>
-<section class="topic-header" style="display: flex; align-items: center; gap: 10px;">
-    {% if topic.icon %}
-        <img src="{% static 'forum/icons/' %}{{ topic.icon }}.png" class="icon" alt="Icône">
-    {% endif %}
-    <div>
-        <h2>{{ topic.title }}</h2>
-        <p class="creator">
-            Créé par {{ topic.created_by.username }} le {{ topic.created_at|date:"d M Y H:i" }}
-        </p>
+    <section class="topic-header">
+        {% if topic.icon %}
+            <img src="{% static 'forum/icons/' %}{{ topic.icon }}.png" class="icon" alt="Icône" style="width: 80px !important; height: 80px !important; background: rgba(255,255,255,0.3); padding: 15px;">
+        {% else %}
+            <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; flex-shrink: 0;">🌟</div>
+        {% endif %}
+        <div>
+            <h2>{{ topic.title }}</h2>
+            <p class="creator" style="color: rgba(255,255,255,0.9);">
+                Créé par {{ topic.created_by.username }} le {{ topic.created_at|date:"d M Y à H:i" }}
+            </p>
+        </div>
+    </section>
+
+    <!-- Réactions -->
+<div class="reactions-container">
+    <div class="reactions-buttons">
+        {% if user.is_authenticated %}
+            <button class="reaction-btn" data-reaction="like" onclick="react({{ topic.id }}, 'like')">
+                👍 <span id="count-like">0</span>
+            </button>
+            <button class="reaction-btn" data-reaction="love" onclick="react({{ topic.id }}, 'love')">
+                ❤️ <span id="count-love">0</span>
+            </button>
+            <button class="reaction-btn" data-reaction="support" onclick="react({{ topic.id }}, 'support')">
+                💪 <span id="count-support">0</span>
+            </button>
+            <button class="reaction-btn" data-reaction="celebrate" onclick="react({{ topic.id }}, 'celebrate')">
+                🎉 <span id="count-celebrate">0</span>
+            </button>
+        {% else %}
+            <p class="login-msg">Connectez-vous pour réagir</p>
+        {% endif %}
     </div>
-</section>
-
-
+</div>
     {% if user.is_authenticated %}
     <section class="new-post">
-        <h3>Ajouter un message</h3>
+        <h3>✍️ Ajouter un message</h3>
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Envoyer</button>
+            <button type="submit">Envoyer mon message</button>
         </form>
     </section>
     {% else %}
@@ -38,18 +62,50 @@
     {% endif %}
 
     <section class="posts-list">
-        <h3>Messages</h3>
+        <h3>💬 Messages ({{ posts|length }})</h3>
         <div class="grid-container">
             {% for post in posts %}
             <div class="card post">
                 <p>{{ post.content }}</p>
-                <p class="author">Publié par {{ post.created_by.username }} le {{ post.created_at|date:"d M Y H:i" }}</p>
+                <p class="author">
+                    <span style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #f9b89e 0%, #f08a5d 100%); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.9rem;">
+                        {{ post.created_by.username|first|upper }}
+                    </span>
+                    <span>
+                        <strong>{{ post.created_by.username }}</strong> • 
+                        {{ post.created_at|date:"d M Y à H:i" }}
+                    </span>
+                </p>
             </div>
             {% empty %}
-            <p>Aucun message pour le moment.</p>
+            <div class="empty-message">
+                <p>🌱 Aucun message pour le moment.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.95rem;">Soyez le premier à participer à cette discussion !</p>
+            </div>
             {% endfor %}
         </div>
     </section>
 </div>
+
+<script>
+function react(topicId, reactionType) {
+    fetch(`/forum/${topicId}/react/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: `reaction_type=${reactionType}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Mettre à jour les compteurs
+        document.getElementById('count-like').textContent = data.reaction_counts.like;
+        document.getElementById('count-love').textContent = data.reaction_counts.love;
+        document.getElementById('count-support').textContent = data.reaction_counts.support;
+        document.getElementById('count-celebrate').textContent = data.reaction_counts.celebrate;
+    });
+}
+</script>
 </body>
 </html>

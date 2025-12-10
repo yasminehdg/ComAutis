@@ -21,6 +21,7 @@ class UserProfile(models.Model):
         verbose_name = "Profil Utilisateur"
         verbose_name_plural = "Profils Utilisateurs"
 
+
 class Enfant(models.Model):
     GENRE_CHOICES = [
         ('M', 'Garçon'),
@@ -71,4 +72,66 @@ class Enfant(models.Model):
         verbose_name = "Enfant"
         verbose_name_plural = "Enfants"
         ordering = ['-created_at']
-        
+
+
+# ← ICI, EN DEHORS DE LA CLASSE ENFANT
+class Badge(models.Model):
+    BADGE_TYPES = [
+        ('nouveau_parent', '🌟 Nouveau Parent'),
+        ('premier_pas', '✍️ Premier Pas'),
+        ('parent_engage', '💬 Parent Engagé'),
+        ('parent_aidant', '❤️ Parent Aidant'),
+        ('pilier', '🎖️ Pilier de la Communauté'),
+        ('mentor', '🤝 Mentor'),
+        ('famille', '👪 Famille ComAutis'),
+    ]
+    
+    name = models.CharField(max_length=50, choices=BADGE_TYPES, unique=True)
+    description = models.TextField()
+    icon = models.CharField(max_length=10)
+    
+    def __str__(self):
+        return self.get_name_display()
+    
+    class Meta:
+        verbose_name = "Badge"
+        verbose_name_plural = "Badges"
+
+
+class UserBadge(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='badges')
+    badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
+    earned_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'badge')
+        verbose_name = "Badge Utilisateur"
+        verbose_name_plural = "Badges Utilisateurs"
+        ordering = ['-earned_at']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.badge.get_name_display()}"
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('reaction', '❤️ Réaction'),
+        ('comment', '💬 Commentaire'),
+        ('badge', '🎉 Badge'),
+        ('mention', '📢 Mention'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    message = models.TextField()
+    link = models.CharField(max_length=200, blank=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Notification"
+        verbose_name_plural = "Notifications"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.get_notification_type_display()}"

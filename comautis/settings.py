@@ -16,7 +16,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'authen',  # ton app
+    'authen',
+    'forum',      # ← Doit être là
+    'paiement',   # ← Doit être là
 ]
 
 # Middleware
@@ -86,4 +88,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Pour tests
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'authen' / 'static',
+]
+# Répertoires des fichiers statiques
+STATICFILES_DIRS = [
+    BASE_DIR / 'forum' / 'static',
+    
 ]

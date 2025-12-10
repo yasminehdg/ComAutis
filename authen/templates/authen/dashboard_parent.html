@@ -59,6 +59,31 @@
             font-weight: 600;
         }
 
+        .notification-icon {
+            position: relative;
+            font-size: 28px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .notification-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff6b6b;
+            color: white;
+            font-size: 12px;
+            padding: 3px 7px;
+            border-radius: 12px;
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+        }
+
         .logout-btn {
             padding: 12px 30px;
             background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
@@ -175,6 +200,15 @@
         </div>
         <div class="user-info">
             <span class="user-name">👋 Bonjour, {{ user.first_name|default:user.username }} !</span>
+            
+            <!-- Icône Notifications -->
+            <a href="/notifications/" class="notification-icon">
+                🔔
+                {% if unread_notifications > 0 %}
+                <span class="notification-badge">{{ unread_notifications }}</span>
+                {% endif %}
+            </a>
+            
             <a href="/logout/" class="logout-btn">Déconnexion</a>
         </div>
     </nav>
@@ -204,10 +238,10 @@
                 <p>Découvrez les jeux et exercices</p>
             </div>
 
-            <div class="feature-card" onclick="alert('Fonctionnalité en développement')">
+            <div class="feature-card" onclick="window.location.href='/forum/'">
                 <div class="feature-icon">💬</div>
-                <h3>Communication</h3>
-                <p>Outils de communication visuelle</p>
+                <h3>Forum</h3>
+                <p>Partagez et échangez avec d'autres parents</p>
             </div>
 
             <div class="feature-card" onclick="alert('Fonctionnalité en développement')">

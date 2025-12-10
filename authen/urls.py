@@ -17,6 +17,10 @@ urlpatterns = [
     path('jeux/', views.liste_jeux, name='liste_jeux'),
     path('jeux/memory/', views.jeu_memory, name='jeu_memory'),
     path('jeux/compter-3/', views.jeu_compter_3, name='jeu_compter_3'),
+    # Badges et Notifications
+    path('profile/<str:username>/', views.user_profile, name='user_profile'),
+    path('notifications/', views.notifications_list, name='notifications'),
+    path('notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
 
 ]
 

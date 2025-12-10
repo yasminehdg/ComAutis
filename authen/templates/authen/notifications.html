@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - ComAutis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 50%, #ffd3b6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .notifications-header {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .notifications-header h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .notifications-list {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .notification-item {
+            background: #f8f9fa;
+            border-left: 4px solid #74b9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .notification-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .notification-item.badge {
+            border-left-color: #ffeaa7;
+            background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+        }
+
+        .notification-item.reaction {
+            border-left-color: #ff7675;
+            background: linear-gradient(135deg, #ffe6e6 0%, #fff 100%);
+        }
+
+        .notification-item.comment {
+            border-left-color: #74b9ff;
+            background: linear-gradient(135deg, #e6f2ff 0%, #fff 100%);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-type {
+            font-size: 24px;
+        }
+
+        .notification-time {
+            font-size: 13px;
+            color: #95a5a6;
+        }
+
+        .notification-message {
+            font-size: 16px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .no-notifications-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .notifications-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard/" class="back-btn">← Retour au tableau de bord</a>
+
+        <div class="notifications-header">
+            <h1><span>🔔</span> Mes Notifications</h1>
+        </div>
+
+        <div class="notifications-list">
+            {% if notifications %}
+                {% for notif in notifications %}
+                <a href="{% if notif.link %}{{ notif.link }}{% else %}#{% endif %}" style="text-decoration: none; color: inherit;">
+                    <div class="notification-item {{ notif.notification_type }}">
+                        <div class="notification-header">
+                            <span class="notification-type">
+                                {% if notif.notification_type == 'badge' %}
+                                    🎉
+                                {% elif notif.notification_type == 'reaction' %}
+                                    ❤️
+                                {% elif notif.notification_type == 'comment' %}
+                                    💬
+                                {% else %}
+                                    📢
+                                {% endif %}
+                            </span>
+                            <span class="notification-time">{{ notif.created_at|timesince }} ago</span>
+                        </div>
+                        <div class="notification-message">
+                            {{ notif.message }}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="no-notifications">
+                    <div class="no-notifications-icon">📭</div>
+                    <p style="font-size: 18px; margin-bottom: 10px;">Aucune notification</p>
+                    <p>Vous serez notifié lorsque quelqu'un interagira avec vos publications !</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

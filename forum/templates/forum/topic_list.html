@@ -1,20 +1,169 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Forum ComAutis</title>
 <link rel="stylesheet" href="{% static 'forum/style.css' %}">
+<style>
+/* Styles pour les salons */
+.salons-bar {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.salons-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.salons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.salon-btn {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid transparent;
+    padding: 15px 20px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.salon-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.salon-btn.active {
+    border-color: #74b9ff;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    font-weight: bold;
+}
+
+.salon-btn.ecole { border-left: 4px solid #ffd93d; }
+.salon-btn.ecole.active { background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 100%); border-color: #ffd93d; }
+
+.salon-btn.alimentation { border-left: 4px solid #6bcf7f; }
+.salon-btn.alimentation.active { background: linear-gradient(135deg, #e8f8ea 0%, #a8e6cf 100%); border-color: #6bcf7f; }
+
+.salon-btn.sommeil { border-left: 4px solid #a29bfe; }
+.salon-btn.sommeil.active { background: linear-gradient(135deg, #f0efff 0%, #dfe6e9 100%); border-color: #a29bfe; }
+
+.salon-btn.jeux { border-left: 4px solid #fd79a8; }
+.salon-btn.jeux.active { background: linear-gradient(135deg, #ffe6f0 0%, #ffeaa7 100%); border-color: #fd79a8; }
+
+.salon-btn.sante { border-left: 4px solid #74b9ff; }
+.salon-btn.sante.active { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-color: #74b9ff; }
+
+.salon-btn.entraide { border-left: 4px solid #fab1a0; }
+.salon-btn.entraide.active { background: linear-gradient(135deg, #fff0ed 0%, #fab1a0 100%); border-color: #fab1a0; }
+
+.salon-btn.libre { border-left: 4px solid #b2bec3; }
+.salon-btn.libre.active { background: linear-gradient(135deg, #f5f6fa 0%, #dfe6e9 100%); border-color: #b2bec3; }
+
+.salon-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+}
+
+.salon-count {
+    background: rgba(0,0,0,0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.clear-filter {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.clear-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
+}
+
+.current-salon {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+</style>
 </head>
 <body>
+<!-- Bouton retour -->
+<a href="/dashboard/" style="position: fixed; top: 20px; left: 20px; background: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; color: #2c3e50; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 1000; transition: all 0.3s;">
+    ← Tableau de bord
+</a>
+
 <div class="container">
     <header>
-        <h1>Forum ComAutis</h1>
+        <h1>Notre Communauté 💬</h1>
+        <p class="subtitle">Partagez et échangez avec d'autres parents sur la communauté Com'Autiste pour entraide et bénéficier de notre soutien.</p>
     </header>
+
+    <!-- Barre des Salons -->
+    <div class="salons-bar">
+        <div class="salons-title">🏠 Salons de Discussion</div>
+        
+        {% if selected_category %}
+        <div class="current-salon">
+            Vous êtes dans : 
+            {% for choice, label in category_choices %}
+                {% if choice == selected_category %}{{ label }}{% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="salons-grid">
+    {% for cat in category_counts %}
+    <a href="?category={{ cat.choice }}" class="salon-btn {{ cat.choice }} {% if selected_category == cat.choice %}active{% endif %}">
+        <span class="salon-label">{{ cat.label }}</span>
+        <span class="salon-count">{{ cat.count }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+        {% if selected_category %}
+        <a href="?" class="clear-filter">✨ Voir tous les salons</a>
+        {% endif %}
+    </div>
 
     {% if user.is_authenticated %}
     <section class="new-topic">
-        <h2>Créer un nouveau sujet</h2>
+        <h2>✏️ Créer un nouveau sujet</h2>
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
@@ -22,27 +171,44 @@
         </form>
     </section>
     {% else %}
-    <p class="login-msg">Vous devez être connecté pour créer un sujet.</p>
+    <p class="login-msg">Vous devez être connecté(e) pour créer un sujet et participer aux discussions.</p>
     {% endif %}
 
     <section class="topics-list">
-        <h2>Liste des sujets</h2>
+        <h2>📋 Liste des sujets</h2>
         <div class="grid-container">
             {% for topic in topics %}
             <div class="card">
                 {% if topic.icon %}
                 <img src="{% static 'forum/icons/' %}{{ topic.icon }}.png" alt="Icône" class="icon">
+                {% else %}
+                <div class="icon">🌟</div>
                 {% endif %}
                 <div>
-                    <h3><a href="{% url 'forum:topic_detail' topic.id %}">{{ topic.title }}</a></h3>
-                    <p class="creator">Créé par {{ topic.created_by.username }}</p>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <h3><a href="{% url 'forum:topic_detail' topic.id %}">{{ topic.title }}</a></h3>
+                        <span style="background: rgba(116, 185, 255, 0.2); padding: 4px 12px; border-radius: 12px; font-size: 12px; color: #2c3e50;">
+    {{ topic.get_category_display }}
+</span>
+                    </div>
+                    <p class="creator">Créé par {{ topic.created_by.username }} • {{ topic.created_at|date:"d M Y" }}</p>
                 </div>
             </div>
             {% empty %}
-            <p>Aucun sujet pour le moment.</p>
+            <div class="empty-message">
+                <p>🌱 Aucun sujet pour le moment.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.95rem;">Soyez le premier à créer un sujet !</p>
+            </div>
             {% endfor %}
         </div>
     </section>
 </div>
+
+<script>
+// Filtre pour accéder aux dictionnaires dans les templates
+document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter un helper pour get_item
+});
+</script>
 </body>
 </html>
