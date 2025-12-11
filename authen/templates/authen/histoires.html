@@ -1,0 +1,586 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histoires - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5);
+        }
+
+        .title {
+            font-size: 36px;
+            color: #2c3e50;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .welcome-section {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .welcome-section h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            font-size: 22px;
+            color: #7f8c8d;
+        }
+
+        .categories {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 20px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: white;
+            color: #7f8c8d;
+        }
+
+        .category-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .category-btn.contes.active {
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            color: white;
+        }
+
+        .category-btn.soir.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .category-content {
+            display: none;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        .histoires-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .histoire-card {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .histoire-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .histoire-card.playing {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .histoire-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 3px solid #f0f0f0;
+            position: relative;
+        }
+
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .histoire-card:hover .play-icon {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        .histoire-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .histoire-duration {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .audio-player {
+            display: none;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .histoire-card.playing .audio-player {
+            display: block;
+        }
+
+        .audio-controls {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+
+        .audio-controls audio {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .stop-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .stop-btn:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .histoires-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .histoire-image {
+                height: 150px;
+            }
+
+            .histoire-title {
+                font-size: 20px;
+            }
+
+            .category-btn {
+                padding: 15px 25px;
+                font-size: 18px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .welcome-section h1 {
+                font-size: 36px;
+            }
+
+            .welcome-section p {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Barre du haut -->
+        <div class="top-bar">
+            <a href="/enfant/{{ enfant.id }}/dashboard/" class="back-btn">
+                ⬅️ Retour
+            </a>
+            <div class="title">📖 Histoires</div>
+            <div style="width: 150px;"></div>
+        </div>
+
+        <!-- Section de bienvenue -->
+        <div class="welcome-section">
+            <h1>✨ Écoute une histoire !</h1>
+            <p>Choisis ton conte préféré 🌙</p>
+        </div>
+
+        <!-- Boutons de catégories -->
+        <div class="categories">
+            <button class="category-btn contes active" onclick="showCategory('contes')">
+                🏰 Contes classiques
+            </button>
+            <button class="category-btn soir" onclick="showCategory('soir')">
+                🌙 Histoires du soir
+            </button>
+        </div>
+
+        <!-- Catégorie CONTES CLASSIQUES -->
+        <div id="contes" class="category-content active">
+            <div class="histoires-grid">
+                <div class="histoire-card" onclick="playHistoire(this, 'audio1')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/1.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">🔴 Le Petit Chaperon Rouge</div>
+                    <div class="histoire-duration">⏱️ 8 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio1" controls>
+                                <source src="{% static 'audio/histoires/1.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio1')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio2')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/2.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">🐷 Les Trois Petits Cochons</div>
+                    <div class="histoire-duration">⏱️ 7 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio2" controls>
+                                <source src="{% static 'audio/histoires/2.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio2')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio3')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/3.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">👧 Boucle d'Or</div>
+                    <div class="histoire-duration">⏱️ 6 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio3" controls>
+                                <source src="{% static 'audio/histoires/3.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio3')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio4')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/4.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">🦆 Le Vilain Petit Canard</div>
+                    <div class="histoire-duration">⏱️ 5 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio4" controls>
+                                <source src="{% static 'audio/histoires/4.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio4')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio5')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/5.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">🐔 La Petite Poule Rousse</div>
+                    <div class="histoire-duration">⏱️ 7 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio5" controls>
+                                <source src="{% static 'audio/histoires/5.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio5')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio6')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/6.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">👢 Le Chat Botté</div>
+                    <div class="histoire-duration">⏱️ 10 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio6" controls>
+                                <source src="{% static 'audio/histoires/6.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio6')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Catégorie HISTOIRES DU SOIR -->
+        <div id="soir" class="category-content">
+            <div class="histoires-grid">
+                <div class="histoire-card" onclick="playHistoire(this, 'audio7')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/7.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">🌙 Le Dodo de la Lune</div>
+                    <div class="histoire-duration">⏱️ 60 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio7" controls>
+                                <source src="{% static 'audio/histoires/7.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio7')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio8')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/8.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">☁️ Le Nuage Tout Doux</div>
+                    <div class="histoire-duration">⏱️ 4 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio8" controls>
+                                <source src="{% static 'audio/histoires/8.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio8')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio9')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/9.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">⭐ Les Étoiles Magiques</div>
+                    <div class="histoire-duration">⏱️ 7 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio9" controls>
+                                <source src="{% static 'audio/histoires/9.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio9')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio10')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/10.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">🌲 La Forêt Endormie</div>
+                    <div class="histoire-duration">⏱️ 4 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio10" controls>
+                                <source src="{% static 'audio/histoires/10.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio10')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio11')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/11.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">🎵 Berceuse Douce</div>
+                    <div class="histoire-duration">⏱️ 2 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio11" controls>
+                                <source src="{% static 'audio/histoires/11.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio11')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="histoire-card" onclick="playHistoire(this, 'audio12')">
+                    <div class="histoire-image" style="background-image: url('{% static "images/histoires/12.jpg" %}');">
+                        <div class="play-icon">▶️</div>
+                    </div>
+                    <div class="histoire-title">💤 Le Pays des Rêves</div>
+                    <div class="histoire-duration">⏱️ 13 min</div>
+                    <div class="audio-player">
+                        <div class="audio-controls">
+                            <audio id="audio12" controls>
+                                <source src="{% static 'audio/histoires/12.mp3' %}" type="audio/mpeg">
+                            </audio>
+                            <button class="stop-btn" onclick="stopHistoire(event, this, 'audio12')">⏹️ Arrêter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAudio = null;
+        let currentCard = null;
+
+        function showCategory(categoryName) {
+            // Arrêter l'audio en cours
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            if (currentCard) {
+                currentCard.classList.remove('playing');
+            }
+
+            // Masquer toutes les catégories
+            const allContents = document.querySelectorAll('.category-content');
+            allContents.forEach(content => content.classList.remove('active'));
+
+            // Désactiver tous les boutons
+            const allButtons = document.querySelectorAll('.category-btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Activer la catégorie sélectionnée
+            document.getElementById(categoryName).classList.add('active');
+            document.querySelector(`.category-btn.${categoryName}`).classList.add('active');
+        }
+
+        function playHistoire(card, audioId) {
+            // Arrêter l'audio précédent
+            if (currentAudio && currentAudio.id !== audioId) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                if (currentCard) {
+                    currentCard.classList.remove('playing');
+                }
+            }
+
+            // Activer la carte
+            card.classList.add('playing');
+            currentCard = card;
+
+            // Jouer l'audio
+            const audio = document.getElementById(audioId);
+            currentAudio = audio;
+            audio.play();
+        }
+
+        function stopHistoire(event, btn, audioId) {
+            event.stopPropagation();
+            const audio = document.getElementById(audioId);
+            audio.pause();
+            audio.currentTime = 0;
+            
+            const card = btn.closest('.histoire-card');
+            card.classList.remove('playing');
+            
+            if (currentCard === card) {
+                currentCard = null;
+                currentAudio = null;
+            }
+        }
+
+        // Animation au chargement
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.histoire-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.animation = 'slideUp 0.5s ease-out';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

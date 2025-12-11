@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍎 Memory Fruits - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fd79a8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 42px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 20px;
+            color: #7f8c8d;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .difficulty-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .difficulty-selector h3 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            padding: 12px 25px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            background: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .difficulty-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #game-board {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+            perspective: 1000px;
+        }
+
+        .grid-4x4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-4x3 { grid-template-columns: repeat(4, 1fr); }
+        .grid-4x2 { grid-template-columns: repeat(4, 1fr); }
+
+        .card {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s, box-shadow 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .card:hover:not(.matched):not(.flip) {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            transform: translateY(-5px);
+        }
+
+        .card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched {
+           opacity: 1;
+           cursor: default;
+           border: 3px solid #27ae60;
+           box-shadow: 0 0 20px rgba(39, 174, 96, 0.5);
+         }
+
+        .card.matched .card-back {
+          background: white;
+         }
+
+        .card-face {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fd79a8 100%);
+            color: white;
+            font-size: 60px;
+        }
+
+        .card-back {
+            background: white;
+            transform: rotateY(180deg);
+            padding: 15px;
+        }
+
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-back {
+            background: white;
+            color: #2c3e50;
+            border: 3px solid #2c3e50;
+        }
+
+        .btn-back:hover {
+            background: #2c3e50;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .victory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .victory-content {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .victory-emoji {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: spin 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(360deg); }
+        }
+
+        .victory-content h2 {
+            font-size: 48px;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        .victory-content p {
+            font-size: 24px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .stars {
+            font-size: 50px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            #game-board {
+                gap: 10px;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .difficulty-buttons {
+                flex-direction: column;
+            }
+
+            .difficulty-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍎 Jeu Memory Fruits 🍎</h1>
+            <p>Trouve toutes les paires de fruits !</p>
+        </div>
+
+        <div class="difficulty-selector">
+            <h3>🎯 Choisis ta difficulté :</h3>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn active" onclick="changeDifficulty('facile')">😊 Facile (4 paires)</button>
+                <button class="difficulty-btn" onclick="changeDifficulty('moyen')">🤔 Moyen (6 paires)</button>
+                <button class="difficulty-btn" onclick="changeDifficulty('difficile')">🔥 Difficile (8 paires)</button>
+            </div>
+        </div>
+
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">⏱️ Temps</div>
+                <div class="info-value" id="time">0s</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">🎯 Coups</div>
+                <div class="info-value" id="moves">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">✨ Paires</div>
+                <div class="info-value" id="pairs">0/4</div>
+            </div>
+        </div>
+
+        <div id="game-board" class="grid-4x4"></div>
+
+        <div class="controls">
+            <button class="btn btn-restart" onclick="startGame()">🔄 Nouvelle Partie</button>
+            <button class="btn btn-back" onclick="window.location.href='/jeux/'">⬅️ Retour</button>
+        </div>
+    </div>
+
+    <div class="victory-modal" id="victory-modal">
+        <div class="victory-content">
+            <div class="victory-emoji">🎉</div>
+            <h2>Bravo !</h2>
+            <p>Tu as trouvé toutes les paires !</p>
+            <div class="stars" id="stars"></div>
+            <p><strong>⏱️ Temps :</strong> <span id="final-time"></span></p>
+            <p><strong>🎯 Coups :</strong> <span id="final-moves"></span></p>
+            <button class="btn btn-restart" onclick="closeModal()">🔄 Rejouer</button>
+        </div>
+    </div>
+
+    <script>
+        // Chemins des images de fruits
+        const fruitImages = [
+            '/static/images/jeux/fruits/apple.png',
+            '/static/images/jeux/fruits/banana.png',
+            '/static/images/jeux/fruits/orange.png',
+            '/static/images/jeux/fruits/grape.png',
+            '/static/images/jeux/fruits/strawberry.png',
+            '/static/images/jeux/fruits/watermelon.png',
+            '/static/images/jeux/fruits/peach.png',
+            '/static/images/jeux/fruits/cherry.png',
+            '/static/images/jeux/fruits/kiwi.png',
+            '/static/images/jeux/fruits/pineapple.png',
+            '/static/images/jeux/fruits/mango.png',
+            '/static/images/jeux/fruits/lemon.png',
+        ];
+
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let lockBoard = false;
+        let timer = 0;
+        let timerInterval = null;
+        let currentDifficulty = 'facile';
+        let totalPairs = 4;
+
+        const difficulties = {
+            facile: { pairs: 4, grid: 'grid-4x2' },
+            moyen: { pairs: 6, grid: 'grid-4x3' },
+            difficile: { pairs: 8, grid: 'grid-4x4' }
+        };
+
+        function changeDifficulty(level) {
+            currentDifficulty = level;
+            totalPairs = difficulties[level].pairs;
+            
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            startGame();
+        }
+
+        function startGame() {
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            board.className = difficulties[currentDifficulty].grid;
+            
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            lockBoard = false;
+            timer = 0;
+            
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('pairs').textContent = `0/${totalPairs}`;
+            document.getElementById('time').textContent = '0s';
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timer++;
+                document.getElementById('time').textContent = timer + 's';
+            }, 1000);
+
+            const selectedImages = fruitImages.slice(0, totalPairs);
+            cards = [...selectedImages, ...selectedImages].sort(() => Math.random() - 0.5);
+
+            cards.forEach((imgUrl, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.image = imgUrl;
+
+                card.innerHTML = `
+                    <div class="card-face card-front">?</div>
+                    <div class="card-face card-back">
+                        <img src="${imgUrl}" alt="Fruit" onerror="this.src='https://via.placeholder.com/150?text=Fruit'">
+                    </div>
+                `;
+
+                card.addEventListener('click', () => flipCard(card));
+                board.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (lockBoard) return;
+            if (card === flippedCards[0]) return;
+            if (card.classList.contains('matched')) return;
+            if (card.classList.contains('flip')) return;
+
+            card.classList.add('flip');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            lockBoard = true;
+            const [card1, card2] = flippedCards;
+
+            if (card1.dataset.image === card2.dataset.image) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                document.getElementById('pairs').textContent = `${matchedPairs}/${totalPairs}`;
+                
+                flippedCards = [];
+                lockBoard = false;
+
+                if (matchedPairs === totalPairs) {
+                    setTimeout(showVictory, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flip');
+                    card2.classList.remove('flip');
+                    flippedCards = [];
+                    lockBoard = false;
+                }, 1000);
+            }
+        }
+
+        function showVictory() {
+            clearInterval(timerInterval);
+            
+            let stars = '⭐⭐⭐';
+            if (moves > totalPairs * 2.5) stars = '⭐⭐';
+            if (moves > totalPairs * 3) stars = '⭐';
+            
+            document.getElementById('stars').textContent = stars;
+            document.getElementById('final-moves').textContent = moves;
+            document.getElementById('final-time').textContent = timer + 's';
+            document.getElementById('victory-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('victory-modal').style.display = 'none';
+            startGame();
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

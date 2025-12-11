@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Animaux - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* En-tête */
+        .game-header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: #f0f0f0;
+            color: #2c3e50;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .game-title {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Zone de jeu */
+        .game-board {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .question {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        /* Image de l'animal */
+        .animal-image-container {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .animal-image {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            object-fit: contain;
+            border-radius: 15px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Boutons de sons */
+        .sound-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .sound-btn {
+            background: white;
+            border: 3px solid #e0e0e0;
+            padding: 30px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .sound-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .sound-btn.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .sound-btn.playing {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .sound-icon {
+            font-size: 60px;
+            color: #667eea;
+        }
+
+        .sound-label {
+            font-size: 18px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        /* Bouton de validation */
+        .validate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            margin-top: 20px;
+        }
+
+        .validate-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .validate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Feedback */
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        /* Écran de fin */
+        .end-screen {
+            display: none;
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .end-screen.active {
+            display: block;
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .end-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .end-screen h2 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 32px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .game-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .sound-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .question {
+                font-size: 24px;
+            }
+
+            .animal-image {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- En-tête -->
+        <div class="game-header">
+            <a href="/jeux/" class="back-btn">
+                ← Retour
+            </a>
+            <div class="game-title">🐾 Les Animaux</div>
+            <div class="score-display">Score: <span id="score">0</span> / <span id="total">5</span></div>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div class="game-board" id="gameBoard">
+            <div class="question">Quel est le cri de cet animal ?</div>
+
+            <!-- Image de l'animal -->
+            <div class="animal-image-container">
+                <img id="animalImage" class="animal-image" src="" alt="Animal">
+            </div>
+
+            <!-- Boutons de sons -->
+            <div class="sound-buttons">
+                <div class="sound-btn" data-sound="0" onclick="playSound(0)">
+                    <div class="sound-icon">🔊</div>
+                    <div class="sound-label">Son 1</div>
+                </div>
+                <div class="sound-btn" data-sound="1" onclick="playSound(1)">
+                    <div class="sound-icon">🔊</div>
+                    <div class="sound-label">Son 2</div>
+                </div>
+                <div class="sound-btn" data-sound="2" onclick="playSound(2)">
+                    <div class="sound-icon">🔊</div>
+                    <div class="sound-label">Son 3</div>
+                </div>
+            </div>
+
+            <button class="validate-btn" id="validateBtn" onclick="validateAnswer()" disabled>
+                Valider ma réponse
+            </button>
+
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <!-- Écran de fin -->
+        <div class="end-screen" id="endScreen">
+            <div class="end-icon">🎉</div>
+            <h2>Bravo {{ enfant.prenom }} !</h2>
+            <p style="font-size: 20px; color: #7f8c8d;">Tu as terminé le jeu !</p>
+            <div class="final-score">Score final: <span id="finalScore">0</span> / 5</div>
+            <button class="restart-btn" onclick="restartGame()">Rejouer</button>
+            <button class="restart-btn" style="background: #6c757d;" onclick="window.location.href='/jeux/'">
+                Autres jeux
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ IMPORTANT : Remplace ces chemins par TES images et sons !
+        const animals = [
+            {
+                name: 'Lion',
+                image: '/static/images/icons/animaux/lion.png',  // ← Change ce chemin
+                sound: '/static/sons/animaux/lion.wav',    // ← Change ce chemin
+                wrongSounds: [
+                    '/static/sons/animaux/elephant.mp3',
+                    '/static/sons/animaux/cow.wav'
+                ]
+            },
+            {
+                name: 'Elephant',
+                image: '/static/images/icons/animaux/elephant.png',
+                sound: '/static/sons/animaux/elephant.mp3',
+                wrongSounds: [
+                    '/static/sons/animaux/lion.wav',
+                    '/static/sons/animaux/bison.wav'
+                ]
+            },
+            {
+                name: 'Vache',
+                image: '/static/images/icons/animaux/cow.png',
+                sound: '/static/sons/animaux/cow.wav',
+                wrongSounds: [
+                    '/static/sons/animaux/mouton.wav',
+                    '/static/sons/animaux/horse.wav'
+                ]
+            },
+            {
+                name: 'Mouton',
+                image: '/static/images/icons/animaux/bison.png',
+                sound: '/static/sons/animaux/bison.wav',
+                wrongSounds: [
+                    '/static/sons/animaux/cow.wav',
+                    '/static/sons/animaux/lion.wav'
+                ]
+            },
+            {
+                name: 'Cheval',
+                image: '/static/images/icons/animaux/horse.png',
+                sound: '/static/sons/animaux/horse.wav',
+                wrongSounds: [
+                    '/static/sons/animaux/cow.wav',
+                    '/static/sons/animaux/bison.wav'
+                ]
+            }
+        ];
+
+        let currentAnimalIndex = 0;
+        let score = 0;
+        let selectedSound = null;
+        let currentSounds = [];
+        let correctSoundIndex = null;
+        let audioPlayer = new Audio();
+
+        function startGame() {
+            currentAnimalIndex = 0;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentAnimalIndex >= animals.length) {
+                showEndScreen();
+                return;
+            }
+
+            const animal = animals[currentAnimalIndex];
+            
+            // Afficher l'image
+            document.getElementById('animalImage').src = animal.image;
+            
+            // Mélanger les sons (1 bon + 2 mauvais)
+            currentSounds = [animal.sound, ...animal.wrongSounds];
+            currentSounds = currentSounds.sort(() => Math.random() - 0.5);
+            correctSoundIndex = currentSounds.indexOf(animal.sound);
+            
+            // Réinitialiser l'interface
+            selectedSound = null;
+            document.querySelectorAll('.sound-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.getElementById('validateBtn').disabled = true;
+            document.getElementById('feedback').style.display = 'none';
+        }
+
+        function playSound(index) {
+            // Jouer le son
+            audioPlayer.src = currentSounds[index];
+            audioPlayer.play();
+            
+            // Animation
+            const btn = document.querySelector(`[data-sound="${index}"]`);
+            btn.classList.add('playing');
+            setTimeout(() => btn.classList.remove('playing'), 500);
+            
+            // Sélectionner ce son
+            document.querySelectorAll('.sound-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedSound = index;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const feedback = document.getElementById('feedback');
+            const validateBtn = document.getElementById('validateBtn');
+            
+            if (selectedSound === correctSoundIndex) {
+                // Bonne réponse !
+                score++;
+                document.getElementById('score').textContent = score;
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = '✅ Bravo ! C\'est le bon cri !<br><button class="next-btn" onclick="nextQuestion()">Suivant →</button>';
+            } else {
+                // Mauvaise réponse
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = '❌ Réessaye ! Ce n\'est pas le bon cri.<br><button class="next-btn" onclick="nextQuestion()">Suivant →</button>';
+            }
+            
+            feedback.style.display = 'block';
+            validateBtn.disabled = true;
+        }
+
+        function nextQuestion() {
+            currentAnimalIndex++;
+            loadQuestion();
+        }
+
+        function showEndScreen() {
+            document.getElementById('gameBoard').style.display = 'none';
+            document.getElementById('endScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        function restartGame() {
+            document.getElementById('gameBoard').style.display = 'block';
+            document.getElementById('endScreen').classList.remove('active');
+            startGame();
+        }
+
+        // Démarrer le jeu au chargement
+        startGame();
+    </script>
+</body>
+</html>

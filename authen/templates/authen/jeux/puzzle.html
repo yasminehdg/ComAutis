@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧩 Puzzle - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 42px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 20px;
+            color: #7f8c8d;
+        }
+
+        .image-selector {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .image-selector h3 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .selected-image-preview {
+            max-width: 300px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .selected-image-preview.active {
+            display: block;
+        }
+
+        .selected-image-preview img {
+            width: 100%;
+            display: block;
+        }
+
+        .selected-image-preview p {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 10px;
+            margin: 0;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .upload-area {
+            border: 4px dashed #667eea;
+            border-radius: 20px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, #e8ecf3 0%, #dfe5f0 100%);
+            transform: scale(1.02);
+        }
+
+        .upload-area.dragover {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+
+        .upload-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .preset-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .preset-img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 4px solid transparent;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .preset-img:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .preset-img.selected {
+            border-color: #27ae60;
+            box-shadow: 0 0 20px rgba(39, 174, 96, 0.6);
+        }
+
+        .difficulty-selector {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .difficulty-selector h3 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            padding: 15px 30px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            background: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .difficulty-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .puzzle-container {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .puzzle-container.active {
+            display: block;
+        }
+
+        #puzzle-board {
+            display: grid;
+            gap: 5px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #e0e0e0;
+            padding: 5px;
+            border-radius: 15px;
+        }
+
+        .grid-2x2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3x3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4x4 { grid-template-columns: repeat(4, 1fr); }
+
+        .puzzle-piece {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 8px;
+            cursor: grab;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            background-size: 300% 300%;
+            background-repeat: no-repeat;
+        }
+        
+        .puzzle-piece.grid-2 {
+            background-size: 200% 200%;
+        }
+        
+        .puzzle-piece.grid-4 {
+            background-size: 400% 400%;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .puzzle-piece:active {
+            cursor: grabbing;
+        }
+
+        .puzzle-piece.correct {
+            border: 4px solid #27ae60;
+            box-shadow: 0 0 20px rgba(39, 174, 96, 0.6);
+            cursor: default !important;
+            animation: correctPulse 0.5s ease-out;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .puzzle-piece.correct:hover {
+            transform: scale(1) !important;
+        }
+
+        .puzzle-piece img {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-hint {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            color: white;
+        }
+
+        .btn-hint:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(254, 202, 87, 0.4);
+        }
+
+        .victory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .victory-content {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .victory-emoji {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: spin 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(360deg); }
+        }
+
+        .victory-content h2 {
+            font-size: 48px;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        .victory-content p {
+            font-size: 24px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .stars {
+            font-size: 50px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .difficulty-buttons {
+                flex-direction: column;
+            }
+
+            .difficulty-btn {
+                width: 100%;
+            }
+
+            #puzzle-board {
+                max-width: 100%;
+            }
+
+            .preset-images {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧩 Jeu Puzzle 🧩</h1>
+            <p>Choisis une image et assemble les pièces !</p>
+        </div>
+
+        <!-- Sélection d'image -->
+        <div class="image-selector">
+            <h3>📸 Choisis ton image</h3>
+            
+            <!-- Prévisualisation de l'image sélectionnée -->
+            <div class="selected-image-preview" id="selected-preview">
+                <img src="" alt="Image choisie" id="preview-img">
+                <p id="preview-text">✅ Image sélectionnée</p>
+            </div>
+            
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Clique ici ou glisse une image</div>
+                <div class="upload-subtext">PNG, JPG, JPEG acceptés</div>
+            </div>
+            <input type="file" id="file-input" accept="image/*">
+
+            <p style="margin: 20px 0; color: #7f8c8d; font-size: 18px;">Ou choisis parmi ces images :</p>
+            
+            <div class="preset-images">
+                <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=400&fit=crop" class="preset-img" alt="Chat" data-name="Chat mignon">
+                <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783?w=400&h=400&fit=crop" class="preset-img" alt="Chien" data-name="Chien joyeux">
+                <img src="https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&h=400&fit=crop" class="preset-img" alt="Papillon" data-name="Papillon">
+                <img src="https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400&h=400&fit=crop" class="preset-img" alt="Fleurs" data-name="Fleurs colorées">
+                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=400&fit=crop" class="preset-img" alt="Montagne" data-name="Montagne">
+            </div>
+        </div>
+
+        <!-- Sélection de difficulté -->
+        <div class="difficulty-selector">
+            <h3>🎯 Choisis ta difficulté</h3>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn" data-size="2">😊 Facile (2x2 - 4 pièces)</button>
+                <button class="difficulty-btn active" data-size="3">🤔 Moyen (3x3 - 9 pièces)</button>
+                <button class="difficulty-btn" data-size="4">🔥 Difficile (4x4 - 16 pièces)</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 25px;">
+            <button class="btn btn-start" id="start-btn" disabled>🚀 Commencer le puzzle !</button>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div class="puzzle-container" id="puzzle-container">
+            <div class="game-info">
+                <div class="info-item">
+                    <div class="info-label">⏱️ Temps</div>
+                    <div class="info-value" id="time">0s</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">🔄 Mouvements</div>
+                    <div class="info-value" id="moves">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">✅ Complété</div>
+                    <div class="info-value" id="progress">0%</div>
+                </div>
+            </div>
+
+            <div id="puzzle-board" class="grid-3x3"></div>
+
+            <div class="controls" style="margin-top: 20px;">
+                <button class="btn btn-restart" onclick="startGame()">🔄 Mélanger</button>
+                <button class="btn btn-hint" onclick="showHint()">💡 Aide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de victoire -->
+    <div class="victory-modal" id="victory-modal">
+        <div class="victory-content">
+            <div class="victory-emoji">🎉</div>
+            <h2>Bravo !</h2>
+            <p>Tu as réussi le puzzle !</p>
+            <div class="stars" id="stars"></div>
+            <p><strong>⏱️ Temps :</strong> <span id="final-time"></span></p>
+            <p><strong>🔄 Mouvements :</strong> <span id="final-moves"></span></p>
+            <button class="btn btn-restart" onclick="closeModal()">🔄 Rejouer</button>
+        </div>
+    </div>
+
+    <script>
+        let gridSize = 3;
+        let pieces = [];
+        let currentImage = null;
+        let draggedPiece = null;
+        let moves = 0;
+        let timer = 0;
+        let timerInterval = null;
+        let correctPieces = 0;
+        let gameStarted = false;
+
+        // Gestion de l'upload
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const startBtn = document.getElementById('start-btn');
+        const puzzleContainer = document.getElementById('puzzle-container');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                loadImage(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                loadImage(file);
+            }
+        });
+
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImage = e.target.result;
+                document.querySelectorAll('.preset-img').forEach(img => img.classList.remove('selected'));
+                startBtn.disabled = false;
+                
+                // Afficher la prévisualisation
+                const preview = document.getElementById('selected-preview');
+                const previewImg = document.getElementById('preview-img');
+                const previewText = document.getElementById('preview-text');
+                
+                previewImg.src = currentImage;
+                previewText.textContent = `✅ ${file.name}`;
+                preview.classList.add('active');
+                
+                uploadArea.style.borderColor = '#27ae60';
+                uploadArea.querySelector('.upload-text').textContent = '✅ Image chargée !';
+                uploadArea.querySelector('.upload-subtext').textContent = 'Clique sur "Commencer" ou choisis une autre image';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Gestion des images préchargées
+        document.querySelectorAll('.preset-img').forEach(img => {
+            img.addEventListener('click', function() {
+                document.querySelectorAll('.preset-img').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+                currentImage = this.src;
+                startBtn.disabled = false;
+                
+                // Afficher la prévisualisation
+                const preview = document.getElementById('selected-preview');
+                const previewImg = document.getElementById('preview-img');
+                const previewText = document.getElementById('preview-text');
+                
+                previewImg.src = currentImage;
+                previewText.textContent = `✅ ${this.dataset.name}`;
+                preview.classList.add('active');
+                
+                uploadArea.querySelector('.upload-text').textContent = '✅ ' + this.dataset.name;
+                uploadArea.querySelector('.upload-subtext').textContent = 'Clique sur "Commencer" pour jouer';
+                uploadArea.style.borderColor = '#27ae60';
+            });
+        });
+
+        // Gestion de la difficulté
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                gridSize = parseInt(this.dataset.size);
+                const board = document.getElementById('puzzle-board');
+                board.className = `grid-${gridSize}x${gridSize}`;
+                
+                if (gameStarted) {
+                    startGame();
+                }
+            });
+        });
+
+        // Bouton commencer
+        startBtn.addEventListener('click', () => {
+            if (currentImage) {
+                puzzleContainer.classList.add('active');
+                puzzleContainer.scrollIntoView({ behavior: 'smooth' });
+                startGame();
+            }
+        });
+
+        function startGame() {
+            if (!currentImage) return;
+            
+            gameStarted = true;
+            moves = 0;
+            timer = 0;
+            correctPieces = 0;
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('time').textContent = '0s';
+            document.getElementById('progress').textContent = '0%';
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timer++;
+                document.getElementById('time').textContent = timer + 's';
+            }, 1000);
+            
+            createPuzzle();
+        }
+
+        function createPuzzle() {
+            const board = document.getElementById('puzzle-board');
+            board.innerHTML = '';
+            
+            pieces = [];
+            const totalPieces = gridSize * gridSize;
+            
+            for (let i = 0; i < totalPieces; i++) {
+                pieces.push({
+                    correctPosition: i,
+                    currentPosition: i,
+                    row: Math.floor(i / gridSize),
+                    col: i % gridSize
+                });
+            }
+            
+            shufflePieces();
+            renderPuzzle();
+        }
+
+        function shufflePieces() {
+            for (let i = 0; i < 100; i++) {
+                const idx1 = Math.floor(Math.random() * pieces.length);
+                const idx2 = Math.floor(Math.random() * pieces.length);
+                
+                const temp = pieces[idx1].currentPosition;
+                pieces[idx1].currentPosition = pieces[idx2].currentPosition;
+                pieces[idx2].currentPosition = temp;
+            }
+        }
+
+        function renderPuzzle() {
+            const board = document.getElementById('puzzle-board');
+            board.innerHTML = '';
+            
+            const sortedPieces = [...pieces].sort((a, b) => a.currentPosition - b.currentPosition);
+            
+            sortedPieces.forEach((piece) => {
+                const div = document.createElement('div');
+                div.className = 'puzzle-piece';
+                div.draggable = true;
+                div.dataset.correctPos = piece.correctPosition;
+                div.dataset.currentPos = piece.currentPosition;
+                
+                // Appliquer l'image en background
+                div.style.backgroundImage = `url(${currentImage})`;
+                
+                // Calculer la position du background en fonction de la position CORRECTE de la pièce
+                const bgPosX = (piece.col / (gridSize - 1)) * 100;
+                const bgPosY = (piece.row / (gridSize - 1)) * 100;
+                
+                div.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
+                div.style.backgroundSize = `${gridSize * 100}%`;
+                
+                if (piece.correctPosition === piece.currentPosition) {
+                    div.classList.add('correct');
+                    div.draggable = false;
+                }
+                
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragover', handleDragOver);
+                div.addEventListener('drop', handleDrop);
+                div.addEventListener('dragend', handleDragEnd);
+                
+                board.appendChild(div);
+            });
+            
+            updateProgress();
+        }
+
+        function handleDragStart(e) {
+            if (e.target.classList.contains('correct')) return;
+            draggedPiece = e.target;
+            e.target.style.opacity = '0.5';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            if (!draggedPiece) return;
+            
+            const dropTarget = e.target.closest('.puzzle-piece');
+            if (!dropTarget || dropTarget === draggedPiece) return;
+            if (dropTarget.classList.contains('correct') || draggedPiece.classList.contains('correct')) return;
+            
+            const draggedCorrectPos = parseInt(draggedPiece.dataset.correctPos);
+            const targetCorrectPos = parseInt(dropTarget.dataset.correctPos);
+            
+            const draggedPieceData = pieces.find(p => p.correctPosition === draggedCorrectPos);
+            const targetPieceData = pieces.find(p => p.correctPosition === targetCorrectPos);
+            
+            const temp = draggedPieceData.currentPosition;
+            draggedPieceData.currentPosition = targetPieceData.currentPosition;
+            targetPieceData.currentPosition = temp;
+            
+            moves++;
+            document.getElementById('moves').textContent = moves;
+            
+            renderPuzzle();
+            checkWin();
+        }
+
+        function handleDragEnd(e) {
+            if (e.target) e.target.style.opacity = '1';
+            draggedPiece = null;
+        }
+
+        function updateProgress() {
+            correctPieces = pieces.filter(p => p.correctPosition === p.currentPosition).length;
+            const percentage = Math.round((correctPieces / pieces.length) * 100);
+            document.getElementById('progress').textContent = percentage + '%';
+        }
+
+        function checkWin() {
+            if (pieces.every(p => p.correctPosition === p.currentPosition)) {
+                clearInterval(timerInterval);
+                setTimeout(showVictory, 500);
+            }
+        }
+
+        function showVictory() {
+            let stars = '⭐⭐⭐';
+            const expectedMoves = gridSize * gridSize * 2;
+            
+            if (moves > expectedMoves * 1.5) stars = '⭐⭐';
+            if (moves > expectedMoves * 2.5) stars = '⭐';
+            
+            document.getElementById('stars').textContent = stars;
+            document.getElementById('final-moves').textContent = moves;
+            document.getElementById('final-time').textContent = timer + 's';
+            document.getElementById('victory-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('victory-modal').style.display = 'none';
+            startGame();
+        }
+
+        function showHint() {
+            const allPieces = document.querySelectorAll('.puzzle-piece');
+            let wrongPieces = [];
+            
+            allPieces.forEach(piece => {
+                if (!piece.classList.contains('correct')) {
+                    wrongPieces.push(piece);
+                }
+            });
+            
+            if (wrongPieces.length > 0) {
+                const randomWrong = wrongPieces[Math.floor(Math.random() * wrongPieces.length)];
+                randomWrong.style.border = '4px solid #feca57';
+                randomWrong.style.animation = 'correctPulse 1s ease-out';
+                
+                setTimeout(() => {
+                    randomWrong.style.border = '';
+                    randomWrong.style.animation = '';
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>

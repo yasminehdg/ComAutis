@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Couleurs - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .game-header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: #f0f0f0;
+            color: #2c3e50;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .game-title {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .game-board {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background: #f8f9fa;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover:not(.flipped):not(.matched) {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .card.flipped, .card.matched {
+            border-color: #6c5ce7;
+        }
+
+        .card.matched {
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            border-radius: 12px;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .card.flipped .card-back,
+        .card.matched .card-back {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .card-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1;
+        }
+
+        .card.flipped .card-front,
+        .card.matched .card-front {
+            opacity: 1;
+            visibility: visible;
+            z-index: 2;
+        }
+
+        .color-box {
+            width: 80%;
+            height: 80%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .end-screen {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .end-screen.active {
+            display: block;
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .end-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .end-screen h2 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .final-stats {
+            font-size: 24px;
+            color: #7f8c8d;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .game-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <a href="/jeux/" class="back-btn">← Retour</a>
+            <div class="game-title">🎨 Memory Couleurs</div>
+            <div class="stats">
+                <div class="stat-item">Coups: <span id="moves">0</span></div>
+                <div class="stat-item">Paires: <span id="pairs">0</span>/6</div>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <div class="cards-grid" id="cardsGrid"></div>
+        </div>
+
+        <div class="end-screen" id="endScreen">
+            <div class="end-icon">🎉</div>
+            <h2>Félicitations !</h2>
+            <p style="font-size: 20px; color: #7f8c8d;">Tu as trouvé toutes les paires !</p>
+            <div class="final-stats">
+                Nombre de coups: <span id="finalMoves">0</span>
+            </div>
+            <button class="restart-btn" onclick="restartGame()">Rejouer</button>
+        </div>
+    </div>
+
+    <script>
+        const colors = [
+            { name: 'Rouge', color: '#e74c3c' },
+            { name: 'Bleu', color: '#3498db' },
+            { name: 'Vert', color: '#2ecc71' },
+            { name: 'Jaune', color: '#f1c40f' },
+            { name: 'Orange', color: '#e67e22' },
+            { name: 'Violet', color: '#9b59b6' }
+        ];
+
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let canFlip = true;
+
+        function initGame() {
+            // Créer les paires
+            cards = [...colors, ...colors];
+            // Mélanger
+            cards = cards.sort(() => Math.random() - 0.5);
+            
+            // Créer les cartes
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+            
+            cards.forEach((cardData, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = index;
+                card.innerHTML = `
+                    <div class="card-back">🎨</div>
+                    <div class="card-front">
+                        <div class="color-box" style="background-color: ${cardData.color};"></div>
+                    </div>
+                `;
+                card.addEventListener('click', () => flipCard(index));
+                grid.appendChild(card);
+            });
+            
+            // Réinitialiser
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            canFlip = true;
+            updateStats();
+        }
+
+        function flipCard(index) {
+            if (!canFlip) return;
+            
+            const card = document.querySelector(`[data-index="${index}"]`);
+            
+            // Empêcher de cliquer sur une carte déjà retournée
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) {
+                return;
+            }
+            
+            // Empêcher de retourner plus de 2 cartes
+            if (flippedCards.length >= 2) return;
+            
+            card.classList.add('flipped');
+            flippedCards.push({ index, color: cards[index] });
+            
+            if (flippedCards.length === 2) {
+                moves++;
+                updateStats();
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            canFlip = false;
+            const [card1, card2] = flippedCards;
+            
+            setTimeout(() => {
+                if (card1.color.name === card2.color.name) {
+                    // C'est une paire !
+                    document.querySelector(`[data-index="${card1.index}"]`).classList.add('matched');
+                    document.querySelector(`[data-index="${card2.index}"]`).classList.add('matched');
+                    matchedPairs++;
+                    updateStats();
+                    
+                    if (matchedPairs === colors.length) {
+                        setTimeout(showEndScreen, 500);
+                    }
+                } else {
+                    // Pas une paire, retourner les cartes
+                    document.querySelector(`[data-index="${card1.index}"]`).classList.remove('flipped');
+                    document.querySelector(`[data-index="${card2.index}"]`).classList.remove('flipped');
+                }
+                
+                flippedCards = [];
+                canFlip = true;
+            }, 1000);
+        }
+
+        function updateStats() {
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('pairs').textContent = matchedPairs;
+        }
+
+        function showEndScreen() {
+            document.getElementById('gameBoard').style.display = 'none';
+            document.getElementById('endScreen').classList.add('active');
+            document.getElementById('finalMoves').textContent = moves;
+        }
+
+        function restartGame() {
+            document.getElementById('gameBoard').style.display = 'block';
+            document.getElementById('endScreen').classList.remove('active');
+            initGame();
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈 Les Couleurs - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fd79a8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 22px;
+            color: #7f8c8d;
+        }
+
+        .game-area {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+            min-height: 550px;
+        }
+
+        .color-display {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .color-instruction {
+            font-size: 42px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .color-box {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: pulse 2s ease-in-out infinite;
+            border: 8px solid white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .color-name {
+            font-size: 48px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        .objects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .object-card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 4px solid transparent;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .object-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .object-emoji {
+            font-size: 100px;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .object-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .object-card.correct {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            animation: correctBounce 0.6s ease-out;
+        }
+
+        @keyframes correctBounce {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15) rotate(5deg); }
+            50% { transform: scale(1.2); }
+            75% { transform: scale(1.15) rotate(-5deg); }
+        }
+
+        .object-card.wrong {
+            animation: wrongShake 0.6s ease-out;
+            border-color: #e74c3c;
+            background: #ffebee;
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-15px); }
+            75% { transform: translateX(15px); }
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 36px;
+            font-weight: bold;
+            min-height: 60px;
+        }
+
+        .feedback.correct {
+            color: #27ae60;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .feedback.wrong {
+            color: #e74c3c;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-15px); }
+            75% { transform: translateX(15px); }
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-display h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .stars {
+            font-size: 50px;
+            margin: 10px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-back {
+            background: white;
+            color: #2c3e50;
+            border: 3px solid #2c3e50;
+        }
+
+        .btn-back:hover {
+            background: #2c3e50;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .victory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .victory-content {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            animation: bounceInModal 0.8s ease-out;
+        }
+
+        @keyframes bounceInModal {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .victory-emoji {
+            font-size: 120px;
+            margin-bottom: 20px;
+            animation: spin 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(360deg); }
+        }
+
+        .victory-content h2 {
+            font-size: 48px;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 36px; }
+            .color-instruction { font-size: 32px; }
+            .color-box { width: 150px; height: 150px; }
+            .color-name { font-size: 36px; }
+            .object-emoji { font-size: 80px; min-height: 80px; }
+            .object-name { font-size: 18px; }
+            .game-area { padding: 25px 20px; }
+            .objects-container { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌈 Apprendre les Couleurs 🌈</h1>
+            <p>Trouve l'objet de la bonne couleur !</p>
+        </div>
+
+        <div class="score-display">
+            <h3>🌟 Ton Score 🌟</h3>
+            <div class="stars" id="stars">⭐⭐⭐</div>
+            <p style="font-size: 22px; margin-top: 10px;">
+                <span id="correct-count">0</span> bonnes réponses sur <span id="total-count">0</span>
+            </p>
+        </div>
+
+        <div class="game-area">
+            <div class="color-display">
+                <div class="color-instruction">Trouve quelque chose de :</div>
+                <div class="color-box" id="color-box"></div>
+                <div class="color-name" id="color-name"></div>
+            </div>
+
+            <div class="objects-container" id="objects-container"></div>
+
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-next" id="next-btn" onclick="nextQuestion()" style="display: none;">
+                ➡️ Question Suivante
+            </button>
+            <button class="btn btn-back" onclick="window.location.href='/jeux/'">
+                ⬅️ Retour aux Jeux
+            </button>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration"></div>
+
+    <div class="victory-modal" id="victory-modal">
+        <div class="victory-content">
+            <div class="victory-emoji">🎉</div>
+            <h2>Bravo Champion !</h2>
+            <p style="font-size: 24px; color: #7f8c8d; margin: 20px 0;">
+                Tu connais toutes les couleurs !
+            </p>
+            <div class="stars" style="font-size: 70px; margin: 30px 0;">⭐⭐⭐</div>
+            <button class="btn btn-next" onclick="restartGame()">🔄 Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        let currentColor = null;
+        let correctAnswers = 0;
+        let totalQuestions = 0;
+        let questionCount = 0;
+        const maxQuestions = 16;
+        let answered = false;
+
+        // Base de données avec UNIQUEMENT des emojis universels
+        const colorsDatabase = {
+            rouge: {
+                hex: '#e74c3c',
+                name: 'ROUGE',
+                objects: [
+                    { emoji: '🍎', name: 'Pomme' },
+                    { emoji: '🍓', name: 'Fraise' },
+                    { emoji: '🍅', name: 'Tomate' },
+                    { emoji: '🌹', name: 'Rose' },
+                    { emoji: '🚗', name: 'Voiture' },
+                    { emoji: '❤️', name: 'Cœur' }
+                ]
+            },
+            bleu: {
+                hex: '#3498db',
+                name: 'BLEU',
+                objects: [
+                    { emoji: '🌊', name: 'Eau' },
+                    { emoji: '🦋', name: 'Papillon' },
+                    { emoji: '🐟', name: 'Poisson' },
+                    { emoji: '🚙', name: 'Voiture' },
+                    { emoji: '💙', name: 'Cœur' },
+                    { emoji: '🐳', name: 'Baleine' }
+                ]
+            },
+            jaune: {
+                hex: '#f1c40f',
+                name: 'JAUNE',
+                objects: [
+                    { emoji: '🍌', name: 'Banane' },
+                    { emoji: '🌻', name: 'Tournesol' },
+                    { emoji: '⭐', name: 'Étoile' },
+                    { emoji: '🍋', name: 'Citron' },
+                    { emoji: '☀️', name: 'Soleil' },
+                    { emoji: '🚕', name: 'Taxi' }
+                ]
+            },
+            vert: {
+                hex: '#27ae60',
+                name: 'VERT',
+                objects: [
+                    { emoji: '🥦', name: 'Brocoli' },
+                    { emoji: '🍀', name: 'Trèfle' },
+                    { emoji: '🌳', name: 'Arbre' },
+                    { emoji: '🍏', name: 'Pomme' },
+                    { emoji: '🐸', name: 'Grenouille' },
+                    { emoji: '🐢', name: 'Tortue' }
+                ]
+            },
+            orange: {
+                hex: '#e67e22',
+                name: 'ORANGE',
+                objects: [
+                    { emoji: '🍊', name: 'Orange' },
+                    { emoji: '🥕', name: 'Carotte' },
+                    { emoji: '🎃', name: 'Citrouille' },
+                    { emoji: '🦊', name: 'Renard' },
+                    { emoji: '🧡', name: 'Cœur' },
+                    { emoji: '🏀', name: 'Ballon' }
+                ]
+            },
+            violet: {
+                hex: '#9b59b6',
+                name: 'VIOLET',
+                objects: [
+                    { emoji: '🍇', name: 'Raisin' },
+                    { emoji: '🍆', name: 'Aubergine' },
+                    { emoji: '💜', name: 'Cœur' },
+                    { emoji: '🔮', name: 'Boule' },
+                    { emoji: '👾', name: 'Monstre' },
+                    { emoji: '🦄', name: 'Licorne' }
+                ]
+            },
+            rose: {
+                hex: '#fd79a8',
+                name: 'ROSE',
+                objects: [
+                    { emoji: '🌸', name: 'Fleur' },
+                    { emoji: '🐷', name: 'Cochon' },
+                    { emoji: '💗', name: 'Cœur' },
+                    { emoji: '🎀', name: 'Nœud' },
+                    { emoji: '🦩', name: 'Flamant' },
+                    { emoji: '🧁', name: 'Cupcake' }
+                ]
+            },
+            marron: {
+                hex: '#8b4513',
+                name: 'MARRON',
+                objects: [
+                    { emoji: '🐻', name: 'Ours' },
+                    { emoji: '🍫', name: 'Chocolat' },
+                    { emoji: '🥔', name: 'Pomme de terre' },
+                    { emoji: '🌰', name: 'Châtaigne' },
+                    { emoji: '🐶', name: 'Chien' },
+                    { emoji: '🥥', name: 'Noix de coco' }
+                ]
+            }
+        };
+
+        const encouragements = [
+            "Super ! 🎉",
+            "Bravo ! ⭐",
+            "Excellent ! 🌟",
+            "Génial ! 🏆",
+            "Parfait ! 🎊",
+            "Magnifique ! 💪",
+            "Fantastique ! 🌸",
+            "Incroyable ! 🎨",
+            "Formidable ! 🎯",
+            "Extraordinaire ! 🌈"
+        ];
+
+        function generateQuestion() {
+            answered = false;
+            questionCount++;
+            totalQuestions++;
+            
+            document.getElementById('total-count').textContent = totalQuestions;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('next-btn').style.display = 'none';
+            
+            const colorKeys = Object.keys(colorsDatabase);
+            const randomColorKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+            currentColor = colorsDatabase[randomColorKey];
+            
+            document.getElementById('color-box').style.background = currentColor.hex;
+            document.getElementById('color-name').textContent = currentColor.name;
+            document.getElementById('color-name').style.color = currentColor.hex;
+            
+            generateChoices();
+        }
+
+        function generateChoices() {
+            const container = document.getElementById('objects-container');
+            container.innerHTML = '';
+            
+            const correctObject = currentColor.objects[Math.floor(Math.random() * currentColor.objects.length)];
+            
+            const wrongObjects = [];
+            const colorKeys = Object.keys(colorsDatabase).filter(key => colorsDatabase[key] !== currentColor);
+            
+            while (wrongObjects.length < 3) {
+                const randomColorKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+                const randomColor = colorsDatabase[randomColorKey];
+                const randomObject = randomColor.objects[Math.floor(Math.random() * randomColor.objects.length)];
+                
+                if (!wrongObjects.some(obj => obj.emoji === randomObject.emoji)) {
+                    wrongObjects.push(randomObject);
+                }
+            }
+            
+            const allObjects = [correctObject, ...wrongObjects].sort(() => Math.random() - 0.5);
+            
+            allObjects.forEach((obj) => {
+                const card = document.createElement('div');
+                card.className = 'object-card';
+                card.innerHTML = `
+                    <div class="object-emoji">${obj.emoji}</div>
+                    <div class="object-name">${obj.name}</div>
+                `;
+                
+                card.onclick = () => checkAnswer(obj.emoji === correctObject.emoji, card);
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(isCorrect, card) {
+            if (answered) return;
+            answered = true;
+            
+            const allCards = document.querySelectorAll('.object-card');
+            allCards.forEach(c => c.style.pointerEvents = 'none');
+            
+            const feedback = document.getElementById('feedback');
+            
+            if (isCorrect) {
+                card.classList.add('correct');
+                correctAnswers++;
+                document.getElementById('correct-count').textContent = correctAnswers;
+                
+                const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
+                feedback.textContent = `${randomEncouragement} C'est bien ${currentColor.name} !`;
+                feedback.style.color = currentColor.hex;
+                feedback.className = 'feedback correct';
+                
+                playSound('correct');
+                createConfetti();
+                
+                updateStars();
+                
+                setTimeout(() => {
+                    if (questionCount >= maxQuestions) {
+                        showVictory();
+                    } else {
+                        document.getElementById('next-btn').style.display = 'inline-block';
+                    }
+                }, 1500);
+                
+            } else {
+                card.classList.add('wrong');
+                feedback.textContent = "Essaie encore ! Regarde bien la couleur ! 💪";
+                feedback.className = 'feedback wrong';
+                
+                playSound('wrong');
+                
+                setTimeout(() => {
+                    card.classList.remove('wrong');
+                    allCards.forEach(c => c.style.pointerEvents = 'auto');
+                    answered = false;
+                    feedback.textContent = '';
+                }, 1000);
+            }
+        }
+
+        function nextQuestion() {
+            if (questionCount >= maxQuestions) {
+                showVictory();
+            } else {
+                generateQuestion();
+            }
+        }
+
+        function updateStars() {
+            const percentage = (correctAnswers / totalQuestions) * 100;
+            let stars = '⭐⭐⭐';
+            if (percentage < 60) stars = '⭐';
+            else if (percentage < 80) stars = '⭐⭐';
+            document.getElementById('stars').textContent = stars;
+        }
+
+        function createConfetti() {
+            const celebration = document.getElementById('celebration');
+            const colors = ['#e74c3c', '#3498db', '#f1c40f', '#27ae60', '#e67e22', '#9b59b6', '#fd79a8'];
+            
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.3 + 's';
+                celebration.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'correct') {
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+            } else {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+            }
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function showVictory() {
+            document.getElementById('victory-modal').style.display = 'flex';
+            createConfetti();
+            setTimeout(createConfetti, 500);
+            setTimeout(createConfetti, 1000);
+        }
+
+        function restartGame() {
+            correctAnswers = 0;
+            totalQuestions = 0;
+            questionCount = 0;
+            document.getElementById('correct-count').textContent = '0';
+            document.getElementById('total-count').textContent = '0';
+            document.getElementById('stars').textContent = '⭐⭐⭐';
+            document.getElementById('victory-modal').style.display = 'none';
+            generateQuestion();
+        }
+
+        generateQuestion();
+    </script>
+</body>
+</html>

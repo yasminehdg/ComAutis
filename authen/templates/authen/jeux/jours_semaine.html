@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📆 Jours de la Semaine - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 22px;
+            color: #7f8c8d;
+        }
+
+        .game-area {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+            min-height: 600px;
+        }
+
+        .instruction {
+            text-align: center;
+            font-size: 32px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .days-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+            min-height: 450px;
+        }
+
+        .day-card {
+            border-radius: 25px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: grab;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 5px solid white;
+            user-select: none;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .day-card:active {
+            cursor: grabbing;
+        }
+
+        .day-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+
+        .day-card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        /* Couleurs pour chaque jour */
+        .day-1 { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); }
+        .day-2 { background: linear-gradient(135deg, #ff9f43 0%, #ff7f50 100%); }
+        .day-3 { background: linear-gradient(135deg, #feca57 0%, #f7b731 100%); }
+        .day-4 { background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%); }
+        .day-5 { background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%); }
+        .day-6 { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); }
+        .day-7 { background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); }
+
+        .day-name {
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .day-number {
+            font-size: 20px;
+            color: white;
+            margin-top: 10px;
+            opacity: 0.9;
+            font-weight: bold;
+        }
+
+        .drop-zone {
+            border: 3px dashed #ddd;
+            border-radius: 20px;
+            min-height: 200px;
+            padding: 10px;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .correct-order {
+            border-color: #27ae60 !important;
+            border-width: 6px !important;
+            animation: correctBounce 0.6s ease-out;
+        }
+
+        @keyframes correctBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .wrong-order {
+            border-color: #2c3e50 !important;
+            border-width: 6px !important;
+            animation: wrongShake 0.6s ease-out;
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-15px); }
+            75% { transform: translateX(15px); }
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 32px;
+            font-weight: bold;
+            min-height: 50px;
+        }
+
+        .feedback.correct {
+            color: #27ae60;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .feedback.wrong {
+            color: #e74c3c;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-display h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .stars {
+            font-size: 50px;
+            margin: 10px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-check:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-back {
+            background: white;
+            color: #2c3e50;
+            border: 3px solid #2c3e50;
+        }
+
+        .btn-back:hover {
+            background: #2c3e50;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .victory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .victory-content {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            animation: bounceInModal 0.8s ease-out;
+        }
+
+        @keyframes bounceInModal {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .victory-emoji {
+            font-size: 120px;
+            margin-bottom: 20px;
+            animation: spin 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(360deg); }
+        }
+
+        .victory-content h2 {
+            font-size: 48px;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 36px; }
+            .instruction { font-size: 24px; }
+            .days-container { grid-template-columns: 1fr; }
+            .day-name { font-size: 28px; }
+            .game-area { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📆 Jours de la Semaine 📆</h1>
+            <p>Remets les jours dans le bon ordre !</p>
+        </div>
+
+        <div class="score-display">
+            <h3>🌟 Ton Score 🌟</h3>
+            <div class="stars" id="stars">⭐⭐⭐</div>
+            <p style="font-size: 22px; margin-top: 10px;">
+                <span id="attempts">0</span> essais
+            </p>
+        </div>
+
+        <div class="game-area">
+            <div class="instruction">
+                Glisse les jours pour les mettre dans l'ordre !
+            </div>
+
+            <div class="days-container drop-zone" id="days-container"></div>
+
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-check" onclick="checkOrder()">✓ Vérifier l'ordre</button>
+            <button class="btn btn-restart" onclick="shuffleDays()">🔄 Mélanger</button>
+            <button class="btn btn-back" onclick="window.location.href='/jeux/'">⬅️ Retour</button>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration"></div>
+
+    <div class="victory-modal" id="victory-modal">
+        <div class="victory-content">
+            <div class="victory-emoji">🎉</div>
+            <h2>Bravo Champion !</h2>
+            <p style="font-size: 24px; color: #7f8c8d; margin: 20px 0;">
+                Tu connais les jours de la semaine !
+            </p>
+            <div class="stars" style="font-size: 70px; margin: 30px 0;">⭐⭐⭐</div>
+            <p style="font-size: 20px; color: #2c3e50;">
+                Tu as réussi en <span id="final-attempts"></span> essais !
+            </p>
+            <button class="btn btn-restart" onclick="closeModal()">🔄 Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        const daysData = [
+            { id: 1, name: 'Lundi', color: 'day-1' },
+            { id: 2, name: 'Mardi', color: 'day-2' },
+            { id: 3, name: 'Mercredi', color: 'day-3' },
+            { id: 4, name: 'Jeudi', color: 'day-4' },
+            { id: 5, name: 'Vendredi', color: 'day-5' },
+            { id: 6, name: 'Samedi', color: 'day-6' },
+            { id: 7, name: 'Dimanche', color: 'day-7' }
+        ];
+
+        let attempts = 0;
+        let draggedElement = null;
+
+        function initGame() {
+            shuffleDays();
+        }
+
+        function shuffleDays() {
+            const container = document.getElementById('days-container');
+            container.innerHTML = '';
+            
+            // Mélanger les jours
+            const shuffled = [...daysData].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(day => {
+                const card = createDayCard(day);
+                container.appendChild(card);
+            });
+
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+        }
+
+        function createDayCard(day) {
+            const card = document.createElement('div');
+            card.className = `day-card ${day.color}`;
+            card.draggable = true;
+            card.dataset.id = day.id;
+            
+            card.innerHTML = `
+                <div class="day-name">${day.name}</div>
+            `;
+
+            // Événements de drag and drop
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+            card.addEventListener('dragover', handleDragOver);
+            card.addEventListener('drop', handleDrop);
+            card.addEventListener('dragenter', handleDragEnter);
+            card.addEventListener('dragleave', handleDragLeave);
+
+            return card;
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            
+            // Retirer la classe drag-over de tous les éléments
+            document.querySelectorAll('.day-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            if (this !== draggedElement) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (draggedElement !== this) {
+                // Échanger les positions
+                const container = document.getElementById('days-container');
+                const allCards = [...container.children];
+                const draggedIndex = allCards.indexOf(draggedElement);
+                const targetIndex = allCards.indexOf(this);
+
+                if (draggedIndex < targetIndex) {
+                    container.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    container.insertBefore(draggedElement, this);
+                }
+            }
+
+            this.classList.remove('drag-over');
+            return false;
+        }
+
+        function checkOrder() {
+            const container = document.getElementById('days-container');
+            const cards = [...container.children];
+            const currentOrder = cards.map(card => parseInt(card.dataset.id));
+            const correctOrder = [1, 2, 3, 4, 5, 6, 7];
+            
+            attempts++;
+            document.getElementById('attempts').textContent = attempts;
+
+            const feedback = document.getElementById('feedback');
+            
+            // Vérifier si l'ordre est correct
+            const isCorrect = currentOrder.every((id, index) => id === correctOrder[index]);
+
+            // Marquer les cartes
+            cards.forEach((card, index) => {
+                card.classList.remove('correct-order', 'wrong-order');
+                if (parseInt(card.dataset.id) === correctOrder[index]) {
+                    card.classList.add('correct-order');
+                } else {
+                    card.classList.add('wrong-order');
+                }
+            });
+
+            if (isCorrect) {
+                feedback.textContent = "Bravo ! C'est parfait ! 🎉";
+                feedback.className = 'feedback correct';
+                playSound('correct');
+                createConfetti();
+                
+                setTimeout(() => {
+                    showVictory();
+                }, 1500);
+            } else {
+                feedback.textContent = "Pas tout à fait ! Regarde les cartes avec le gros bord 💪";
+                feedback.className = 'feedback wrong';
+                playSound('wrong');
+            }
+        }
+
+        function createConfetti() {
+            const celebration = document.getElementById('celebration');
+            const colors = ['#ff6b6b', '#ff9f43', '#feca57', '#48dbfb', '#1dd1a1', '#a29bfe', '#fd79a8'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.3 + 's';
+                celebration.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'correct') {
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+            } else {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+            }
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function showVictory() {
+            document.getElementById('final-attempts').textContent = attempts;
+            document.getElementById('victory-modal').style.display = 'flex';
+            createConfetti();
+            setTimeout(createConfetti, 500);
+        }
+
+        function closeModal() {
+            document.getElementById('victory-modal').style.display = 'none';
+            attempts = 0;
+            document.getElementById('attempts').textContent = '0';
+            shuffleDays();
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

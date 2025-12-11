@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
 from .models import UserProfile, Enfant, Badge, UserBadge, Notification
 from datetime import datetime
+from django.urls import path
+from . import views
 
 def index(request):
     return render(request, 'authen/index.html')
@@ -306,6 +308,106 @@ def jeu_memory(request):
 def jeu_compter_3(request):
     """Jeu pour apprendre à compter jusqu'à 3"""
     return render(request, 'authen/jeux/compter_3.html')
+
+
+@login_required
+def jeu_couleurs(request):
+    """Jeu pour apprendre les couleurs"""
+    return render(request, 'authen/jeux/couleurs.html')
+
+@login_required
+def jeu_emotions(request):
+    """Jeu pour apprendre les émotions"""
+    return render(request, 'authen/jeux/emotions.html')
+
+@login_required
+def jeu_compter_10(request):
+    """Jeu pour apprendre à compter jusqu'à 10"""
+    return render(request, 'authen/jeux/compter_10.html')
+
+@login_required
+def jeu_memory_fruits(request):
+    """Jeu Memory Fruits"""
+    return render(request, 'authen/jeux/memory_fruits.html')
+
+@login_required
+def jeu_jours_semaine(request):
+    """Jeu Jours de la Semaine"""
+    return render(request, 'authen/jeux/jours_semaine.html')
+
+@login_required
+def animaux_jeu(request):
+    """Jeu pour apprendre les cris des animaux"""
+    # Pas besoin d'enfant_id ici
+    return render(request, 'authen/jeux/animaux_jeu.html')
+
+@login_required
+def jeu_fruits(request):
+    """Jeu pour apprendre les fruits"""
+    return render(request, 'authen/jeux/fruits.html')
+
+@login_required
+def jeu_memory_couleurs(request):
+    """Jeu Memory Couleurs"""
+    return render(request, 'authen/jeux/memory_couleurs.html')
+
+@login_required
+def jeu_saisons(request):
+    """Jeu pour apprendre les saisons"""
+    return render(request, 'authen/jeux/saisons.html')
+
+@login_required
+def jeu_puzzle(request):
+    """Jeu Puzzle"""
+    return render(request, 'authen/jeux/puzzle.html')
+
+
+@login_required
+def page_sons(request):
+    """Page des sons"""
+    return render(request, 'authen/sons.html')
+
+def pictogrammes_view(request, enfant_id):
+    enfant = Enfant.objects.get(id=enfant_id)
+    
+    context = {
+        'enfant': enfant,
+    }
+    
+    return render(request, 'authen/pictogrammes.html', context)
+
+def dessiner_view(request, enfant_id):
+    enfant = Enfant.objects.get(id=enfant_id)
+    context = {'enfant': enfant}
+    return render(request, 'authen/dessiner.html', context)
+
+def videos_view(request, enfant_id):
+    enfant = Enfant.objects.get(id=enfant_id)
+    context = {'enfant': enfant}
+    return render(request, 'authen/videos.html', context)
+
+def histoires_view(request, enfant_id):
+    enfant = Enfant.objects.get(id=enfant_id)
+    context = {'enfant': enfant}
+    return render(request, 'authen/histoires.html', context)
+
+# Vue pour la page Ressources
+def ressources(request):
+    return render(request, 'authen/ressources.html', {
+        'user': request.user
+    })
+
+def parametres(request):
+    # Récupérer les enfants de l'utilisateur connecté
+    enfants = Enfant.objects.filter(parent=request.user)
+    
+    return render(request, 'authen/parametres.html', {
+        'user': request.user,
+        'enfants': enfants
+    })
+
+def labyrinthe_jeu(request):
+    return render(request, 'authen/jeux/labyrinthe.html')
 
 
 # ========== VUES BADGES ET NOTIFICATIONS ==========

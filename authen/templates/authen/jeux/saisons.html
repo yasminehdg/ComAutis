@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Saisons - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .game-header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: #f0f0f0;
+            color: #2c3e50;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .game-title {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .game-board {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .question {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .seasons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .season-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 3px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .season-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .season-card.selected {
+            border-color: #74b9ff;
+            background: linear-gradient(135deg, #74b9ff15 0%, #a29bfe15 100%);
+            box-shadow: 0 5px 20px rgba(116, 185, 255, 0.3);
+        }
+
+        .season-icon {
+            font-size: 80px;
+            margin-bottom: 15px;
+        }
+
+        .season-name {
+            font-size: 26px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .season-description {
+            font-size: 16px;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        .validate-btn {
+            background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .validate-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(116, 185, 255, 0.4);
+        }
+
+        .validate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .end-screen {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .end-screen.active {
+            display: block;
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .end-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .end-screen h2 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 32px;
+            color: #74b9ff;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(116, 185, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .game-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .seasons-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .season-icon {
+                font-size: 60px;
+            }
+
+            .season-name {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <a href="/jeux/" class="back-btn">← Retour</a>
+            <div class="game-title">🍂 Les Saisons</div>
+            <div class="score-display">Score: <span id="score">0</span> / <span id="total">4</span></div>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <div class="question" id="question">Quelle saison correspond à cette description ?</div>
+
+            <div class="seasons-grid">
+                <div class="season-card" onclick="selectSeason(0)">
+                    <div class="season-icon">🌸</div>
+                    <div class="season-name">Printemps</div>
+                    <div class="season-description">Les fleurs poussent, il fait doux</div>
+                </div>
+                <div class="season-card" onclick="selectSeason(1)">
+                    <div class="season-icon">☀️</div>
+                    <div class="season-name">Été</div>
+                    <div class="season-description">Il fait chaud, on va à la plage</div>
+                </div>
+                <div class="season-card" onclick="selectSeason(2)">
+                    <div class="season-icon">🍂</div>
+                    <div class="season-name">Automne</div>
+                    <div class="season-description">Les feuilles tombent, il pleut</div>
+                </div>
+                <div class="season-card" onclick="selectSeason(3)">
+                    <div class="season-icon">❄️</div>
+                    <div class="season-name">Hiver</div>
+                    <div class="season-description">Il fait froid, il neige parfois</div>
+                </div>
+            </div>
+
+            <button class="validate-btn" id="validateBtn" onclick="validateAnswer()" disabled>
+                Valider ma réponse
+            </button>
+
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="end-screen" id="endScreen">
+            <div class="end-icon">🎉</div>
+            <h2>Bravo !</h2>
+            <p style="font-size: 20px; color: #7f8c8d;">Tu connais bien les saisons !</p>
+            <div class="final-score">Score final: <span id="finalScore">0</span> / 4</div>
+            <button class="restart-btn" onclick="restartGame()">Rejouer</button>
+            <button class="restart-btn" style="background: #6c757d;" onclick="window.location.href='/jeux/'">
+                Autres jeux
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Quelle saison arrive après l'hiver ?",
+                correctAnswer: 0,
+                feedback: "Oui ! Le Printemps arrive après l'hiver 🌸"
+            },
+            {
+                question: "En quelle saison fait-il très chaud et va-t-on à la plage ?",
+                correctAnswer: 1,
+                feedback: "C'est ça ! En Été il fait chaud ☀️"
+            },
+            {
+                question: "Quelle saison voit les feuilles tomber des arbres ?",
+                correctAnswer: 2,
+                feedback: "Bravo ! En Automne les feuilles tombent 🍂"
+            },
+            {
+                question: "En quelle saison peut-il neiger et fait-il très froid ?",
+                correctAnswer: 3,
+                feedback: "Parfait ! En Hiver il fait froid ❄️"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('score').textContent = score;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showEndScreen();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = question.question;
+            
+            // Réinitialiser
+            selectedAnswer = null;
+            document.querySelectorAll('.season-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('validateBtn').disabled = true;
+            document.getElementById('feedback').style.display = 'none';
+        }
+
+        function selectSeason(index) {
+            document.querySelectorAll('.season-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelectorAll('.season-card')[index].classList.add('selected');
+            selectedAnswer = index;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const feedback = document.getElementById('feedback');
+            const validateBtn = document.getElementById('validateBtn');
+            const question = questions[currentQuestionIndex];
+            
+            if (selectedAnswer === question.correctAnswer) {
+                score++;
+                document.getElementById('score').textContent = score;
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = '✅ ' + question.feedback + '<br><button class="next-btn" onclick="nextQuestion()">Suivant →</button>';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = '❌ Réessaye ! ' + question.feedback + '<br><button class="next-btn" onclick="nextQuestion()">Suivant →</button>';
+            }
+            
+            feedback.style.display = 'block';
+            validateBtn.disabled = true;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function showEndScreen() {
+            document.getElementById('gameBoard').style.display = 'none';
+            document.getElementById('endScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        function restartGame() {
+            document.getElementById('gameBoard').style.display = 'block';
+            document.getElementById('endScreen').classList.remove('active');
+            startGame();
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

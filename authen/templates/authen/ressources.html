@@ -1,0 +1,500 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressources - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5);
+        }
+
+        .title {
+            font-size: 36px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .welcome-section {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .welcome-section h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            font-size: 22px;
+            color: #7f8c8d;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 18px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: white;
+            color: #7f8c8d;
+        }
+
+        .tab-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: white;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .resource-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .resource-card h3 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .resource-card p {
+            font-size: 16px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .resource-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .resource-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+
+        .link-list {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .link-item {
+            padding: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+
+        .link-item:last-child {
+            border-bottom: none;
+        }
+
+        .link-item:hover {
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .link-item h4 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .link-item p {
+            font-size: 15px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .link-item a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .link-item a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .welcome-section h1 {
+                font-size: 36px;
+            }
+
+            .tab-btn {
+                padding: 15px 25px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Barre du haut -->
+        <div class="top-bar">
+            <a href="/dashboard/" class="back-btn">
+                ⬅️ Retour au tableau de bord
+            </a>
+            <div class="title">📚 Ressources</div>
+            <div style="width: 150px;"></div>
+        </div>
+
+        <!-- Section de bienvenue -->
+        <div class="welcome-section">
+            <h1>📚 Centre de Ressources</h1>
+            <p>Tous les outils pour vous accompagner au quotidien</p>
+        </div>
+
+        <!-- Onglets -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('guides')">
+                📖 Guides pratiques
+            </button>
+            <button class="tab-btn" onclick="showTab('documents')">
+                📄 Documents
+            </button>
+            <button class="tab-btn" onclick="showTab('videos')">
+                🎥 Vidéos
+            </button>
+            <button class="tab-btn" onclick="showTab('liens')">
+                🔗 Liens utiles
+            </button>
+        </div>
+
+        <!-- Contenu GUIDES PRATIQUES -->
+        <div id="guides" class="tab-content active">
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">🧩</div>
+                    <h3>Comprendre l'autisme</h3>
+                    <p>Guide complet pour mieux comprendre les troubles du spectre autistique, les signes, les diagnostics et les approches thérapeutiques.</p>
+                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">⏰</div>
+                    <h3>Créer une routine efficace</h3>
+                    <p>Apprenez à mettre en place des routines quotidiennes structurées pour aider votre enfant à mieux s'organiser et réduire son anxiété.</p>
+                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🗣️</div>
+                    <h3>Les pictogrammes : mode d'emploi</h3>
+                    <p>Découvrez comment utiliser les pictogrammes pour faciliter la communication avec votre enfant au quotidien.</p>
+                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">😤</div>
+                    <h3>Gérer les crises et les émotions</h3>
+                    <p>Stratégies concrètes pour anticiper, comprendre et gérer les crises émotionnelles de votre enfant.</p>
+                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🍽️</div>
+                    <h3>L'alimentation et l'autisme</h3>
+                    <p>Conseils nutritionnels et astuces pour gérer les difficultés alimentaires souvent rencontrées.</p>
+                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🌙</div>
+                    <h3>Le sommeil chez l'enfant autiste</h3>
+                    <p>Comment améliorer la qualité du sommeil et mettre en place un rituel du coucher apaisant.</p>
+                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu DOCUMENTS -->
+        <div id="documents" class="tab-content">
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📅</div>
+                    <h3>Planning de routine vierge</h3>
+                    <p>Planning visuel personnalisable pour organiser les routines quotidiennes de votre enfant.</p>
+                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🖼️</div>
+                    <h3>Fiches de pictogrammes</h3>
+                    <p>Collection de pictogrammes à imprimer et découper pour faciliter la communication.</p>
+                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">⭐</div>
+                    <h3>Tableau de récompenses</h3>
+                    <p>Système de récompenses visuelles pour encourager les comportements positifs.</p>
+                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <h3>Grille d'observation</h3>
+                    <p>Outil pour noter et suivre les comportements, progrès et difficultés de votre enfant.</p>
+                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📆</div>
+                    <h3>Calendrier visuel</h3>
+                    <p>Calendrier mensuel avec pictogrammes pour anticiper les événements importants.</p>
+                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">✅</div>
+                    <h3>Liste de tâches illustrée</h3>
+                    <p>Checklists visuelles pour rendre les tâches quotidiennes plus claires et motivantes.</p>
+                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu VIDÉOS -->
+        <div id="videos" class="tab-content">
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">👨‍👩‍👧</div>
+                    <h3>Témoignages de parents</h3>
+                    <p>Des familles partagent leur expérience, leurs défis et leurs réussites au quotidien.</p>
+                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">👨‍⚕️</div>
+                    <h3>Conseils de professionnels</h3>
+                    <p>Orthophonistes, psychologues et éducateurs spécialisés répondent à vos questions.</p>
+                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🎓</div>
+                    <h3>Tutoriels pour parents</h3>
+                    <p>Apprenez des techniques pratiques en vidéo : ABA, TEACCH, Makaton et plus encore.</p>
+                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🏫</div>
+                    <h3>Scolarisation et inclusion</h3>
+                    <p>Comment préparer la rentrée scolaire et favoriser l'inclusion de votre enfant.</p>
+                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🎨</div>
+                    <h3>Activités adaptées</h3>
+                    <p>Idées d'activités créatives et ludiques adaptées aux enfants autistes.</p>
+                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">💪</div>
+                    <h3>Autonomie et développement</h3>
+                    <p>Vidéos pour développer l'autonomie de votre enfant dans les gestes du quotidien.</p>
+                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu LIENS UTILES -->
+        <div id="liens" class="tab-content">
+            <div class="link-list">
+                <div class="link-item">
+                    <h4>🏥 Autisme Info Service</h4>
+                    <p>Plateforme nationale d'écoute et d'information sur l'autisme</p>
+                    <a href="https://www.autismeinfoservice.fr" target="_blank">🔗 Visiter le site</a>
+                </div>
+
+                <div class="link-item">
+                    <h4>🤝 Autisme France</h4>
+                    <p>Association de parents pour la défense des droits des personnes autistes</p>
+                    <a href="https://www.autisme-france.fr" target="_blank">🔗 Visiter le site</a>
+                </div>
+
+                <div class="link-item">
+                    <h4>📞 Numéro d'urgence - 0800 71 40 40</h4>
+                    <p>Autisme Info Service - Gratuit et confidentiel du lundi au vendredi</p>
+                    <a href="tel:0800714040">📞 Appeler maintenant</a>
+                </div>
+
+                <div class="link-item">
+                    <h4>🎓 CRA (Centres Ressources Autisme)</h4>
+                    <p>Réseau national de centres spécialisés dans le diagnostic et l'accompagnement</p>
+                    <a href="https://www.autisme.gouv.fr" target="_blank">🔗 Trouver un CRA près de chez vous</a>
+                </div>
+
+                <div class="link-item">
+                    <h4>📱 Applications recommandées</h4>
+                    <p>ARASAAC, Niki Talk, Pictogrammes - Applications de communication par pictogrammes</p>
+                    <a href="#" target="_blank">🔗 Voir la liste complète</a>
+                </div>
+
+                <div class="link-item">
+                    <h4>📚 Livres recommandés</h4>
+                    <p>Bibliothèque de livres essentiels pour comprendre et accompagner l'autisme</p>
+                    <a href="#" target="_blank">🔗 Voir les recommandations</a>
+                </div>
+
+                <div class="link-item">
+                    <h4>🎙️ Podcasts sur l'autisme</h4>
+                    <p>"La voix des autistes", "Autisme, l'autre différence" et autres podcasts inspirants</p>
+                    <a href="#" target="_blank">🔗 Écouter les podcasts</a>
+                </div>
+
+                <div class="link-item">
+                    <h4>👥 Groupes de soutien locaux</h4>
+                    <p>Trouvez des groupes de parents près de chez vous pour échanger et vous entraider</p>
+                    <a href="#" target="_blank">🔗 Trouver un groupe</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Masquer tous les contenus
+            const allContents = document.querySelectorAll('.tab-content');
+            allContents.forEach(content => content.classList.remove('active'));
+
+            // Désactiver tous les boutons
+            const allButtons = document.querySelectorAll('.tab-btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Activer l'onglet sélectionné
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+    </script>
+</body>
+</html>

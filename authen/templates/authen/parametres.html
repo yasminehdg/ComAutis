@@ -1,0 +1,668 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5);
+        }
+
+        .title {
+            font-size: 36px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .welcome-section {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .welcome-section h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            font-size: 22px;
+            color: #7f8c8d;
+        }
+
+        .settings-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .setting-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .setting-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .setting-icon {
+            font-size: 40px;
+        }
+
+        .setting-header h2 {
+            font-size: 28px;
+            color: #2c3e50;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .setting-info p {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .edit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .danger-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+        }
+
+        .danger-btn:hover {
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 33px;
+        }
+
+        /* Select Box */
+        .custom-select {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 15px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .custom-select:hover {
+            border-color: #667eea;
+        }
+
+        .child-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .child-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .child-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .child-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .child-details h4 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .child-details p {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .add-child-btn {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .add-child-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(86, 171, 47, 0.4);
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            width: 100%;
+            max-width: 400px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .save-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .welcome-section h1 {
+                font-size: 36px;
+            }
+
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .child-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Barre du haut -->
+        <div class="top-bar">
+            <a href="/dashboard/" class="back-btn">
+                ⬅️ Retour au tableau de bord
+            </a>
+            <div class="title">⚙️ Paramètres</div>
+            <div style="width: 150px;"></div>
+        </div>
+
+        <!-- Section de bienvenue -->
+        <div class="welcome-section">
+            <h1>⚙️ Paramètres du compte</h1>
+            <p>Personnalisez votre expérience ComAutiste</p>
+        </div>
+
+        <!-- Paramètres -->
+        <div class="settings-grid">
+            <!-- COMPTE & PROFIL -->
+            <div class="setting-card">
+                <div class="setting-header">
+                    <div class="setting-icon">👤</div>
+                    <h2>Compte & Profil</h2>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Nom complet</h3>
+                        <p>{{ user.first_name }} {{ user.last_name }}</p>
+                    </div>
+                    <div class="setting-control">
+                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">✏️ Modifier</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Adresse email</h3>
+                        <p>{{ user.email }}</p>
+                    </div>
+                    <div class="setting-control">
+                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">✏️ Modifier</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Mot de passe</h3>
+                        <p>••••••••</p>
+                    </div>
+                    <div class="setting-control">
+                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">🔒 Changer</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Photo de profil</h3>
+                        <p>Personnalisez votre avatar</p>
+                    </div>
+                    <div class="setting-control">
+                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">📷 Modifier</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GESTION DES ENFANTS -->
+            <div class="setting-card">
+                <div class="setting-header">
+                    <div class="setting-icon">👶</div>
+                    <h2>Gestion des enfants</h2>
+                </div>
+
+                <div class="child-list">
+                    {% for enfant in enfants %}
+                    <div class="child-item">
+                        <div class="child-info">
+                            <div class="child-avatar">{{ enfant.prenom.0 }}</div>
+                            <div class="child-details">
+                                <h4>{{ enfant.prenom }}</h4>
+                                <p>{{ enfant.age }} ans - Niveau {{ enfant.niveau }}</p>
+                            </div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="edit-btn" onclick="window.location.href='/enfant/{{ enfant.id }}/modifier/'">✏️ Modifier</button>
+                            <button class="edit-btn danger-btn" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce profil ?')) alert('Fonctionnalité en développement')">🗑️ Supprimer</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <button class="add-child-btn" onclick="window.location.href='/ajouter-enfant/'">
+                    ➕ Ajouter un enfant
+                </button>
+            </div>
+
+            <!-- NOTIFICATIONS -->
+            <div class="setting-card">
+                <div class="setting-header">
+                    <div class="setting-icon">🔔</div>
+                    <h2>Notifications</h2>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Notifications par email</h3>
+                        <p>Recevoir les mises à jour par email</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Rappels de routine</h3>
+                        <p>Notifications pour les routines quotidiennes</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Alertes du forum</h3>
+                        <p>Être notifié des réponses à vos messages</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Newsletter</h3>
+                        <p>Recevoir les actualités et conseils</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRÉFÉRENCES D'AFFICHAGE -->
+            <div class="setting-card">
+                <div class="setting-header">
+                    <div class="setting-icon">🎨</div>
+                    <h2>Préférences d'affichage</h2>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Thème de l'interface</h3>
+                        <p>Choisissez votre mode préféré</p>
+                    </div>
+                    <div class="setting-control">
+                        <select class="custom-select">
+                            <option>Mode clair</option>
+                            <option>Mode sombre</option>
+                            <option>Automatique</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Taille de police</h3>
+                        <p>Ajustez la taille du texte</p>
+                    </div>
+                    <div class="setting-control">
+                        <select class="custom-select">
+                            <option>Petite</option>
+                            <option selected>Normale</option>
+                            <option>Grande</option>
+                            <option>Très grande</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Langue</h3>
+                        <p>Langue de l'interface</p>
+                    </div>
+                    <div class="setting-control">
+                        <select class="custom-select">
+                            <option selected>Français</option>
+                            <option>English</option>
+                            <option>Español</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Contraste élevé</h3>
+                        <p>Pour une meilleure lisibilité</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SONS & ACCESSIBILITÉ -->
+            <div class="setting-card">
+                <div class="setting-header">
+                    <div class="setting-icon">🔊</div>
+                    <h2>Sons & Accessibilité</h2>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Sons des jeux</h3>
+                        <p>Activer les effets sonores</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Musique de fond</h3>
+                        <p>Musique d'ambiance dans les activités</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Volume général</h3>
+                        <p>Ajuster le volume des sons</p>
+                    </div>
+                    <div class="setting-control">
+                        <select class="custom-select">
+                            <option>Silencieux</option>
+                            <option>Faible</option>
+                            <option selected>Moyen</option>
+                            <option>Fort</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Lecture vocale</h3>
+                        <p>Lire les textes à voix haute</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONFIDENTIALITÉ & SÉCURITÉ -->
+            <div class="setting-card">
+                <div class="setting-header">
+                    <div class="setting-icon">🔒</div>
+                    <h2>Confidentialité & Sécurité</h2>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Visibilité du profil forum</h3>
+                        <p>Qui peut voir votre profil</p>
+                    </div>
+                    <div class="setting-control">
+                        <select class="custom-select">
+                            <option selected>Tous les membres</option>
+                            <option>Amis uniquement</option>
+                            <option>Privé</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Partage de données</h3>
+                        <p>Participer aux statistiques anonymes</p>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Historique des connexions</h3>
+                        <p>Voir les dernières connexions</p>
+                    </div>
+                    <div class="setting-control">
+                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">📊 Voir</button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Authentification à deux facteurs</h3>
+                        <p>Renforcer la sécurité de votre compte</p>
+                    </div>
+                    <div class="setting-control">
+                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">🔐 Activer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DANGER ZONE -->
+            <div class="setting-card" style="border: 3px solid #ff6b6b;">
+                <div class="setting-header">
+                    <div class="setting-icon">⚠️</div>
+                    <h2 style="color: #ff6b6b;">Zone dangereuse</h2>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3>Supprimer mon compte</h3>
+                        <p>Cette action est irréversible</p>
+                    </div>
+                    <div class="setting-control">
+                        <button class="edit-btn danger-btn" onclick="if(confirm('⚠️ ATTENTION : Cette action supprimera définitivement votre compte et toutes vos données. Êtes-vous absolument sûr ?')) alert('Fonctionnalité en développement')">🗑️ Supprimer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bouton Enregistrer -->
+        <button class="save-btn" onclick="alert('Paramètres enregistrés avec succès ! ✅')">
+            💾 Enregistrer les modifications
+        </button>
+    </div>
+
+    <script>
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

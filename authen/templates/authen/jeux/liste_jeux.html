@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% load static %}
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -249,16 +250,14 @@
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/memory-fruits/'">
                         <div class="game-icon">🍎</div>
                         <h3>Memory Fruits</h3>
                         <p>Trouve les paires de fruits</p>
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/memory-couleurs/'">
                         <div class="game-icon">🎨</div>
                         <h3>Memory Couleurs</h3>
                         <p>Trouve les paires de couleurs</p>
@@ -272,15 +271,13 @@
                 <h2 class="category-title">🔢 Apprendre les Nombres</h2>
                 <div class="games-grid">
                     <div class="game-card" onclick="window.location.href='/jeux/compter-3/'">
-                        <span class="badge-soon">Bientôt</span>
                         <div class="game-icon">1️⃣</div>
                         <h3>Compter jusqu'à 3</h3>
                         <p>Apprends à compter 1, 2, 3</p>
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/compter-10/'">
                         <div class="game-icon">🔟</div>
                         <h3>Compter jusqu'à 10</h3>
                         <p>Compte les objets de 1 à 10</p>
@@ -301,24 +298,21 @@
             <div class="category-section">
                 <h2 class="category-title">🎨 Concepts de Base</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/couleurs/'">
                         <div class="game-icon">🌈</div>
                         <h3>Les Couleurs</h3>
                         <p>Apprends toutes les couleurs</p>
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/emotions/'">
                         <div class="game-icon">😊</div>
                         <h3>Les Émotions</h3>
                         <p>Reconnais les émotions</p>
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/animaux/'">
                         <div class="game-icon">🐘</div>
                         <h3>Les Animaux</h3>
                         <p>Découvre les animaux</p>
@@ -331,16 +325,14 @@
             <div class="category-section">
                 <h2 class="category-title">📅 Le Quotidien</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/jours-semaine/'">
                         <div class="game-icon">📆</div>
                         <h3>Jours de la Semaine</h3>
                         <p>Lundi, Mardi, Mercredi...</p>
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/saisons/'">
                         <div class="game-icon">🍂</div>
                         <h3>Les Saisons</h3>
                         <p>Printemps, Été, Automne, Hiver</p>
@@ -355,8 +347,7 @@
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/fruits/'">
                         <div class="game-icon">🍓</div>
                         <h3>Les Fruits</h3>
                         <p>Découvre les fruits</p>
@@ -369,16 +360,14 @@
             <div class="category-section">
                 <h2 class="category-title">🎯 Jeux d'Adresse</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='{% url 'jeu_puzzle' %}'">
                         <div class="game-icon">🧩</div>
                         <h3>Puzzle</h3>
                         <p>Assemble les pièces</p>
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
-                        <span class="badge-soon">Bientôt</span>
+                    <div class="game-card" onclick="window.location.href='/jeux/labyrinthe/'">
                         <div class="game-icon">🌀</div>
                         <h3>Labyrinthe</h3>
                         <p>Trouve le chemin</p>
