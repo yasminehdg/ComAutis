@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ educateur.nom_complet }} - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        nav {
+            background: white;
+            padding: 20px 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+
+        .back-btn {
+            padding: 12px 30px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        /* Section Header avec photo */
+        .profil-header {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .profil-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
+        .profil-info {
+            flex: 1;
+        }
+
+        .profil-nom {
+            font-size: 42px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .profil-specialite {
+            font-size: 22px;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .profil-etablissement {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .rating-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stars {
+            color: #ffd93d;
+            font-size: 28px;
+        }
+
+        .rating-details {
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .quick-stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .quick-stat {
+            text-align: center;
+        }
+
+        .quick-stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .quick-stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        /* Sections de contenu */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .section h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section p {
+            font-size: 16px;
+            color: #5a6c7d;
+            line-height: 1.8;
+        }
+
+        .certifications-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .certifications-list li {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 15px;
+            font-size: 16px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .methodologie-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Témoignages */
+        .temoignages-section {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .temoignage-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .temoignage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .temoignage-auteur {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .temoignage-date {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .temoignage-stars {
+            color: #ffd93d;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .temoignage-texte {
+            font-size: 15px;
+            color: #5a6c7d;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Contact button */
+        .contact-section {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .contact-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #2c3e50;
+            border: none;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(132, 250, 176, 0.3);
+        }
+
+        .contact-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(132, 250, 176, 0.5);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            font-size: 15px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profil-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .quick-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon">🌟</div>
+            <span>ComAutiste</span>
+        </a>
+        <a href="/educateurs/" class="back-btn">← Retour à la liste</a>
+    </nav>
+
+    <div class="container">
+        <!-- Header avec photo et infos principales -->
+        <div class="profil-header">
+            <div class="profil-photo">
+                {% if educateur.photo %}
+                    <img src="{{ educateur.photo.url }}" alt="{{ educateur.nom_complet }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                    👨‍🏫
+                {% endif %}
+            </div>
+
+            <div class="profil-info">
+                <h1 class="profil-nom">{{ educateur.nom_complet }}</h1>
+                <div class="profil-specialite">{{ educateur.specialite }}</div>
+                {% if educateur.etablissement %}
+                <div class="profil-etablissement">🏫 {{ educateur.etablissement }}</div>
+                {% endif %}
+
+                <div class="rating-section">
+                    <div class="stars">
+                        {% if educateur.note_moyenne >= 4.5 %}
+                            ⭐⭐⭐⭐⭐
+                        {% elif educateur.note_moyenne >= 3.5 %}
+                            ⭐⭐⭐⭐
+                        {% elif educateur.note_moyenne >= 2.5 %}
+                            ⭐⭐⭐
+                        {% else %}
+                            ⭐⭐
+                        {% endif %}
+                    </div>
+                    <div class="rating-details">
+                        <strong>{{ educateur.note_moyenne }}/5</strong> ({{ educateur.temoignages.count }} avis)
+                    </div>
+                </div>
+
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ educateur.nombre_enfants }}</div>
+                        <div class="quick-stat-label">Enfants suivis</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ educateur.annees_experience }}</div>
+                        <div class="quick-stat-label">Années d'expérience</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grille de contenu -->
+        <div class="content-grid">
+            <!-- Colonne principale -->
+            <div>
+                <!-- Bio -->
+                <div class="section">
+                    <h2>📖 Présentation</h2>
+                    <p>{{ educateur.bio }}</p>
+                </div>
+
+                <!-- Méthodologie -->
+                {% if educateur.methodologie %}
+                <div class="section">
+                    <h2>🎯 Approche pédagogique</h2>
+                    <p>{{ educateur.methodologie }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Témoignages -->
+                <div class="temoignages-section">
+                    <h2>💬 Témoignages des parents</h2>
+                    
+                    {% if temoignages %}
+                        {% for temoignage in temoignages %}
+                        <div class="temoignage-card">
+                            <div class="temoignage-header">
+                                <div class="temoignage-auteur">{{ temoignage.parent.first_name|default:"Parent" }}</div>
+                                <div class="temoignage-date">{{ temoignage.date|date:"d/m/Y" }}</div>
+                            </div>
+                            <div class="temoignage-stars">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= temoignage.note %}⭐{% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="temoignage-texte">"{{ temoignage.commentaire }}"</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <p>Aucun témoignage pour le moment</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Colonne latérale -->
+            <div>
+                <!-- Certifications -->
+                {% if educateur.certifications %}
+                <div class="section">
+                    <h2>🎓 Certifications</h2>
+                    <ul class="certifications-list">
+                        {% for cert in educateur.certifications.splitlines %}
+                            {% if cert.strip %}
+                            <li>✓ {{ cert }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Contact -->
+                <div class="contact-section">
+                    <h2>📞 Contact</h2>
+                    <div class="info-box">
+                        <p>Intéressé(e) par un accompagnement avec {{ educateur.nom_complet }} ?</p>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <button class="contact-btn" onclick="window.location.href='/educateurs/contacter/{{ educateur.id }}/'">
+                            💌 Contacter l'éducateur
+                        </button>
+                    {% else %}
+                        <button class="contact-btn" onclick="window.location.href='/login/'">
+                            🔑 Connectez-vous pour contacter
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

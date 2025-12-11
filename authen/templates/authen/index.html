@@ -17,6 +17,8 @@
             overflow-x: hidden;
         }
 
+
+
         /* Navigation */
         nav {
             background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
@@ -727,6 +729,22 @@
             </div>
         </div>
     </section>
+    {% if user.is_authenticated and user.is_staff %}
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'gestion_contenus' %}" style="
+             display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            ">
+                📚 Gérer les Contenus Éducatifs
+        </a>
+    </div>
+    {% endif %}
 
     <!-- Section Partenaires -->
     <section class="partners" id="partenaires">
@@ -740,11 +758,14 @@
                 <p>Collaboration avec des centres d'expertise en autisme</p>
                 <button class="partner-button">En savoir plus</button>
             </div>
+            <!--******-->
             <div class="partner-card">
                 <div class="partner-icon">👨‍🏫</div>
                 <h3>Éducateurs</h3>
                 <p>Partenariat avec des professionnels de l'éducation spécialisée</p>
-                <button class="partner-button">Découvrir</button>
+                <button class="partner-button" onclick="window.location.href='/educateurs/'">
+                    Découvrir
+                </button>
             </div>
             <div class="partner-card">
                 <div class="partner-icon">🎓</div>
@@ -782,6 +803,11 @@
             </form>
         </div>
     </section>
+
+    <!--la page progression -->
+    {% block content %} 
+    {% endblock %}
+
 
     <!-- Footer -->
     <footer>

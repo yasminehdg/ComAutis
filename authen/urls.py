@@ -17,7 +17,10 @@ urlpatterns = [
     path('jeux/', views.liste_jeux, name='liste_jeux'),
     path('jeux/memory/', views.jeu_memory, name='jeu_memory'),
     path('jeux/compter-3/', views.jeu_compter_3, name='jeu_compter_3'),
-
+     # ✅ URLs pour les éducateurs ******
+    path('educateurs/', views.liste_educateurs, name='liste_educateurs'),
+    path('educateurs/profil/<int:educateur_id>/', views.profil_educateur, name='profil_educateur'),
+    path('educateurs/contacter/<int:educateur_id>/', views.contacter_educateur, name='contacter_educateur'),
 ]
 
 

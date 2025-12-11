@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Éducateurs - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            min-height: 100vh;
+        }
+
+        nav {
+            background: white;
+            padding: 20px 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            margin-bottom: 50px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .header-section h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .header-section p {
+            font-size: 20px;
+            color: #7f8c8d;
+        }
+
+        .educateurs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 35px;
+        }
+
+        .educateur-card {
+            background: white;
+            border-radius: 25px;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.4s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .educateur-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        }
+
+        .educateur-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .educateur-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .educateur-nom {
+            font-size: 26px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .educateur-specialite {
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+        }
+
+        .educateur-body {
+            padding: 30px;
+        }
+
+        .educateur-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            padding: 20px 0;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .educateur-bio {
+            font-size: 15px;
+            color: #5a6c7d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .educateur-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 13px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            color: #ffd93d;
+            font-size: 20px;
+        }
+
+        .rating-text {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .voir-profil-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .voir-profil-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .empty-state {
+            background: white;
+            padding: 80px 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .empty-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .empty-text {
+            font-size: 24px;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .educateurs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-section h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon">🌟</div>
+            <span>ComAutiste</span>
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>👨‍🏫 Nos Éducateurs Partenaires</h1>
+            <p>Découvrez notre équipe d'éducateurs spécialisés qui accompagnent les enfants autistes</p>
+        </div>
+
+        {% if educateurs %}
+        <div class="educateurs-grid">
+            {% for educateur in educateurs %}
+            <div class="educateur-card" onclick="window.location.href='/educateurs/profil/{{ educateur.id }}/'">
+                <div class="educateur-header">
+                    <div class="educateur-photo">
+                        {% if educateur.photo %}
+                            <img src="{{ educateur.photo.url }}" alt="{{ educateur.nom_complet }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            👨‍🏫
+                        {% endif %}
+                    </div>
+                    <div class="educateur-nom">{{ educateur.nom_complet }}</div>
+                    <div class="educateur-specialite">{{ educateur.specialite }}</div>
+                </div>
+
+                <div class="educateur-body">
+                    <div class="educateur-stats">
+                        <div class="stat">
+                            <div class="stat-number">{{ educateur.nombre_enfants }}</div>
+                            <div class="stat-label">Enfants suivis</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">{{ educateur.annees_experience }}</div>
+                            <div class="stat-label">Années d'exp.</div>
+                        </div>
+                    </div>
+
+                    <div class="rating">
+                        <div class="stars">
+                            {% if educateur.note_moyenne >= 4.5 %}
+                                ⭐⭐⭐⭐⭐
+                            {% elif educateur.note_moyenne >= 3.5 %}
+                                ⭐⭐⭐⭐
+                            {% elif educateur.note_moyenne >= 2.5 %}
+                                ⭐⭐⭐
+                            {% else %}
+                                ⭐⭐
+                            {% endif %}
+                        </div>
+                        <div class="rating-text">{{ educateur.note_moyenne }}/5</div>
+                    </div>
+
+                    <div class="educateur-bio">
+                        {{ educateur.bio }}
+                    </div>
+
+                    {% if educateur.etablissement %}
+                    <div class="educateur-tags">
+                        <span class="tag">🏫 {{ educateur.etablissement }}</span>
+                    </div>
+                    {% endif %}
+
+                    <button class="voir-profil-btn">Voir le profil complet</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">😊</div>
+            <p class="empty-text">Aucun éducateur disponible pour le moment</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

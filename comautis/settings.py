@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authen',  # ton app
+    'progression',
+
 ]
 
 # Middleware
@@ -37,7 +39,7 @@ ROOT_URLCONF = 'comautis.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'authen' / 'templates'],  # chemin vers templates
+        'DIRS': [BASE_DIR  / 'templates'],  # chemin vers templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,3 +89,37 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'authen' / 'static',
 ]
+# *********
+# URL de base pour accéder aux fichiers uploadés
+MEDIA_URL = '/media/'
+
+# Dossier physique où les fichiers seront stockés
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Taille maximale d'un fichier uploadé : 10 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB en bytes
+
+# Taille maximale en mémoire pour les uploads : 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB en bytes
+
+# Liste des extensions de fichiers autorisées pour l'upload
+ALLOWED_UPLOAD_EXTENSIONS = [
+    # Images
+    '.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg',
+    # Vidéos
+    '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm',
+    # Audio
+    '.mp3', '.wav', '.ogg', '.m4a', '.aac',
+    # Documents
+    '.pdf', '.doc', '.docx', '.txt',
+    # Autres
+    '.zip', '.rar',
+]
+
+# Taille maximale pour chaque type de fichier (en MB)
+MAX_UPLOAD_SIZE = {
+    'image': 5,    # 5 MB pour les images
+    'video': 50,   # 50 MB pour les vidéos
+    'audio': 10,   # 10 MB pour les audios
+    'document': 10,  # 10 MB pour les documents
+}

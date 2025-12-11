@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Contenus - ComAutis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #2c3e50;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        /* Filtres */
+        .filters-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Grille de contenus */
+        .contenus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .contenu-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .contenu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .contenu-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .contenu-type-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .contenu-status {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-valide {
+            background: #27ae60;
+            color: white;
+        }
+
+        .status-attente {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-inactif {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .contenu-body {
+            padding: 20px;
+        }
+
+        .contenu-titre {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .contenu-description {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .contenu-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #95a5a6;
+            margin-bottom: 15px;
+        }
+
+        .contenu-niveau {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .contenu-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 10px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        /* Empty state */
+        .empty-state {
+            background: white;
+            padding: 60px 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .empty-text {
+            font-size: 20px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .page-link {
+            padding: 10px 18px;
+            background: white;
+            border-radius: 10px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .page-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .page-link.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Messages */
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contenus-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <span>📚</span>
+                Gestion des Contenus Éducatifs
+            </h1>
+            <div class="header-actions">
+                <a href="{% url 'creer_contenu' %}" class="btn btn-success">
+                    ➕ Créer un contenu
+                </a>
+                <a href="{% url 'dashboard_educateur' %}" class="btn btn-primary">
+                    ← Retour au dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Statistiques -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number">{{ stats.total }}</div>
+                <div class="stat-label">Total contenus</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-number">{{ stats.actifs }}</div>
+                <div class="stat-label">Contenus actifs</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-number">{{ stats.valides }}</div>
+                <div class="stat-label">Contenus validés</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-number">{{ stats.en_attente }}</div>
+                <div class="stat-label">En attente</div>
+            </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="filters-section">
+            <h3 style="color: #2c3e50; margin-bottom: 15px;">🔍 Filtrer les contenus</h3>
+            <form method="get" action="{% url 'gestion_contenus' %}">
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label for="id_type_contenu">Type de contenu</label>
+                        {{ form_filtre.type_contenu }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_categorie">Catégorie</label>
+                        {{ form_filtre.categorie }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_niveau">Niveau</label>
+                        {{ form_filtre.niveau }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_difficulte">Difficulté</label>
+                        {{ form_filtre.difficulte }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_est_valide">Statut</label>
+                        {{ form_filtre.est_valide }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_recherche">Recherche</label>
+                        {{ form_filtre.recherche }}
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary">
+                        🔍 Filtrer
+                    </button>
+                    <a href="{% url 'gestion_contenus' %}" class="btn" style="background: #95a5a6; color: white;">
+                        🔄 Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Grille de contenus -->
+        {% if page_obj %}
+        <div class="contenus-grid">
+            {% for contenu in page_obj %}
+            <div class="contenu-card">
+                <!-- Image -->
+                {% if contenu.image_preview %}
+                <img src="{{ contenu.image_preview.url }}" alt="{{ contenu.titre }}" class="contenu-image">
+                {% else %}
+                <div class="contenu-image"></div>
+                {% endif %}
+
+                <!-- Badge type -->
+                <div class="contenu-type-badge">
+                    {{ contenu.get_type_contenu_display }}
+                </div>
+
+                <!-- Statut -->
+                {% if contenu.est_valide %}
+                <div class="contenu-status status-valide">✅ Validé</div>
+                {% elif not contenu.est_actif %}
+                <div class="contenu-status status-inactif">❌ Inactif</div>
+                {% else %}
+                <div class="contenu-status status-attente">⏳ En attente</div>
+                {% endif %}
+
+                <!-- Corps -->
+                <div class="contenu-body">
+                    <h3 class="contenu-titre">{{ contenu.titre }}</h3>
+                    <p class="contenu-description">{{ contenu.description }}</p>
+
+                    <div class="contenu-meta">
+                        <div class="contenu-niveau">
+                            <span>📊</span>
+                            Niveaux {{ contenu.niveau_min }}-{{ contenu.niveau_max }}
+                        </div>
+                        <div>
+                            {{ contenu.get_difficulte_display_stars }}
+                        </div>
+                    </div>
+
+                    <div class="contenu-meta">
+                        <div>⏱️ {{ contenu.duree_estimee }} min</div>
+                        <div>🎁 {{ contenu.points_recompense }} pts</div>
+                        <div>👁️ {{ contenu.nombre_vues }}</div>
+                    </div>
+
+                    <div class="contenu-actions">
+                        <a href="{% url 'detail_contenu' contenu.id %}" class="btn btn-small btn-info">
+                            👁️ Voir
+                        </a>
+                        <a href="{% url 'modifier_contenu' contenu.id %}" class="btn btn-small btn-warning">
+                            ✏️ Modifier
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="page-link">⏮️ Premier</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">⬅️ Précédent</a>
+            {% endif %}
+
+            <span class="page-link active">
+                Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link">Suivant ➡️</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Dernier ⏭️</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty state -->
+        <div class="empty-state">
+            <div class="empty-icon">📚</div>
+            <p class="empty-text">Aucun contenu trouvé</p>
+            <a href="{% url 'creer_contenu' %}" class="btn btn-success">
+                ➕ Créer votre premier contenu
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

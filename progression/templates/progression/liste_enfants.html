@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Enfants - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: #2c3e50;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #5a6c7d;
+        }
+
+        .enfants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .enfant-card {
+            background: white;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.4s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .enfant-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .enfant-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 20px rgba(253, 203, 110, 0.3);
+        }
+
+        .enfant-nom {
+            font-size: 28px;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .enfant-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #5a6c7d;
+        }
+
+        .progress-mini {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-mini-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .niveau-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 12px 25px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .empty-state-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-text {
+            font-size: 24px;
+            color: #5a6c7d;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .enfants-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Retour à l'accueil</a>
+        
+        <div class="header">
+            <h1>🌈 Tous les Enfants 🌈</h1>
+            <p class="subtitle">Découvre la progression de tous les enfants !</p>
+        </div>
+
+        {% if progressions %}
+        <div class="enfants-grid">
+            {% for prog in progressions %}
+            <a href="{% url 'progression_enfant_detail' prog.id %}" class="enfant-card">
+                <div class="enfant-avatar">🌟</div>
+                <h2 class="enfant-nom">{{ prog.nom_enfant }}</h2>
+                
+                <div class="enfant-stats">
+                    <div class="stat">
+                        <div class="stat-value">{{ prog.niveau }}</div>
+                        <div class="stat-label">Niveau</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">{{ prog.score }}</div>
+                        <div class="stat-label">Points</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">{{ prog.activites_terminees }}</div>
+                        <div class="stat-label">Activités</div>
+                    </div>
+                </div>
+
+                <div class="progress-mini">
+                    <div class="progress-mini-bar" style="width: {{ prog.pourcentage_progression }}%;">
+                        {{ prog.pourcentage_progression }}%
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <span class="niveau-badge">⭐ Niveau {{ prog.niveau }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">😊</div>
+            <p class="empty-state-text">Aucun enfant enregistré pour le moment</p>
+            <p style="color: #5a6c7d;">Les enfants apparaîtront ici une fois qu'ils commenceront leur aventure !</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

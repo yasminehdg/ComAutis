@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
 from .models import UserProfile, Enfant
 from datetime import datetime
+# *****
+from .models import ProfilEducateur, Temoignage 
+from django.contrib import messages
+from .models import MessageEducateur
 
 def index(request):
     return render(request, 'authen/index.html')
@@ -123,10 +127,8 @@ def dashboard(request):
     
     # Rediriger vers le bon dashboard selon le type
     if user_type == 'educator':
-        return render(request, 'authen/dashboard_educator.html', {
-            'user': request.user,
-            'profile': user_profile
-        })
+        # ✅ REDIRECTION vers TON dashboard éducateur
+        return redirect('dashboard_educateur')
     else:  # parent
         return render(request, 'authen/dashboard_parent.html', {
             'user': request.user,
@@ -318,3 +320,63 @@ def jeu_memory(request):
 def jeu_compter_3(request):
     """Jeu pour apprendre à compter jusqu'à 3"""
     return render(request, 'authen/jeux/compter_3.html')
+
+# Liste de tous les éducateurs *********
+def liste_educateurs(request):
+    """
+    Affiche la liste de tous les éducateurs actifs
+    """
+    educateurs = ProfilEducateur.objects.filter(est_actif=True)
+    
+    context = {
+        'educateurs': educateurs
+    }
+    
+    return render(request, 'authen/liste_educateurs.html', context)
+
+
+def profil_educateur(request, educateur_id):
+    """
+    Affiche le profil détaillé d'un éducateur
+    """
+    educateur = get_object_or_404(ProfilEducateur, id=educateur_id, est_actif=True)
+    temoignages = educateur.temoignages.all()[:5]  # Les 5 derniers témoignages
+    
+    context = {
+        'educateur': educateur,
+        'temoignages': temoignages,
+    }
+    
+    return render(request, 'authen/profil_educateur.html', context)
+
+# Contacter educateur
+@login_required
+def contacter_educateur(request, educateur_id):
+    """
+    Permet à un parent d'envoyer un message à un éducateur
+    """
+    educateur = get_object_or_404(ProfilEducateur, id=educateur_id, est_actif=True)
+    
+    if request.method == 'POST':
+        sujet = request.POST.get('sujet')
+        message_text = request.POST.get('message')
+        
+        if sujet and message_text:
+            # Créer le message
+            MessageEducateur.objects.create(
+                educateur=educateur,
+                expediteur=request.user,
+                sujet=sujet,
+                message=message_text
+            )
+            
+            messages.success(request, f"✅ Votre message a été envoyé à {educateur.nom_complet} !")
+            return redirect('profil_educateur', educateur_id=educateur_id)
+        else:
+            messages.error(request, "❌ Veuillez remplir tous les champs")
+    
+    context = {
+        'educateur': educateur,
+    }
+    
+    return render(request, 'authen/contacter_educateur.html', context)
