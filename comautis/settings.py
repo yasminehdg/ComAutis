@@ -1,12 +1,15 @@
-from pathlib import Path
 import os
+from pathlib import Path
 
 # Chemin de base du projet
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Sécurité
-SECRET_KEY = 'django-insecure-b)e1g_9kl9ig@=(hs&xpq%y8==hl*)04vxptjg1e8ro(!8ohre'
-DEBUG = True
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-b)e1g_9kl9ig@=(hs&xpq%y8==hl*)04vxptjg1e8ro(!8ohre')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+
+# ALLOWED_HOSTS depuis la variable d'environnement
+# Sur Render, crée la variable DJANGO_ALLOWED_HOSTS = comautis-3.onrender.com,localhost,127.0.0.1
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
 
 # Applications installées
@@ -72,13 +75,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS/JS/Images)
+# Static files
 STATIC_URL = '/static/'
-
-# Répertoires des fichiers statiques
-STATICFILES_DIRS = [
-    BASE_DIR / 'forum' / 'static',
-]
+STATICFILES_DIRS = [BASE_DIR / 'forum' / 'static']
 
 # Code secret pour l'inscription des éducateurs
 EDUCATOR_SECRET_CODE = "COMAUTISTE2024"
