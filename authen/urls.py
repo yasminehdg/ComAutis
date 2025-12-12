@@ -1,5 +1,19 @@
 from django.urls import path
 from . import views
+from .admin_views import (
+    admin_dashboard,
+    admin_users_list,
+    admin_user_detail,
+    admin_approve_educator,
+    admin_deactivate_user,
+    admin_delete_user,
+    admin_enfants_list,
+    admin_forum_moderation,
+    admin_delete_topic,
+    admin_delete_post,
+    admin_subscriptions,
+    admin_statistics,
+)
 
 urlpatterns = [
     path('', views.index, name='index'),           # accueil
@@ -40,7 +54,30 @@ urlpatterns = [
     path('profile/<str:username>/', views.user_profile, name='user_profile'),
     path('notifications/', views.notifications_list, name='notifications'),
     path('notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
-
+    # ========== ADMIN DASHBOARD ==========
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
+    
+    # Gestion utilisateurs
+    path('admin-dashboard/users/', admin_users_list, name='admin_users_list'),
+    path('admin-dashboard/users/<int:user_id>/', admin_user_detail, name='admin_user_detail'),
+    path('admin-dashboard/users/<int:user_id>/approve/', admin_approve_educator, name='admin_approve_educator'),
+    path('admin-dashboard/users/<int:user_id>/deactivate/', admin_deactivate_user, name='admin_deactivate_user'),
+    path('admin-dashboard/users/<int:user_id>/delete/', admin_delete_user, name='admin_delete_user'),
+    
+    # Gestion enfants
+    path('admin-dashboard/enfants/', admin_enfants_list, name='admin_enfants_list'),
+    
+    # Modération forum
+    path('admin-dashboard/forum/', admin_forum_moderation, name='admin_forum_moderation'),
+    path('admin-dashboard/forum/topic/<int:topic_id>/delete/', admin_delete_topic, name='admin_delete_topic'),
+    path('admin-dashboard/forum/post/<int:post_id>/delete/', admin_delete_post, name='admin_delete_post'),
+    
+    # Abonnements
+    path('admin-dashboard/subscriptions/', admin_subscriptions, name='admin_subscriptions'),
+    
+    # Statistiques
+    path('admin-dashboard/statistics/', admin_statistics, name='admin_statistics'),
 ]
+
 
 

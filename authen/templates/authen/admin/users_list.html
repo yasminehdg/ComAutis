@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Utilisateurs - Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #2c3e50;
+        }
+
+        .btn-back {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .filters {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-filter {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .users-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        thead th {
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #ecf0f1;
+            transition: all 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody td {
+            padding: 20px;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info h4 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-parent {
+            background: #3498db;
+            color: white;
+        }
+
+        .badge-educator {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .badge-active {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .badge-inactive {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-view {
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .no-results {
+            padding: 60px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            thead th, tbody td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>👥 Gestion des Utilisateurs</h1>
+            <a href="{% url 'admin_dashboard' %}" class="btn-back">⬅️ Retour Dashboard</a>
+        </div>
+
+        <!-- FILTRES -->
+        <div class="filters">
+            <form method="GET">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label>Type d'utilisateur</label>
+                        <select name="type">
+                            <option value="all" {% if user_type == 'all' %}selected{% endif %}>Tous</option>
+                            <option value="parent" {% if user_type == 'parent' %}selected{% endif %}>Parents</option>
+                            <option value="educator" {% if user_type == 'educator' %}selected{% endif %}>Éducateurs</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Statut</label>
+                        <select name="status">
+                            <option value="all" {% if status == 'all' %}selected{% endif %}>Tous</option>
+                            <option value="active" {% if status == 'active' %}selected{% endif %}>Actifs</option>
+                            <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactifs</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Rechercher</label>
+                        <input type="text" name="search" placeholder="Nom, email..." value="{{ search }}">
+                    </div>
+
+                    <div class="filter-group" style="align-self: flex-end;">
+                        <button type="submit" class="btn-filter">🔍 Filtrer</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- TABLEAU -->
+        <div class="users-table">
+            {% if users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Type</th>
+                        <th>Statut</th>
+                        <th>Date d'inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_obj in users %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar">{{ user_obj.username.0|upper }}</div>
+                                <div class="user-info">
+                                    <h4>{{ user_obj.username }}</h4>
+                                    <p>{{ user_obj.email }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if user_obj.profile.user_type == 'parent' %}
+                                <span class="badge badge-parent">👨‍👩‍👧 Parent</span>
+                            {% elif user_obj.profile.user_type == 'educator' %}
+                                <span class="badge badge-educator">👨‍🏫 Éducateur</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user_obj.is_active %}
+                                <span class="badge badge-active">✅ Actif</span>
+                            {% else %}
+                                <span class="badge badge-inactive">⏳ Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user_obj.date_joined|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'admin_user_detail' user_obj.id %}" class="btn-view">👁️ Voir</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-results">
+                <p>😕 Aucun utilisateur trouvé</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

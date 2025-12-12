@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ComAutiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #2c3e50;
+            color: white;
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 22px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background: white;
+            padding: 25px 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h1 {
+            font-size: 32px;
+            color: #2c3e50;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .btn-logout {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 0 0 0 100px;
+        }
+
+        .stat-card .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 42px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-card .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e74c3c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* SECTION CARDS */
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .section-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-card h2 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-item, .topic-item {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-item:last-child, .topic-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-details h4 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .badge-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-pending {
+            background: #f39c12;
+            color: white;
+        }
+
+        .badge-active {
+            background: #2ecc71;
+            color: white;
+        }
+
+        /* CHART CONTAINER */
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .chart-container h2 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">👑</div>
+            <span>Admin Panel</span>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'admin_dashboard' %}" class="active"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="{% url 'admin_users_list' %}"><span class="icon">👥</span> Utilisateurs</a></li>
+            <li><a href="{% url 'admin_enfants_list' %}"><span class="icon">👶</span> Enfants</a></li>
+            <li><a href="{% url 'admin_forum_moderation' %}"><span class="icon">💬</span> Forum</a></li>
+            <li><a href="{% url 'admin_subscriptions' %}"><span class="icon">💳</span> Abonnements</a></li>
+            <li><a href="{% url 'admin_statistics' %}"><span class="icon">📈</span> Statistiques</a></li>
+            <li><a href="/admin/"><span class="icon">⚙️</span> Admin Django</a></li>
+            <li><a href="{% url 'index' %}"><span class="icon">🏠</span> Retour au site</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <h1>📊 Tableau de bord Admin</h1>
+            <div class="user-profile">
+                <div class="user-avatar">{{ user.first_name.0|default:user.username.0|upper }}</div>
+                <div>
+                    <strong>{{ user.first_name|default:user.username }}</strong><br>
+                    <small style="color: #7f8c8d;">Administrateur</small>
+                </div>
+                <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">Déconnexion</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- STATS GRID -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <h3>Total Utilisateurs</h3>
+                <div class="number">{{ total_users }}</div>
+                {% if new_users_week > 0 %}
+                <span class="badge">+{{ new_users_week }} cette semaine</span>
+                {% endif %}
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">👨‍👩‍👧</div>
+                <h3>Parents</h3>
+                <div class="number">{{ total_parents }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">👨‍🏫</div>
+                <h3>Éducateurs</h3>
+                <div class="number">{{ total_educators }}</div>
+                {% if pending_educators > 0 %}
+                <span class="badge">{{ pending_educators }} en attente</span>
+                {% endif %}
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">👶</div>
+                <h3>Enfants</h3>
+                <div class="number">{{ total_enfants }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">💬</div>
+                <h3>Topics Forum</h3>
+                <div class="number">{{ total_topics }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">💳</div>
+                <h3>Abonnements Actifs</h3>
+                <div class="number">{{ active_subscriptions }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">🎖️</div>
+                <h3>Badges Attribués</h3>
+                <div class="number">{{ total_badges }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">📝</div>
+                <h3>Messages Forum</h3>
+                <div class="number">{{ total_posts }}</div>
+            </div>
+        </div>
+
+        <!-- CHART -->
+        <div class="chart-container">
+            <h2>📈 Inscriptions des 6 derniers mois</h2>
+            <canvas id="usersChart"></canvas>
+        </div>
+
+        <!-- SECTION GRID -->
+        <div class="section-grid">
+            <!-- ÉDUCATEURS EN ATTENTE -->
+            <div class="section-card">
+                <h2>⏳ Éducateurs en attente</h2>
+                {% if pending_educator_profiles %}
+                    {% for profile in pending_educator_profiles %}
+                    <div class="user-item">
+                        <div class="user-info">
+                            <div class="user-avatar-small">{{ profile.user.username.0|upper }}</div>
+                            <div class="user-details">
+                                <h4>{{ profile.user.username }}</h4>
+                                <p>{{ profile.institution|default:"Sans établissement" }}</p>
+                            </div>
+                        </div>
+                        <form method="POST" action="{% url 'admin_approve_educator' profile.user.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success" onclick="return confirm('Approuver cet éducateur ?')">✅ Approuver</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #7f8c8d; text-align: center; padding: 20px;">Aucun éducateur en attente</p>
+                {% endif %}
+            </div>
+
+            <!-- DERNIERS UTILISATEURS -->
+            <div class="section-card">
+                <h2>🆕 Derniers utilisateurs</h2>
+                {% for user in recent_users %}
+                <div class="user-item">
+                    <div class="user-info">
+                        <div class="user-avatar-small">{{ user.username.0|upper }}</div>
+                        <div class="user-details">
+                            <h4>{{ user.username }}</h4>
+                            <p>{{ user.email }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'admin_user_detail' user.id %}" class="btn btn-primary">Voir</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- DERNIERS TOPICS -->
+        <div class="section-card">
+            <h2>💬 Derniers topics du forum</h2>
+            {% for topic in recent_topics %}
+            <div class="topic-item">
+                <div class="user-info">
+                    <div class="user-avatar-small">{{ topic.created_by.username.0|upper }}</div>
+                    <div class="user-details">
+                        <h4>{{ topic.title }}</h4>
+                        <p>Par {{ topic.created_by.username }} • {{ topic.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'admin_forum_moderation' %}" class="btn btn-primary">Modérer</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- CHART.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        // Données du graphique
+        const usersData = {{ users_by_month|safe }};
+        
+        // Configuration du graphique
+        const ctx = document.getElementById('usersChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: usersData.map(d => d.month),
+                datasets: [{
+                    label: 'Nouveaux utilisateurs',
+                    data: usersData.map(d => d.count),
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -17,8 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authen',
-    'forum',      # ← Doit être là
-    'paiement',   # ← Doit être là
+    'forum',
+    'paiement',
 ]
 
 # Middleware
@@ -39,7 +39,7 @@ ROOT_URLCONF = 'comautis.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'authen' / 'templates'],  # chemin vers templates
+        'DIRS': [BASE_DIR / 'authen' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,7 +54,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'comautis.wsgi.application'
 
-# Base de données (SQLite pour l’instant)
+# Base de données
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -74,23 +74,19 @@ USE_TZ = True
 # Static files (CSS/JS/Images)
 STATIC_URL = '/static/'
 
-# À AJOUTER À LA FIN DE settings.py
-
-# Code secret pour l'inscription des éducateurs
-# ⚠️ À CHANGER EN PRODUCTION !
-EDUCATOR_SECRET_CODE = "COMAUTISTE2024"
-
-# Configuration email (pour envoyer les notifications de validation)
-# À configurer plus tard pour envoyer des vrais emails
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Pour tests
-
-# Fichiers statiques (images, CSS, JS)
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'authen' / 'static',
-]
 # Répertoires des fichiers statiques
 STATICFILES_DIRS = [
     BASE_DIR / 'forum' / 'static',
-    
 ]
+
+# Code secret pour l'inscription des éducateurs
+EDUCATOR_SECRET_CODE = "COMAUTISTE2024"
+
+# Configuration email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Redirection après logout
+LOGOUT_REDIRECT_URL = '/'
+
+# Clé par défaut pour les modèles
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques - Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #2c3e50;
+        }
+
+        .btn-back {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .chart-card h2 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            font-size: 16px;
+            color: #34495e;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📈 Statistiques Avancées</h1>
+            <a href="{% url 'admin_dashboard' %}" class="btn-back">⬅️ Retour Dashboard</a>
+        </div>
+
+        <!-- INFO BOX -->
+        <div class="info-box">
+            <h3>📊 Analyse de la plateforme ComAutiste</h3>
+            <p>Visualisez les données clés pour mieux comprendre l'utilisation de la plateforme</p>
+        </div>
+
+        <!-- CHARTS GRID -->
+        <div class="charts-grid">
+            <!-- ENFANTS PAR GENRE -->
+            <div class="chart-card">
+                <h2>👶 Répartition des enfants par genre</h2>
+                <canvas id="genreChart"></canvas>
+            </div>
+
+            <!-- ENFANTS PAR AUTONOMIE -->
+            <div class="chart-card">
+                <h2>🎯 Répartition par niveau d'autonomie</h2>
+                <canvas id="autonomieChart"></canvas>
+            </div>
+
+            <!-- TOPICS PAR CATÉGORIE -->
+            <div class="chart-card">
+                <h2>💬 Topics du forum par catégorie</h2>
+                <canvas id="topicsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHART.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        // Données des graphiques
+        const enfantsByGenre = {{ enfants_by_genre|safe }};
+        const enfantsByAutonomie = {{ enfants_by_autonomie|safe }};
+        const topicsByCategory = {{ topics_by_category|safe }};
+
+        // GRAPHIQUE GENRE
+        const genreCtx = document.getElementById('genreChart').getContext('2d');
+        const genreLabels = enfantsByGenre.map(item => {
+            if (item.genre === 'M') return 'Garçons';
+            if (item.genre === 'F') return 'Filles';
+            return 'Autre';
+        });
+        const genreData = enfantsByGenre.map(item => item.count);
+
+        new Chart(genreCtx, {
+            type: 'doughnut',
+            data: {
+                labels: genreLabels,
+                datasets: [{
+                    data: genreData,
+                    backgroundColor: [
+                        'rgba(116, 185, 255, 0.8)',
+                        'rgba(255, 159, 243, 0.8)',
+                        'rgba(255, 234, 167, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(116, 185, 255, 1)',
+                        'rgba(255, 159, 243, 1)',
+                        'rgba(255, 234, 167, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // GRAPHIQUE AUTONOMIE
+        const autonomieCtx = document.getElementById('autonomieChart').getContext('2d');
+        const autonomieLabels = enfantsByAutonomie.map(item => {
+            if (item.niveau_autonomie === 'faible') return 'Faible autonomie';
+            if (item.niveau_autonomie === 'moyen') return 'Autonomie moyenne';
+            if (item.niveau_autonomie === 'eleve') return 'Autonomie élevée';
+            return item.niveau_autonomie;
+        });
+        const autonomieData = enfantsByAutonomie.map(item => item.count);
+
+        new Chart(autonomieCtx, {
+            type: 'bar',
+            data: {
+                labels: autonomieLabels,
+                datasets: [{
+                    label: 'Nombre d\'enfants',
+                    data: autonomieData,
+                    backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // GRAPHIQUE TOPICS
+        if (topicsByCategory.length > 0) {
+            const topicsCtx = document.getElementById('topicsChart').getContext('2d');
+            const topicsLabels = topicsByCategory.map(item => item.category || 'Sans catégorie');
+            const topicsData = topicsByCategory.map(item => item.count);
+
+            new Chart(topicsCtx, {
+                type: 'pie',
+                data: {
+                    labels: topicsLabels,
+                    datasets: [{
+                        data: topicsData,
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.8)',
+                            'rgba(155, 89, 182, 0.8)',
+                            'rgba(46, 204, 113, 0.8)',
+                            'rgba(241, 196, 15, 0.8)',
+                            'rgba(231, 76, 60, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(241, 196, 15, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        } else {
+            document.getElementById('topicsChart').parentElement.innerHTML = '<p style="text-align: center; padding: 40px; color: #7f8c8d;">Aucune donnée disponible</p>';
+        }
+    </script>
+</body>
+</html>

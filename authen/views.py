@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .forms import RegisterForm
 from .models import UserProfile, Enfant, Badge, UserBadge, Notification
 from datetime import datetime
@@ -113,12 +114,18 @@ def login_view(request):
 
 
 def logout_view(request):
+    # ✅ Accepter GET ET POST
     logout(request)
+    messages.success(request, "✅ Vous avez été déconnecté avec succès !")
     return redirect('index')
 
 
 @login_required
 def dashboard(request):
+    # ✅ REDIRECTION AUTOMATIQUE POUR LES ADMINS
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect('admin_dashboard')
+    
     # Récupérer le profil de l'utilisateur
     try:
         user_profile = request.user.profile
