@@ -4,13 +4,18 @@ from pathlib import Path
 # Chemin de base du projet
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Sécurité
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-b)e1g_9kl9ig@=(hs&xpq%y8==hl*)04vxptjg1e8ro(!8ohre')
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+# ========================================
+# 🔧 MODE DÉVELOPPEMENT LOCAL
+# ========================================
 
-# ALLOWED_HOSTS depuis la variable d'environnement
-# Sur Render, crée la variable DJANGO_ALLOWED_HOSTS = comautis-3.onrender.com,localhost,127.0.0.1
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+# Sécurité
+SECRET_KEY = 'django-insecure-b)e1g_9kl9ig@=(hs&xpq%y8==hl*)04vxptjg1e8ro(!8ohre'
+
+# MODE DEBUG ACTIVÉ pour le développement
+DEBUG = True
+
+# ALLOWED_HOSTS pour le local UNIQUEMENT
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
 
 # Applications installées
 INSTALLED_APPS = [
@@ -58,7 +63,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'comautis.wsgi.application'
 
-# Base de données
+# ========================================
+# 💾 BASE DE DONNÉES LOCALE (SQLite)
+# ========================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -66,27 +73,69 @@ DATABASES = {
     }
 }
 
-# Password validation
+# Validation des mots de passe (désactivée en local pour faciliter le dev)
 AUTH_PASSWORD_VALIDATORS = []
 
-# Internationalisation
+# ========================================
+# 🌍 INTERNATIONALISATION
+# ========================================
 LANGUAGE_CODE = 'fr-fr'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'  # Fuseau horaire français
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# ========================================
+# 📁 FICHIERS STATIQUES (CSS, JS, Images)
+# ========================================
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'forum' / 'static']
+STATICFILES_DIRS = [
+    BASE_DIR / 'forum' / 'static',
+    BASE_DIR / 'authen' / 'static',  # Si tu as des fichiers statiques ici aussi
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# ========================================
+# 📤 FICHIERS MEDIA (uploads utilisateurs)
+# ========================================
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# ========================================
+# ⚙️ CONFIGURATION SPÉCIFIQUE
+# ========================================
 
 # Code secret pour l'inscription des éducateurs
 EDUCATOR_SECRET_CODE = "COMAUTISTE2024"
 
-# Configuration email
+# Configuration email (en console pour le développement)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Redirection après logout
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 # Clé par défaut pour les modèles
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ========================================
+# 🔒 SÉCURITÉ (Désactivée en local)
+# ========================================
+# Ces paramètres sont pour la production, on les désactive en local
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_BROWSER_XSS_FILTER = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
+
+# ========================================
+# 🐛 DEBUG TOOLBAR (optionnel mais utile)
+# ========================================
+# Décommenter si tu veux installer django-debug-toolbar
+# INSTALLED_APPS += ['debug_toolbar']
+# MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+# INTERNAL_IPS = ['127.0.0.1']
+
+print("✅ Django en MODE LOCAL - DEBUG activé")
+print(f"📁 Base de données: {DATABASES['default']['NAME']}")
+print(f"🌐 Serveur: http://localhost:8000/")
