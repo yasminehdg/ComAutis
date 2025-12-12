@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -41,13 +40,9 @@
             padding: 15px 30px;
             border-radius: 50px;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .back-btn:hover {
@@ -56,7 +51,7 @@
         }
 
         .title {
-            font-size: 36px;
+            font-size: 32px;
             color: #2c3e50;
             font-weight: bold;
         }
@@ -71,14 +66,9 @@
         }
 
         .welcome-section h1 {
-            font-size: 48px;
+            font-size: 42px;
             color: #2c3e50;
             margin-bottom: 10px;
-        }
-
-        .welcome-section p {
-            font-size: 22px;
-            color: #7f8c8d;
         }
 
         .settings-grid {
@@ -107,7 +97,7 @@
         }
 
         .setting-header h2 {
-            font-size: 28px;
+            font-size: 26px;
             color: #2c3e50;
         }
 
@@ -134,12 +124,6 @@
             color: #7f8c8d;
         }
 
-        .setting-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .edit-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -161,11 +145,6 @@
             background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
         }
 
-        .danger-btn:hover {
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-        }
-
-        /* Toggle Switch */
         .toggle-switch {
             position: relative;
             width: 60px;
@@ -196,7 +175,6 @@
             left: 33px;
         }
 
-        /* Select Box */
         .custom-select {
             padding: 10px 20px;
             border: 2px solid #e0e0e0;
@@ -205,10 +183,6 @@
             cursor: pointer;
             background: white;
             transition: all 0.3s;
-        }
-
-        .custom-select:hover {
-            border-color: #667eea;
         }
 
         .child-list {
@@ -243,17 +217,6 @@
             font-size: 30px;
         }
 
-        .child-details h4 {
-            font-size: 20px;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .child-details p {
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-
         .add-child-btn {
             background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
@@ -263,14 +226,8 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
             width: 100%;
             margin-top: 20px;
-        }
-
-        .add-child-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 20px rgba(86, 171, 47, 0.4);
         }
 
         .save-btn {
@@ -282,7 +239,6 @@
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
             margin-top: 30px;
             width: 100%;
             max-width: 400px;
@@ -291,9 +247,120 @@
             margin-right: auto;
         }
 
-        .save-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4);
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #ccc;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.active {
+            display: block;
+        }
+
+        .toast.success {
+            border-left: 5px solid #56ab2f;
+        }
+
+        .toast.error {
+            border-left: 5px solid #ff6b6b;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -301,21 +368,13 @@
                 flex-direction: column;
                 gap: 15px;
             }
-
-            .title {
-                font-size: 28px;
-            }
-
-            .welcome-section h1 {
-                font-size: 36px;
-            }
-
+            
             .setting-item {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 15px;
             }
-
+            
             .child-item {
                 flex-direction: column;
                 gap: 15px;
@@ -325,22 +384,17 @@
 </head>
 <body>
     <div class="container">
-        <!-- Barre du haut -->
         <div class="top-bar">
-            <a href="/dashboard/" class="back-btn">
-                ⬅️ Retour au tableau de bord
-            </a>
+            <a href="/dashboard/" class="back-btn">⬅️ Retour</a>
             <div class="title">⚙️ Paramètres</div>
             <div style="width: 150px;"></div>
         </div>
 
-        <!-- Section de bienvenue -->
         <div class="welcome-section">
             <h1>⚙️ Paramètres du compte</h1>
             <p>Personnalisez votre expérience ComAutiste</p>
         </div>
 
-        <!-- Paramètres -->
         <div class="settings-grid">
             <!-- COMPTE & PROFIL -->
             <div class="setting-card">
@@ -352,21 +406,17 @@
                 <div class="setting-item">
                     <div class="setting-info">
                         <h3>Nom complet</h3>
-                        <p>{{ user.first_name }} {{ user.last_name }}</p>
+                        <p id="user-name">{{ user.first_name }} {{ user.last_name }}</p>
                     </div>
-                    <div class="setting-control">
-                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">✏️ Modifier</button>
-                    </div>
+                    <button class="edit-btn" onclick="openModifierNom()">✏️ Modifier</button>
                 </div>
 
                 <div class="setting-item">
                     <div class="setting-info">
                         <h3>Adresse email</h3>
-                        <p>{{ user.email }}</p>
+                        <p id="user-email">{{ user.email }}</p>
                     </div>
-                    <div class="setting-control">
-                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">✏️ Modifier</button>
-                    </div>
+                    <button class="edit-btn" onclick="openModifierEmail()">✏️ Modifier</button>
                 </div>
 
                 <div class="setting-item">
@@ -374,9 +424,7 @@
                         <h3>Mot de passe</h3>
                         <p>••••••••</p>
                     </div>
-                    <div class="setting-control">
-                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">🔒 Changer</button>
-                    </div>
+                    <button class="edit-btn" onclick="openChangerMdp()">🔒 Changer</button>
                 </div>
 
                 <div class="setting-item">
@@ -384,9 +432,8 @@
                         <h3>Photo de profil</h3>
                         <p>Personnalisez votre avatar</p>
                     </div>
-                    <div class="setting-control">
-                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">📷 Modifier</button>
-                    </div>
+                    <button class="edit-btn" onclick="document.getElementById('photoInput').click()">📷 Modifier</button>
+                    <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="uploadPhoto()">
                 </div>
             </div>
 
@@ -397,7 +444,7 @@
                     <h2>Gestion des enfants</h2>
                 </div>
 
-                <div class="child-list">
+                <div class="child-list" id="childList">
                     {% for enfant in enfants %}
                     <div class="child-item">
                         <div class="child-info">
@@ -409,15 +456,13 @@
                         </div>
                         <div class="setting-control">
                             <button class="edit-btn" onclick="window.location.href='/enfant/{{ enfant.id }}/modifier/'">✏️ Modifier</button>
-                            <button class="edit-btn danger-btn" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce profil ?')) alert('Fonctionnalité en développement')">🗑️ Supprimer</button>
+                            <button class="edit-btn danger-btn" onclick="supprimerEnfant({{ enfant.id }}, '{{ enfant.prenom }}')">🗑️ Supprimer</button>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
 
-                <button class="add-child-btn" onclick="window.location.href='/ajouter-enfant/'">
-                    ➕ Ajouter un enfant
-                </button>
+                <button class="add-child-btn" onclick="window.location.href='/ajouter-enfant/'">➕ Ajouter un enfant</button>
             </div>
 
             <!-- NOTIFICATIONS -->
@@ -432,9 +477,9 @@
                         <h3>Notifications par email</h3>
                         <p>Recevoir les mises à jour par email</p>
                     </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-                    </div>
+                    <div class="toggle-switch {% if preferences.notifications_email %}active{% endif %}" 
+                         data-pref="notifications_email" 
+                         onclick="togglePref(this)"></div>
                 </div>
 
                 <div class="setting-item">
@@ -442,29 +487,29 @@
                         <h3>Rappels de routine</h3>
                         <p>Notifications pour les routines quotidiennes</p>
                     </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-                    </div>
+                    <div class="toggle-switch {% if preferences.rappels_routine %}active{% endif %}" 
+                         data-pref="rappels_routine" 
+                         onclick="togglePref(this)"></div>
                 </div>
 
                 <div class="setting-item">
                     <div class="setting-info">
                         <h3>Alertes du forum</h3>
-                        <p>Être notifié des réponses à vos messages</p>
+                        <p>Être notifié des réponses</p>
                     </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
-                    </div>
+                    <div class="toggle-switch {% if preferences.alertes_forum %}active{% endif %}" 
+                         data-pref="alertes_forum" 
+                         onclick="togglePref(this)"></div>
                 </div>
 
                 <div class="setting-item">
                     <div class="setting-info">
                         <h3>Newsletter</h3>
-                        <p>Recevoir les actualités et conseils</p>
+                        <p>Recevoir les actualités</p>
                     </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-                    </div>
+                    <div class="toggle-switch {% if preferences.newsletter %}active{% endif %}" 
+                         data-pref="newsletter" 
+                         onclick="togglePref(this)"></div>
                 </div>
             </div>
 
@@ -480,13 +525,11 @@
                         <h3>Thème de l'interface</h3>
                         <p>Choisissez votre mode préféré</p>
                     </div>
-                    <div class="setting-control">
-                        <select class="custom-select">
-                            <option>Mode clair</option>
-                            <option>Mode sombre</option>
-                            <option>Automatique</option>
-                        </select>
-                    </div>
+                    <select class="custom-select" data-pref="theme" onchange="updateSelectPref(this)">
+                        <option value="clair" {% if preferences.theme == 'clair' %}selected{% endif %}>Mode clair</option>
+                        <option value="sombre" {% if preferences.theme == 'sombre' %}selected{% endif %}>Mode sombre</option>
+                        <option value="auto" {% if preferences.theme == 'auto' %}selected{% endif %}>Automatique</option>
+                    </select>
                 </div>
 
                 <div class="setting-item">
@@ -494,14 +537,12 @@
                         <h3>Taille de police</h3>
                         <p>Ajustez la taille du texte</p>
                     </div>
-                    <div class="setting-control">
-                        <select class="custom-select">
-                            <option>Petite</option>
-                            <option selected>Normale</option>
-                            <option>Grande</option>
-                            <option>Très grande</option>
-                        </select>
-                    </div>
+                    <select class="custom-select" data-pref="taille_police" onchange="updateSelectPref(this)">
+                        <option value="petite" {% if preferences.taille_police == 'petite' %}selected{% endif %}>Petite</option>
+                        <option value="normale" {% if preferences.taille_police == 'normale' %}selected{% endif %}>Normale</option>
+                        <option value="grande" {% if preferences.taille_police == 'grande' %}selected{% endif %}>Grande</option>
+                        <option value="tres_grande" {% if preferences.taille_police == 'tres_grande' %}selected{% endif %}>Très grande</option>
+                    </select>
                 </div>
 
                 <div class="setting-item">
@@ -509,128 +550,11 @@
                         <h3>Langue</h3>
                         <p>Langue de l'interface</p>
                     </div>
-                    <div class="setting-control">
-                        <select class="custom-select">
-                            <option selected>Français</option>
-                            <option>English</option>
-                            <option>Español</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Contraste élevé</h3>
-                        <p>Pour une meilleure lisibilité</p>
-                    </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SONS & ACCESSIBILITÉ -->
-            <div class="setting-card">
-                <div class="setting-header">
-                    <div class="setting-icon">🔊</div>
-                    <h2>Sons & Accessibilité</h2>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Sons des jeux</h3>
-                        <p>Activer les effets sonores</p>
-                    </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Musique de fond</h3>
-                        <p>Musique d'ambiance dans les activités</p>
-                    </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Volume général</h3>
-                        <p>Ajuster le volume des sons</p>
-                    </div>
-                    <div class="setting-control">
-                        <select class="custom-select">
-                            <option>Silencieux</option>
-                            <option>Faible</option>
-                            <option selected>Moyen</option>
-                            <option>Fort</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Lecture vocale</h3>
-                        <p>Lire les textes à voix haute</p>
-                    </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CONFIDENTIALITÉ & SÉCURITÉ -->
-            <div class="setting-card">
-                <div class="setting-header">
-                    <div class="setting-icon">🔒</div>
-                    <h2>Confidentialité & Sécurité</h2>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Visibilité du profil forum</h3>
-                        <p>Qui peut voir votre profil</p>
-                    </div>
-                    <div class="setting-control">
-                        <select class="custom-select">
-                            <option selected>Tous les membres</option>
-                            <option>Amis uniquement</option>
-                            <option>Privé</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Partage de données</h3>
-                        <p>Participer aux statistiques anonymes</p>
-                    </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Historique des connexions</h3>
-                        <p>Voir les dernières connexions</p>
-                    </div>
-                    <div class="setting-control">
-                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">📊 Voir</button>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Authentification à deux facteurs</h3>
-                        <p>Renforcer la sécurité de votre compte</p>
-                    </div>
-                    <div class="setting-control">
-                        <button class="edit-btn" onclick="alert('Fonctionnalité en développement')">🔐 Activer</button>
-                    </div>
+                    <select class="custom-select" data-pref="langue" onchange="updateSelectPref(this)">
+                        <option value="fr" {% if preferences.langue == 'fr' %}selected{% endif %}>Français</option>
+                        <option value="en" {% if preferences.langue == 'en' %}selected{% endif %}>English</option>
+                        <option value="es" {% if preferences.langue == 'es' %}selected{% endif %}>Español</option>
+                    </select>
                 </div>
             </div>
 
@@ -646,23 +570,310 @@
                         <h3>Supprimer mon compte</h3>
                         <p>Cette action est irréversible</p>
                     </div>
-                    <div class="setting-control">
-                        <button class="edit-btn danger-btn" onclick="if(confirm('⚠️ ATTENTION : Cette action supprimera définitivement votre compte et toutes vos données. Êtes-vous absolument sûr ?')) alert('Fonctionnalité en développement')">🗑️ Supprimer</button>
-                    </div>
+                    <button class="edit-btn danger-btn" onclick="openSupprimerCompte()">🗑️ Supprimer</button>
                 </div>
             </div>
         </div>
-
-        <!-- Bouton Enregistrer -->
-        <button class="save-btn" onclick="alert('Paramètres enregistrés avec succès ! ✅')">
-            💾 Enregistrer les modifications
-        </button>
     </div>
 
+    <!-- MODALS -->
+    <!-- Modal Modifier Nom -->
+    <div id="modalNom" class="modal">
+        <div class="modal-content">
+            <h2>Modifier le nom</h2>
+            <div class="form-group">
+                <label>Prénom</label>
+                <input type="text" id="inputPrenom" value="{{ user.first_name }}">
+            </div>
+            <div class="form-group">
+                <label>Nom</label>
+                <input type="text" id="inputNom" value="{{ user.last_name }}">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal('modalNom')">Annuler</button>
+                <button class="btn-submit" onclick="saveNom()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Modifier Email -->
+    <div id="modalEmail" class="modal">
+        <div class="modal-content">
+            <h2>Modifier l'email</h2>
+            <div class="form-group">
+                <label>Nouvel email</label>
+                <input type="email" id="inputEmail" value="{{ user.email }}">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal('modalEmail')">Annuler</button>
+                <button class="btn-submit" onclick="saveEmail()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Changer Mot de Passe -->
+    <div id="modalMdp" class="modal">
+        <div class="modal-content">
+            <h2>Changer le mot de passe</h2>
+            <div class="form-group">
+                <label>Mot de passe actuel</label>
+                <input type="password" id="inputAncienMdp">
+            </div>
+            <div class="form-group">
+                <label>Nouveau mot de passe</label>
+                <input type="password" id="inputNouveauMdp">
+            </div>
+            <div class="form-group">
+                <label>Confirmer le mot de passe</label>
+                <input type="password" id="inputConfirmerMdp">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal('modalMdp')">Annuler</button>
+                <button class="btn-submit" onclick="saveMdp()">Changer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
     <script>
-        function toggleSwitch(element) {
-            element.classList.toggle('active');
+        // Obtenir le CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
-    </script>
-</body>
-</html>
+
+        const csrftoken = getCookie('csrftoken');
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} active`;
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Modals
+        function openModifierNom() {
+            document.getElementById('modalNom').classList.add('active');
+        }
+
+        function openModifierEmail() {
+            document.getElementById('modalEmail').classList.add('active');
+        }
+
+        function openChangerMdp() {
+            document.getElementById('modalMdp').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Sauvegarder le nom
+        async function saveNom() {
+            const prenom = document.getElementById('inputPrenom').value;
+            const nom = document.getElementById('inputNom').value;
+
+            const response = await fetch('/api/modifier-profil/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    first_name: prenom,
+                    last_name: nom
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                document.getElementById('user-name').textContent = `${prenom} ${nom}`;
+                closeModal('modalNom');
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        }
+
+        // Sauvegarder l'email
+        async function saveEmail() {
+            const email = document.getElementById('inputEmail').value;
+
+            const response = await fetch('/api/modifier-profil/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                document.getElementById('user-email').textContent = email;
+                closeModal('modalEmail');
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        }
+
+        // Changer le mot de passe
+        async function saveMdp() {
+            const ancien = document.getElementById('inputAncienMdp').value;
+            const nouveau = document.getElementById('inputNouveauMdp').value;
+            const confirmer = document.getElementById('inputConfirmerMdp').value;
+
+            const response = await fetch('/api/changer-mot-de-passe/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    ancien_mdp: ancien,
+                    nouveau_mdp: nouveau,
+                    confirmer_mdp: confirmer
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                closeModal('modalMdp');
+                document.getElementById('inputAncienMdp').value = '';
+                document.getElementById('inputNouveauMdp').value = '';
+                document.getElementById('inputConfirmerMdp').value = '';
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        }
+
+        // Upload photo
+        async function uploadPhoto() {
+            const input = document.getElementById('photoInput');
+            const file = input.files[0];
+
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            const response = await fetch('/api/upload-photo-profil/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        }
+
+        // Toggle préférences
+        async function togglePref(element) {
+            element.classList.toggle('active');
+            const pref = element.getAttribute('data-pref');
+            const value = element.classList.contains('active');
+
+            await fetch('/api/update-preferences/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ [pref]: value })
+            });
+        }
+
+        // Update select préférences
+        async function updateSelectPref(select) {
+            const pref = select.getAttribute('data-pref');
+            const value = select.value;
+
+            await fetch('/api/update-preferences/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ [pref]: value })
+            });
+
+            showToast('Préférence enregistrée', 'success');
+        }
+
+        // Supprimer enfant
+        async function supprimerEnfant(id, prenom) {
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer le profil de ${prenom} ?`)) return;
+
+            const response = await fetch(`/api/supprimer-enfant/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(data.message, 'error');
+            }
+        }
+
+        // Supprimer compte
+        function openSupprimerCompte() {
+            const mdp = prompt('⚠️ Pour supprimer votre compte, entrez votre mot de passe :');
+            if (!mdp) return;
+
+            if (!confirm('DERNIÈRE CONFIRMATION : Voulez-vous vraiment supprimer votre compte ? Cette action est IRRÉVERSIBLE.')) return;
+
+            supprimerCompte(mdp);
+        }
+
+        async function supprimerCompte(mdp) {
+            const response = await fetch('/api/supprimer-compte/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ mot_de_passe: mdp })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Votre compte a été supprimé. Au revoir.');
+                window.location.href = data.redirect;
+            } else {
+                showToast(data.message, 'error');
+            }
+        }

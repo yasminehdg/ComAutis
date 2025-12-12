@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progression - ComAutiste</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 50%, #ffd3b6 100%);
+            min-height: 100vh;
+        }
+
+        nav {
+            background: white;
+            padding: 20px 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #74b9ff 0%, #a8e6cf 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(116, 185, 255, 0.4);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .enfants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .enfant-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .enfant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+
+        .enfant-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .enfant-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+        }
+
+        .enfant-info h3 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .enfant-age {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .streak-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        .chart-container {
+            margin: 20px 0;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .jeux-favoris {
+            margin-top: 15px;
+        }
+
+        .jeu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .jeu-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .jeu-count {
+            background: #74b9ff;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #74b9ff 0%, #a8e6cf 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ffd3b6 0%, #ffeaa7 100%);
+            color: #2c3e50;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .no-data-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .no-data h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .no-data p {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .add-enfant-btn {
+            background: linear-gradient(135deg, #55efc4 0%, #74b9ff 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .add-enfant-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(85, 239, 196, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .enfants-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px 30px;
+            }
+
+            .page-header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">🌟</div>
+            <span>ComAutiste</span>
+        </div>
+        <div class="user-info">
+            <span style="font-size: 18px; color: #2c3e50; font-weight: 600;">
+                👋 {{ user.first_name|default:user.username }}
+            </span>
+            <a href="/dashboard/" class="back-btn">← Retour au tableau de bord</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📊 Suivi de Progression</h1>
+            <p>Suivez l'évolution et les activités de vos enfants en temps réel</p>
+        </div>
+
+        {% if enfants_avec_stats %}
+        <div class="enfants-grid">
+            {% for item in enfants_avec_stats %}
+            <div class="enfant-card">
+                <div class="enfant-header">
+                    <div class="enfant-avatar">
+                        {% if item.enfant.genre == 'M' %}👦{% elif item.enfant.genre == 'F' %}👧{% else %}🧒{% endif %}
+                    </div>
+                    <div class="enfant-info">
+                        <h3>{{ item.enfant.prenom }}</h3>
+                        <div class="enfant-age">{{ item.enfant.age }} ans</div>
+                        {% if item.stats.streak_jours > 0 %}
+                        <div class="streak-badge">🔥 {{ item.stats.streak_jours }} jour{% if item.stats.streak_jours > 1 %}s{% endif %} d'affilée</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Stats principales -->
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">{{ item.stats.activites_today }}</div>
+                        <div class="stat-label">Aujourd'hui</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ item.stats.activites_week }}</div>
+                        <div class="stat-label">Cette semaine</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ item.stats.temps_aujourd_hui_minutes }}</div>
+                        <div class="stat-label">Minutes (jour)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">{{ item.stats.taux_reussite }}%</div>
+                        <div class="stat-label">Réussite</div>
+                    </div>
+                </div>
+
+                <!-- Graphique des 7 derniers jours -->
+                {% if item.graphique_data %}
+                <div class="chart-container">
+                    <div class="chart-title">📈 Activités des 7 derniers jours</div>
+                    <canvas id="chart-{{ item.enfant.id }}" height="150"></canvas>
+                </div>
+                {% endif %}
+
+                <!-- Jeux favoris -->
+                {% if item.stats.jeux_favoris %}
+                <div class="jeux-favoris">
+                    <div class="chart-title">🎮 Jeux favoris</div>
+                    {% for jeu in item.stats.jeux_favoris %}
+                    <div class="jeu-item">
+                        <span class="jeu-name">{{ jeu.jeu }}</span>
+                        <span class="jeu-count">{{ jeu.count }}x</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Boutons d'action -->
+                <div class="action-buttons">
+                    <a href="/dashboard-enfant/{{ item.enfant.id }}/" class="btn btn-primary">
+                        🎮 Jouer
+                    </a>
+                    <a href="/profil-famille/" class="btn btn-secondary">
+                        ⚙️ Profil
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-data">
+            <div class="no-data-icon">😊</div>
+            <h2>Aucun enfant enregistré</h2>
+            <p>Ajoutez un enfant pour commencer à suivre sa progression</p>
+            <a href="/ajouter-enfant/" class="add-enfant-btn">➕ Ajouter un enfant</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Créer les graphiques pour chaque enfant
+        {% for item in enfants_avec_stats %}
+        {% if item.graphique_data %}
+        (function() {
+            const ctx = document.getElementById('chart-{{ item.enfant.id }}');
+            if (ctx) {
+                const data = {{ item.graphique_data|safe }};
+                
+                const labels = data.map(d => d.jour);
+                const values = data.map(d => d.count);
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Activités',
+                            data: values,
+                            borderColor: '#74b9ff',
+                            backgroundColor: 'rgba(116, 185, 255, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#74b9ff',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        })();
+        {% endif %}
+        {% endfor %}
+    </script>
+</body>
+</html>

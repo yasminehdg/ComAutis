@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import timedelta
 
 class UserProfile(models.Model):
     USER_TYPE_CHOICES = [
@@ -74,7 +75,6 @@ class Enfant(models.Model):
         ordering = ['-created_at']
 
 
-# ← ICI, EN DEHORS DE LA CLASSE ENFANT
 class Badge(models.Model):
     BADGE_TYPES = [
         ('nouveau_parent', '🌟 Nouveau Parent'),
@@ -135,3 +135,60 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.get_notification_type_display()}"
+
+
+# ========== NOUVEAU MODÈLE ACTIVITÉ ==========
+class Activite(models.Model):
+    """Enregistre chaque session de jeu/activité d'un enfant"""
+    
+    JEUX_CHOICES = [
+        ('memory', '🧠 Memory'),
+        ('compter_3', '🔢 Compter jusqu\'à 3'),
+        ('compter_10', '🔢 Compter jusqu\'à 10'),
+        ('couleurs', '🎨 Apprendre les Couleurs'),
+        ('emotions', '😊 Reconnaître les Émotions'),
+        ('memory_fruits', '🍎 Memory Fruits'),
+        ('jours_semaine', '📅 Jours de la Semaine'),
+        ('animaux', '🐶 Cris des Animaux'),
+        ('fruits', '🍓 Apprendre les Fruits'),
+        ('memory_couleurs', '🌈 Memory Couleurs'),
+        ('saisons', '🍂 Les Saisons'),
+        ('puzzle', '🧩 Puzzle'),
+        ('labyrinthe', '🎯 Labyrinthe'),
+        ('pictogrammes', '📊 Pictogrammes'),
+        ('dessiner', '✏️ Dessiner'),
+        ('videos', '🎥 Vidéos'),
+        ('histoires', '📖 Histoires'),
+    ]
+    
+    # Lien avec l'enfant
+    enfant = models.ForeignKey(Enfant, on_delete=models.CASCADE, related_name='activites')
+    
+    # Informations sur l'activité
+    jeu = models.CharField(max_length=50, choices=JEUX_CHOICES)
+    date_debut = models.DateTimeField(auto_now_add=True)
+    date_fin = models.DateTimeField(null=True, blank=True)
+    duree_minutes = models.IntegerField(default=0, help_text="Durée en minutes")
+    
+    # Performance (optionnel)
+    score = models.IntegerField(null=True, blank=True)
+    reussi = models.BooleanField(default=True)
+    
+    # Métadonnées
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.enfant.prenom} - {self.get_jeu_display()} - {self.date_debut.strftime('%d/%m/%Y')}"
+    
+    def calculer_duree(self):
+        """Calcule la durée en minutes entre date_debut et date_fin"""
+        if self.date_fin:
+            duree = self.date_fin - self.date_debut
+            self.duree_minutes = int(duree.total_seconds() / 60)
+            self.save()
+        return self.duree_minutes
+    
+    class Meta:
+        verbose_name = "Activité"
+        verbose_name_plural = "Activités"
+        ordering = ['-date_debut']

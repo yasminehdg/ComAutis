@@ -131,12 +131,28 @@ def dashboard(request):
         user_profile = request.user.profile
         user_type = user_profile.user_type
     except UserProfile.DoesNotExist:
-        # Si pas de profil, créer un profil par défaut
         user_profile = UserProfile.objects.create(user=request.user, user_type='parent')
         user_type = 'parent'
     
     # Récupérer les notifications non lues
     unread_notifications = Notification.objects.filter(user=request.user, is_read=False).count()
+    
+    # ✅ NOUVEAU : Récupérer les enfants avec leurs stats
+    enfants = Enfant.objects.filter(parent=request.user)
+    
+    # Calculer les stats pour chaque enfant
+    from .activity_tracker import get_enfant_stats, get_activites_par_jour
+    enfants_avec_stats = []
+    
+    for enfant in enfants:
+        stats = get_enfant_stats(enfant)
+        activites_7jours = get_activites_par_jour(enfant, jours=7)
+        
+        enfants_avec_stats.append({
+            'enfant': enfant,
+            'stats': stats,
+            'graphique_data': activites_7jours,
+        })
     
     # Rediriger vers le bon dashboard selon le type
     if user_type == 'educator':
@@ -149,10 +165,10 @@ def dashboard(request):
         return render(request, 'authen/dashboard_parent.html', {
             'user': request.user,
             'profile': user_profile,
-            'unread_notifications': unread_notifications
+            'unread_notifications': unread_notifications,
+            'enfants_avec_stats': enfants_avec_stats,  # ✅ Nouvelles données
         })
-
-
+    
 @login_required
 def profil_famille(request):
     # Récupérer le profil de l'utilisateur
@@ -468,3 +484,572 @@ def mark_notification_read(request, notification_id):
         return redirect(notification.link)
     else:
         return redirect('notifications')
+    
+
+@login_required
+def progression(request):
+    """Page de suivi de progression des enfants"""
+    # Récupérer tous les enfants de l'utilisateur
+    enfants = Enfant.objects.filter(parent=request.user)
+    
+    # Calculer les stats pour chaque enfant
+    from .activity_tracker import get_enfant_stats, get_activites_par_jour
+    import json
+    
+    enfants_avec_stats = []
+    
+    for enfant in enfants:
+        stats = get_enfant_stats(enfant)
+        activites_7jours = get_activites_par_jour(enfant, jours=7)
+        
+        # Convertir les données pour le graphique en JSON
+        graphique_json = json.dumps(activites_7jours, default=str)
+        
+        enfants_avec_stats.append({
+            'enfant': enfant,
+            'stats': stats,
+            'graphique_data': graphique_json,
+        })
+    
+    context = {
+        'user': request.user,
+        'enfants_avec_stats': enfants_avec_stats,
+    }
+    
+    return render(request, 'authen/progression.html', context)
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Sum, Avg
+from datetime import datetime, timedelta
+from django.utils import timezone
+import json
+
+@login_required
+def progression_view(request):
+    """Vue pour afficher la progression de tous les enfants"""
+    
+    # Récupérer tous les enfants du parent connecté
+    enfants = request.user.enfants.all()  # Ajuste selon ton modèle
+    
+    enfants_avec_stats = []
+    
+    for enfant in enfants:
+        # Calculer les stats pour cet enfant
+        stats = calculer_stats_enfant(enfant)
+        
+        # Données pour le graphique des 7 derniers jours
+        graphique_data = generer_graphique_7_jours(enfant)
+        
+        enfants_avec_stats.append({
+            'enfant': enfant,
+            'stats': stats,
+            'graphique_data': json.dumps(graphique_data)
+        })
+    
+    context = {
+        'enfants_avec_stats': enfants_avec_stats,
+    }
+    
+    return render(request, 'progression.html', context)
+
+
+def calculer_stats_enfant(enfant):
+    """Calcule toutes les stats pour un enfant"""
+    from datetime import date
+    
+    # Importe ton modèle Activite
+    from .models import Activite  # Ajuste selon ton app
+    
+    aujourd_hui = date.today()
+    debut_semaine = aujourd_hui - timedelta(days=aujourd_hui.weekday())
+    
+    # Activités d'aujourd'hui
+    activites_today = Activite.objects.filter(
+        enfant=enfant,
+        date_debut__date=aujourd_hui
+    ).count()
+    
+    # Activités de la semaine
+    activites_week = Activite.objects.filter(
+        enfant=enfant,
+        date_debut__date__gte=debut_semaine
+    ).count()
+    
+    # Temps passé aujourd'hui (en minutes)
+    activites_jour = Activite.objects.filter(
+        enfant=enfant,
+        date_debut__date=aujourd_hui,
+        date_fin__isnull=False
+    )
+    
+    temps_total = 0
+    for act in activites_jour:
+        if act.date_fin:
+            duree = (act.date_fin - act.date_debut).total_seconds() / 60
+            temps_total += duree
+    
+    temps_aujourd_hui_minutes = int(temps_total)
+    
+    # Taux de réussite
+    activites_terminees = Activite.objects.filter(
+        enfant=enfant,
+        date_fin__isnull=False
+    )
+    
+    if activites_terminees.exists():
+        reussies = activites_terminees.filter(reussi=True).count()
+        total = activites_terminees.count()
+        taux_reussite = int((reussies / total) * 100) if total > 0 else 0
+    else:
+        taux_reussite = 0
+    
+    # Streak (jours consécutifs)
+    streak_jours = calculer_streak(enfant)
+    
+    # Jeux favoris (top 3)
+    jeux_favoris = Activite.objects.filter(
+        enfant=enfant
+    ).values('jeu').annotate(
+        count=Count('id')
+    ).order_by('-count')[:3]
+    
+    # Convertir les noms de jeux en français
+    jeux_favoris_liste = []
+    noms_jeux = {
+        'memory': 'Memory',
+        'compter_3': 'Compter jusqu\'à 3',
+        'compter_10': 'Compter jusqu\'à 10',
+        'couleurs': 'Les Couleurs',
+        'emotions': 'Les Émotions',
+        'animaux': 'Les Animaux',
+        'fruits': 'Les Fruits',
+        'puzzle': 'Puzzle',
+        'labyrinthe': 'Labyrinthe',
+    }
+    
+    for jeu in jeux_favoris:
+        jeux_favoris_liste.append({
+            'jeu': noms_jeux.get(jeu['jeu'], jeu['jeu']),
+            'count': jeu['count']
+        })
+    
+    return {
+        'activites_today': activites_today,
+        'activites_week': activites_week,
+        'temps_aujourd_hui_minutes': temps_aujourd_hui_minutes,
+        'taux_reussite': taux_reussite,
+        'streak_jours': streak_jours,
+        'jeux_favoris': jeux_favoris_liste,
+    }
+
+
+def calculer_streak(enfant):
+    """Calcule le nombre de jours consécutifs où l'enfant a joué"""
+    from datetime import date, timedelta
+    from .models import Activite
+    
+    aujourd_hui = date.today()
+    streak = 0
+    jour_actuel = aujourd_hui
+    
+    # Vérifier les jours en remontant dans le temps
+    while True:
+        activites_jour = Activite.objects.filter(
+            enfant=enfant,
+            date_debut__date=jour_actuel
+        ).exists()
+        
+        if activites_jour:
+            streak += 1
+            jour_actuel -= timedelta(days=1)
+        else:
+            break
+        
+        # Limite de sécurité
+        if streak > 365:
+            break
+    
+    return streak
+
+
+def generer_graphique_7_jours(enfant):
+    """Génère les données pour le graphique des 7 derniers jours"""
+    from datetime import date, timedelta
+    from .models import Activite
+    
+    data = []
+    aujourd_hui = date.today()
+    
+    jours_semaine = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+    
+    for i in range(6, -1, -1):  # De -6 à 0
+        jour = aujourd_hui - timedelta(days=i)
+        
+        # Compter les activités de ce jour
+        count = Activite.objects.filter(
+            enfant=enfant,
+            date_debut__date=jour
+        ).count()
+        
+        # Nom du jour
+        jour_nom = jours_semaine[jour.weekday()]
+        
+        data.append({
+            'jour': jour_nom,
+            'count': count
+        })
+    
+    return data
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import json
+
+# ===========================
+# VUE PRINCIPALE PARAMÈTRES
+# ===========================
+@login_required
+def parametres_view(request):
+    """Page principale des paramètres"""
+    
+    # Récupérer les enfants du parent
+    enfants = request.user.enfants.all()  # Ajuste selon ton modèle
+    
+    # Récupérer ou créer les préférences utilisateur
+    preferences, created = UserPreferences.objects.get_or_create(user=request.user)
+    
+    context = {
+        'enfants': enfants,
+        'preferences': preferences,
+    }
+    
+    return render(request, 'parametres.html', context)
+
+
+# ===========================
+# MODIFIER LE PROFIL
+# ===========================
+@login_required
+@require_POST
+def modifier_profil(request):
+    """Modifier nom, prénom, email"""
+    
+    data = json.loads(request.body)
+    user = request.user
+    
+    # Mettre à jour les informations
+    if 'first_name' in data:
+        user.first_name = data['first_name']
+    
+    if 'last_name' in data:
+        user.last_name = data['last_name']
+    
+    if 'email' in data:
+        # Vérifier que l'email n'existe pas déjà
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        
+        if User.objects.filter(email=data['email']).exclude(id=user.id).exists():
+            return JsonResponse({
+                'success': False,
+                'message': 'Cet email est déjà utilisé'
+            })
+        
+        user.email = data['email']
+    
+    user.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Profil mis à jour avec succès !'
+    })
+
+
+# ===========================
+# CHANGER LE MOT DE PASSE
+# ===========================
+@login_required
+@require_POST
+def changer_mot_de_passe(request):
+    """Changer le mot de passe"""
+    
+    data = json.loads(request.body)
+    user = request.user
+    
+    ancien_mdp = data.get('ancien_mdp')
+    nouveau_mdp = data.get('nouveau_mdp')
+    confirmer_mdp = data.get('confirmer_mdp')
+    
+    # Vérifier l'ancien mot de passe
+    if not user.check_password(ancien_mdp):
+        return JsonResponse({
+            'success': False,
+            'message': 'Mot de passe actuel incorrect'
+        })
+    
+    # Vérifier que les nouveaux mots de passe correspondent
+    if nouveau_mdp != confirmer_mdp:
+        return JsonResponse({
+            'success': False,
+            'message': 'Les mots de passe ne correspondent pas'
+        })
+    
+    # Vérifier la longueur
+    if len(nouveau_mdp) < 8:
+        return JsonResponse({
+            'success': False,
+            'message': 'Le mot de passe doit contenir au moins 8 caractères'
+        })
+    
+    # Changer le mot de passe
+    user.set_password(nouveau_mdp)
+    user.save()
+    
+    # Garder l'utilisateur connecté
+    update_session_auth_hash(request, user)
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Mot de passe changé avec succès !'
+    })
+
+
+# ===========================
+# UPLOAD PHOTO DE PROFIL
+# ===========================
+@login_required
+@require_POST
+def upload_photo_profil(request):
+    """Upload de la photo de profil"""
+    
+    if 'photo' not in request.FILES:
+        return JsonResponse({
+            'success': False,
+            'message': 'Aucune photo fournie'
+        })
+    
+    photo = request.FILES['photo']
+    
+    # Vérifier la taille (max 5MB)
+    if photo.size > 5 * 1024 * 1024:
+        return JsonResponse({
+            'success': False,
+            'message': 'La photo est trop volumineuse (max 5MB)'
+        })
+    
+    # Vérifier le type
+    if not photo.content_type.startswith('image/'):
+        return JsonResponse({
+            'success': False,
+            'message': 'Le fichier doit être une image'
+        })
+    
+    # Sauvegarder la photo
+    user = request.user
+    user.photo_profil = photo  # Assure-toi d'avoir ce champ dans ton modèle User
+    user.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Photo de profil mise à jour !',
+        'photo_url': user.photo_profil.url if user.photo_profil else None
+    })
+
+
+# ===========================
+# SUPPRIMER UN ENFANT
+# ===========================
+@login_required
+@require_POST
+def supprimer_enfant(request, enfant_id):
+    """Supprimer un enfant"""
+    
+    enfant = get_object_or_404(Enfant, id=enfant_id, parent=request.user)
+    
+    prenom = enfant.prenom
+    enfant.delete()
+    
+    return JsonResponse({
+        'success': True,
+        'message': f'Le profil de {prenom} a été supprimé'
+    })
+
+
+# ===========================
+# METTRE À JOUR LES PRÉFÉRENCES
+# ===========================
+@login_required
+@require_POST
+def update_preferences(request):
+    """Mettre à jour toutes les préférences"""
+    
+    data = json.loads(request.body)
+    preferences, created = UserPreferences.objects.get_or_create(user=request.user)
+    
+    # Notifications
+    if 'notifications_email' in data:
+        preferences.notifications_email = data['notifications_email']
+    
+    if 'rappels_routine' in data:
+        preferences.rappels_routine = data['rappels_routine']
+    
+    if 'alertes_forum' in data:
+        preferences.alertes_forum = data['alertes_forum']
+    
+    if 'newsletter' in data:
+        preferences.newsletter = data['newsletter']
+    
+    # Affichage
+    if 'theme' in data:
+        preferences.theme = data['theme']
+    
+    if 'taille_police' in data:
+        preferences.taille_police = data['taille_police']
+    
+    if 'langue' in data:
+        preferences.langue = data['langue']
+    
+    if 'contraste_eleve' in data:
+        preferences.contraste_eleve = data['contraste_eleve']
+    
+    # Sons
+    if 'sons_jeux' in data:
+        preferences.sons_jeux = data['sons_jeux']
+    
+    if 'musique_fond' in data:
+        preferences.musique_fond = data['musique_fond']
+    
+    if 'volume' in data:
+        preferences.volume = data['volume']
+    
+    if 'lecture_vocale' in data:
+        preferences.lecture_vocale = data['lecture_vocale']
+    
+    # Confidentialité
+    if 'visibilite_profil' in data:
+        preferences.visibilite_profil = data['visibilite_profil']
+    
+    if 'partage_donnees' in data:
+        preferences.partage_donnees = data['partage_donnees']
+    
+    preferences.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Préférences enregistrées avec succès !'
+    })
+
+
+# ===========================
+# SUPPRIMER LE COMPTE
+# ===========================
+@login_required
+@require_POST
+def supprimer_compte(request):
+    """Supprimer définitivement le compte"""
+    
+    data = json.loads(request.body)
+    mot_de_passe = data.get('mot_de_passe')
+    
+    # Vérifier le mot de passe
+    if not request.user.check_password(mot_de_passe):
+        return JsonResponse({
+            'success': False,
+            'message': 'Mot de passe incorrect'
+        })
+    
+    # Supprimer le compte
+    user = request.user
+    user.delete()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Compte supprimé avec succès',
+        'redirect': '/goodbye/'  # Page de confirmation
+    })
+
+
+# ===========================
+# MODÈLE USER PREFERENCES
+# ===========================
+from django.db import models
+from django.contrib.auth.models import User
+
+class UserPreferences(models.Model):
+    """Modèle pour stocker les préférences utilisateur"""
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='preferences')
+    
+    # Notifications
+    notifications_email = models.BooleanField(default=True)
+    rappels_routine = models.BooleanField(default=True)
+    alertes_forum = models.BooleanField(default=False)
+    newsletter = models.BooleanField(default=True)
+    
+    # Affichage
+    THEME_CHOICES = [
+        ('clair', 'Mode clair'),
+        ('sombre', 'Mode sombre'),
+        ('auto', 'Automatique'),
+    ]
+    theme = models.CharField(max_length=10, choices=THEME_CHOICES, default='clair')
+    
+    TAILLE_CHOICES = [
+        ('petite', 'Petite'),
+        ('normale', 'Normale'),
+        ('grande', 'Grande'),
+        ('tres_grande', 'Très grande'),
+    ]
+    taille_police = models.CharField(max_length=15, choices=TAILLE_CHOICES, default='normale')
+    
+    LANGUE_CHOICES = [
+        ('fr', 'Français'),
+        ('en', 'English'),
+        ('es', 'Español'),
+    ]
+    langue = models.CharField(max_length=5, choices=LANGUE_CHOICES, default='fr')
+    
+    contraste_eleve = models.BooleanField(default=False)
+    
+    # Sons
+    sons_jeux = models.BooleanField(default=True)
+    musique_fond = models.BooleanField(default=False)
+    
+    VOLUME_CHOICES = [
+        ('silencieux', 'Silencieux'),
+        ('faible', 'Faible'),
+        ('moyen', 'Moyen'),
+        ('fort', 'Fort'),
+    ]
+    volume = models.CharField(max_length=15, choices=VOLUME_CHOICES, default='moyen')
+    
+    lecture_vocale = models.BooleanField(default=False)
+    
+    # Confidentialité
+    VISIBILITE_CHOICES = [
+        ('tous', 'Tous les membres'),
+        ('amis', 'Amis uniquement'),
+        ('prive', 'Privé'),
+    ]
+    visibilite_profil = models.CharField(max_length=10, choices=VISIBILITE_CHOICES, default='tous')
+    
+    partage_donnees = models.BooleanField(default=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Préférences de {self.user.username}"
+    
+    class Meta:
+        verbose_name = "Préférence utilisateur"
+        verbose_name_plural = "Préférences utilisateur"
+
+

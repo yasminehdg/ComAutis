@@ -50,6 +50,8 @@ urlpatterns = [
     path('enfant/<int:enfant_id>/histoires/', views.histoires_view, name='histoires'),
     path('ressources/', views.ressources, name='ressources'),
     path('parametres/', views.parametres, name='parametres'),
+    path('progression/', views.progression, name='progression'),
+    path('progression/', views.progression_view, name='progression'),
     # Badges et Notifications
     path('profile/<str:username>/', views.user_profile, name='user_profile'),
     path('notifications/', views.notifications_list, name='notifications'),
@@ -77,6 +79,13 @@ urlpatterns = [
     
     # Statistiques
     path('admin-dashboard/statistics/', admin_statistics, name='admin_statistics'),
+
+    path('api/modifier-profil/', views.modifier_profil, name='modifier_profil'),
+    path('api/changer-mot-de-passe/', views.changer_mot_de_passe, name='changer_mot_de_passe'),
+    path('api/upload-photo-profil/', views.upload_photo_profil, name='upload_photo_profil'),
+    path('api/supprimer-enfant/<int:enfant_id>/', views.supprimer_enfant, name='supprimer_enfant'),
+    path('api/update-preferences/', views.update_preferences, name='update_preferences'),
+    path('api/supprimer-compte/', views.supprimer_compte, name='supprimer_compte'),
 ]
 
 
