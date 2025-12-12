@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Chemin de base du projet
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -6,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Sécurité
 SECRET_KEY = 'django-insecure-b)e1g_9kl9ig@=(hs&xpq%y8==hl*)04vxptjg1e8ro(!8ohre'
 DEBUG = True
-ALLOWED_HOSTS =["comautis-3.onrender.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
 
 # Applications installées
 INSTALLED_APPS = [
