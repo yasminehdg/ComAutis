@@ -1,5 +1,5 @@
 {% load static %}
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -116,6 +116,37 @@
             overflow: hidden;
         }
 
+        /* ===== STYLE POUR JEUX PREMIUM ===== */
+        .game-card.premium {
+            background: linear-gradient(135deg, #ffd89b 0%, #ff6b9d 100%);
+        }
+
+        .game-card.premium::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            opacity: 0.3;
+        }
+
+        .badge-premium {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #ffd700 0%, #ff6b00 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(255, 107, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .game-card::before {
             content: '';
             position: absolute;
@@ -160,10 +191,18 @@
             margin-bottom: 10px;
         }
 
+        .game-card.premium h3 {
+            color: white;
+        }
+
         .game-card p {
             font-size: 16px;
             color: #7f8c8d;
             margin-bottom: 15px;
+        }
+
+        .game-card.premium p {
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .difficulty {
@@ -242,8 +281,9 @@
             <div class="category-section">
                 <h2 class="category-title">🧠 Jeux de Mémoire</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='/jeux/memory/'">
-                        <span class="badge-new">NOUVEAU</span>
+                    <!-- PREMIUM -->
+                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'memory' %}'">
+                        <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🎴</div>
                         <h3>Memory Animaux</h3>
                         <p>Trouve les paires d'animaux</p>
@@ -277,7 +317,9 @@
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/compter-10/'">
+                    <!-- PREMIUM -->
+                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'compter_10' %}'">
+                        <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🔟</div>
                         <h3>Compter jusqu'à 10</h3>
                         <p>Compte les objets de 1 à 10</p>
@@ -332,7 +374,9 @@
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/saisons/'">
+                    <!-- PREMIUM -->
+                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'saisons' %}'">
+                        <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🍂</div>
                         <h3>Les Saisons</h3>
                         <p>Printemps, Été, Automne, Hiver</p>
@@ -360,14 +404,18 @@
             <div class="category-section">
                 <h2 class="category-title">🎯 Jeux d'Adresse</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='{% url 'jeu_puzzle' %}'">
+                    <!-- PREMIUM -->
+                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'puzzle' %}'">
+                        <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🧩</div>
                         <h3>Puzzle</h3>
                         <p>Assemble les pièces</p>
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/labyrinthe/'">
+                    <!-- PREMIUM -->
+                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'labyrinthe' %}'">
+                        <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🌀</div>
                         <h3>Labyrinthe</h3>
                         <p>Trouve le chemin</p>

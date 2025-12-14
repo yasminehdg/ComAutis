@@ -572,7 +572,8 @@
 
                         <div class="child-actions">
                             <a href="{% url 'modifier_enfant' enfant.id %}" class="btn btn-edit">✏️ Modifier</a>
-                            <a href="{% url 'supprimer_enfant' enfant.id %}" class="btn btn-delete">🗑️ Supprimer</a>
+                   <a href="{% url 'supprimer_enfant_view' enfant.id %}" class="btn btn-delete">🗑️ Supprimer</a>
+
                         </div>
                     </div>
                     {% endfor %}

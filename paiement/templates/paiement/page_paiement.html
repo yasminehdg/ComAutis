@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement - {{ jeu.nom }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .payment-container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, #ffd89b 0%, #ff6b9d 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .game-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .payment-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .payment-body {
+            padding: 40px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .error-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 25px 0;
+            color: #2e7d32;
+            font-size: 14px;
+        }
+
+        .btn-pay {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-cancel {
+            width: 100%;
+            background: white;
+            color: #667eea;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-cancel:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .card-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <div class="game-icon">{{ jeu.icone }}</div>
+            <h1>{{ jeu.nom }}</h1>
+            <p>{{ jeu.description }}</p>
+            <div class="price">{{ jeu.prix }}€</div>
+        </div>
+
+        <div class="payment-body">
+            {% if erreurs %}
+            <div class="error-box">
+                <strong>❌ Erreur de paiement :</strong>
+                <ul>
+                    {% for erreur in erreurs %}
+                    <li>{{ erreur }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'paiement:traiter_paiement' jeu.jeu_code %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="numero_carte">Numéro de carte 💳</label>
+                    <input 
+                        type="text" 
+                        id="numero_carte" 
+                        name="numero_carte" 
+                        placeholder="1234 5678 9012 3456"
+                        maxlength="19"
+                        value="{{ numero_carte|default:'' }}"
+                        required
+                    >
+                    <div class="info-text">16 chiffres sans espaces</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nom_carte">Nom sur la carte</label>
+                    <input 
+                        type="text" 
+                        id="nom_carte" 
+                        name="nom_carte" 
+                        placeholder="JEAN DUPONT"
+                        value="{{ nom_carte|default:'' }}"
+                        required
+                    >
+                </div>
+
+                <div class="card-row">
+                    <div class="form-group">
+                        <label for="date_expiration">Date d'expiration 📅</label>
+                        <input 
+                            type="text" 
+                            id="date_expiration" 
+                            name="date_expiration" 
+                            placeholder="MM/YY"
+                            maxlength="5"
+                            value="{{ date_expiration|default:'' }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cvv">CVV 🔒</label>
+                        <input 
+                            type="text" 
+                            id="cvv" 
+                            name="cvv" 
+                            placeholder="123"
+                            maxlength="3"
+                            required
+                        >
+                        <div class="info-text">3 chiffres au dos</div>
+                    </div>
+                </div>
+
+                <div class="secure-badge">
+                    <span style="font-size: 24px;">🔒</span>
+                    <span><strong>Paiement sécurisé</strong> - Vos données sont protégées</span>
+                </div>
+
+                <button type="submit" class="btn-pay">
+                    💳 Payer {{ jeu.prix }}€
+                </button>
+
+                <a href="/jeux/" class="btn-cancel">❌ Annuler</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Formatage automatique du numéro de carte
+        document.getElementById('numero_carte').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        // Formatage de la date d'expiration
+        document.getElementById('date_expiration').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Accepter uniquement les chiffres pour CVV
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+    </script>
+</body>
+</html>
