@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ✅ META POUR LE TRACKING AUTOMATIQUE -->
+    <meta name="enfant-id" content="{{ enfant.id }}">
+    
+    <title>{% block title %}Activité - ComAutiste{% endblock %}</title>
+    
+    <!-- Styles du jeu/activité -->
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Bouton retour universel */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton retour universel -->
+    <a href="/enfant/{{ enfant.id }}/dashboard/" class="back-button">
+        ⬅️ Retour
+    </a>
+    
+    <!-- Contenu de l'activité -->
+    {% block content %}{% endblock %}
+    
+    <!-- ✅ SCRIPT DE TRACKING AUTOMATIQUE -->
+    <script src="/static/js/auto-tracker.js"></script>
+    
+    <!-- Scripts spécifiques à l'activité -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

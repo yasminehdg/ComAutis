@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="enfant-id" content="{{ enfant.id }}">
     <title>📆 Jours de la Semaine - ComAutiste</title>
     <style>
         * {
@@ -105,7 +106,6 @@
             transform: rotate(5deg);
         }
 
-        /* Couleurs pour chaque jour */
         .day-1 { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); }
         .day-2 { background: linear-gradient(135deg, #ff9f43 0%, #ff7f50 100%); }
         .day-3 { background: linear-gradient(135deg, #feca57 0%, #f7b731 100%); }
@@ -121,14 +121,6 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             text-transform: uppercase;
             letter-spacing: 2px;
-        }
-
-        .day-number {
-            font-size: 20px;
-            color: white;
-            margin-top: 10px;
-            opacity: 0.9;
-            font-weight: bold;
         }
 
         .drop-zone {
@@ -259,30 +251,6 @@
             transform: translateY(-3px);
         }
 
-        .celebration {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            animation: confettiFall 3s ease-out forwards;
-        }
-
-        @keyframes confettiFall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
         .victory-modal {
             display: none;
             position: fixed;
@@ -365,16 +333,14 @@
         <div class="controls">
             <button class="btn btn-check" onclick="checkOrder()">✓ Vérifier l'ordre</button>
             <button class="btn btn-restart" onclick="shuffleDays()">🔄 Mélanger</button>
-            <button class="btn btn-back" onclick="window.location.href='/jeux/'">⬅️ Retour</button>
+            <button class="btn btn-back" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/'">⬅️ Retour</button>
         </div>
     </div>
-
-    <div class="celebration" id="celebration"></div>
 
     <div class="victory-modal" id="victory-modal">
         <div class="victory-content">
             <div class="victory-emoji">🎉</div>
-            <h2>Bravo Champion !</h2>
+            <h2>Bravo {{ enfant.prenom }} !</h2>
             <p style="font-size: 24px; color: #7f8c8d; margin: 20px 0;">
                 Tu connais les jours de la semaine !
             </p>
@@ -385,6 +351,147 @@
             <button class="btn btn-restart" onclick="closeModal()">🔄 Recommencer</button>
         </div>
     </div>
+
+    <!-- ✅ SCRIPT DE TRACKING AUTOMATIQUE -->
+    <script>
+    (function() {
+        'use strict';
+        const urlParts = window.location.pathname.split('/');
+        let enfantId = null;
+        let jeuName = 'jours_semaine';
+        
+        const enfantIndex = urlParts.indexOf('enfant');
+        if (enfantIndex !== -1 && urlParts[enfantIndex + 1]) {
+            enfantId = urlParts[enfantIndex + 1];
+        }
+        
+        if (!enfantId) {
+            const metaEnfant = document.querySelector('meta[name="enfant-id"]');
+            if (metaEnfant) enfantId = metaEnfant.content;
+        }
+        
+        if (!enfantId || !jeuName) {
+            console.log('ℹ️ Tracking désactivé');
+            return;
+        }
+        
+        console.log('🎮 Auto-tracking activé:', jeuName, 'pour enfant', enfantId);
+        
+        let activiteId = null;
+        let startTime = Date.now();
+        let hasStarted = false;
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        async function startActivity() {
+            if (hasStarted) return;
+            hasStarted = true;
+            
+            try {
+                const response = await fetch('/api/start-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        enfant_id: enfantId,
+                        jeu: jeuName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    activiteId = data.activite_id;
+                    console.log('✅ Activité démarrée automatiquement, ID:', activiteId);
+                }
+            } catch (error) {
+                console.error('❌ Erreur démarrage:', error);
+            }
+        }
+        
+        async function endActivity() {
+            if (!activiteId) return;
+            
+            try {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                const score = reussi ? 75 : 50;
+                
+                const response = await fetch('/api/end-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        activite_id: activiteId,
+                        score: score,
+                        reussi: reussi
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Activité terminée automatiquement');
+                }
+            } catch (error) {
+                console.error('❌ Erreur fin activité:', error);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startActivity);
+        } else {
+            startActivity();
+        }
+        
+        window.addEventListener('beforeunload', function() {
+            if (activiteId) {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                
+                const data = JSON.stringify({
+                    activite_id: activiteId,
+                    score: reussi ? 75 : 50,
+                    reussi: reussi
+                });
+                
+                navigator.sendBeacon('/api/end-activity/', data);
+            }
+        });
+        
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                console.log('⏱️ Inactivité détectée');
+                endActivity();
+            }, 30000);
+        }
+        
+        ['click', 'keypress', 'touchstart', 'mousemove'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, { passive: true });
+        });
+        
+        resetInactivityTimer();
+    })();
+    </script>
 
     <script>
         const daysData = [
@@ -408,7 +515,6 @@
             const container = document.getElementById('days-container');
             container.innerHTML = '';
             
-            // Mélanger les jours
             const shuffled = [...daysData].sort(() => Math.random() - 0.5);
             
             shuffled.forEach(day => {
@@ -426,11 +532,8 @@
             card.draggable = true;
             card.dataset.id = day.id;
             
-            card.innerHTML = `
-                <div class="day-name">${day.name}</div>
-            `;
+            card.innerHTML = `<div class="day-name">${day.name}</div>`;
 
-            // Événements de drag and drop
             card.addEventListener('dragstart', handleDragStart);
             card.addEventListener('dragend', handleDragEnd);
             card.addEventListener('dragover', handleDragOver);
@@ -450,7 +553,6 @@
         function handleDragEnd(e) {
             this.classList.remove('dragging');
             
-            // Retirer la classe drag-over de tous les éléments
             document.querySelectorAll('.day-card').forEach(card => {
                 card.classList.remove('drag-over');
             });
@@ -480,7 +582,6 @@
             }
 
             if (draggedElement !== this) {
-                // Échanger les positions
                 const container = document.getElementById('days-container');
                 const allCards = [...container.children];
                 const draggedIndex = allCards.indexOf(draggedElement);
@@ -508,10 +609,8 @@
 
             const feedback = document.getElementById('feedback');
             
-            // Vérifier si l'ordre est correct
             const isCorrect = currentOrder.every((id, index) => id === correctOrder[index]);
 
-            // Marquer les cartes
             cards.forEach((card, index) => {
                 card.classList.remove('correct-order', 'wrong-order');
                 if (parseInt(card.dataset.id) === correctOrder[index]) {
@@ -525,7 +624,6 @@
                 feedback.textContent = "Bravo ! C'est parfait ! 🎉";
                 feedback.className = 'feedback correct';
                 playSound('correct');
-                createConfetti();
                 
                 setTimeout(() => {
                     showVictory();
@@ -534,22 +632,6 @@
                 feedback.textContent = "Pas tout à fait ! Regarde les cartes avec le gros bord 💪";
                 feedback.className = 'feedback wrong';
                 playSound('wrong');
-            }
-        }
-
-        function createConfetti() {
-            const celebration = document.getElementById('celebration');
-            const colors = ['#ff6b6b', '#ff9f43', '#feca57', '#48dbfb', '#1dd1a1', '#a29bfe', '#fd79a8'];
-            
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDelay = Math.random() * 0.3 + 's';
-                celebration.appendChild(confetti);
-                
-                setTimeout(() => confetti.remove(), 3000);
             }
         }
 
@@ -580,8 +662,6 @@
         function showVictory() {
             document.getElementById('final-attempts').textContent = attempts;
             document.getElementById('victory-modal').style.display = 'flex';
-            createConfetti();
-            setTimeout(createConfetti, 500);
         }
 
         function closeModal() {

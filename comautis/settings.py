@@ -139,3 +139,26 @@ SECURE_CONTENT_TYPE_NOSNIFF = False
 print("✅ Django en MODE LOCAL - DEBUG activé")
 print(f"📁 Base de données: {DATABASES['default']['NAME']}")
 print(f"🌐 Serveur: http://localhost:8000/")
+
+# ============================================
+# 📧 CONFIGURATION EMAIL - GMAIL
+# ============================================
+# Ajoute ce code À LA FIN de ton fichier settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# ⚠️ REMPLACE PAR TON EMAIL GMAIL
+EMAIL_HOST_USER = 'yassoudz213p@gmail.com'
+
+# ⚠️ REMPLACE PAR LE CODE DE 16 CARACTÈRES (sans espaces!)
+EMAIL_HOST_PASSWORD = 'brnzyzszejvomlni'  # ← Le code que Google t'a donné
+
+# ⚠️ REMPLACE PAR TON EMAIL GMAIL (même que ci-dessus)
+DEFAULT_FROM_EMAIL = 'ComAutiste <yassoudz213p@gmail.com>'
+
+# ============================================
+# ✅ C'EST TOUT ! Sauvegarde le fichier.
+# ============================================

@@ -210,19 +210,6 @@
             color: #7f8c8d;
         }
 
-        .coming-soon {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-            color: #2c3e50;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-
         .fun-facts {
             background: white;
             padding: 40px;
@@ -294,7 +281,6 @@
         }
     </style>
 </head>
-<script src="/static/js/auto-tracker.js"></script>
 <body>
     <!-- Confettis animés -->
     <div class="confetti confetti1"></div>
@@ -327,13 +313,13 @@
 
         <!-- Grille d'activités -->
         <div class="activities-grid">
-            <div class="activity-card" onclick="window.location.href='/jeux/'">
+            <div class="activity-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/'">
                 <div class="activity-icon">🎮</div>
                 <h3>Jeux</h3>
                 <p>Découvre tous les jeux disponibles</p>
             </div>
 
-            <div class="activity-card" onclick="window.location.href='/sons/'">
+            <div class="activity-card" onclick="window.location.href='/enfant/{{ enfant.id }}/sons/'">
                 <div class="activity-icon">🔊</div>
                 <h3>Sons</h3>
                 <p>Nature, instruments, bruits</p>

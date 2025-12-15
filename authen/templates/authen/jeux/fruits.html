@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="enfant-id" content="{{ enfant.id }}">
     <title>Les Fruits - ComAutiste</title>
     <style>
         * {
@@ -274,7 +275,7 @@
 <body>
     <div class="game-container">
         <div class="game-header">
-            <a href="/jeux/" class="back-btn">← Retour</a>
+            <a href="/enfant/{{ enfant.id }}/jeux/" class="back-btn">← Retour</a>
             <div class="game-title">🍓 Les Fruits</div>
             <div class="score-display">Score: <span id="score">0</span> / <span id="total">6</span></div>
         </div>
@@ -302,16 +303,158 @@
 
         <div class="end-screen" id="endScreen">
             <div class="end-icon">🎉</div>
-            <h2>Bravo !</h2>
+            <h2>Bravo {{ enfant.prenom }} !</h2>
             <p style="font-size: 20px; color: #7f8c8d;">Tu connais bien les fruits !</p>
             <div class="final-score">Score final: <span id="finalScore">0</span> / 6</div>
             <button class="restart-btn" onclick="restartGame()">Rejouer</button>
-            <button class="restart-btn" style="background: #6c757d;" onclick="window.location.href='/jeux/'">
+            <button class="restart-btn" style="background: #6c757d;" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/'">
                 Autres jeux
             </button>
         </div>
     </div>
 
+    <!-- ✅ SCRIPT DE TRACKING AUTOMATIQUE -->
+    <script>
+    (function() {
+        'use strict';
+        const urlParts = window.location.pathname.split('/');
+        let enfantId = null;
+        let jeuName = 'fruits';
+        
+        const enfantIndex = urlParts.indexOf('enfant');
+        if (enfantIndex !== -1 && urlParts[enfantIndex + 1]) {
+            enfantId = urlParts[enfantIndex + 1];
+        }
+        
+        if (!enfantId) {
+            const metaEnfant = document.querySelector('meta[name="enfant-id"]');
+            if (metaEnfant) enfantId = metaEnfant.content;
+        }
+        
+        if (!enfantId || !jeuName) {
+            console.log('ℹ️ Tracking désactivé');
+            return;
+        }
+        
+        console.log('🎮 Auto-tracking activé:', jeuName, 'pour enfant', enfantId);
+        
+        let activiteId = null;
+        let startTime = Date.now();
+        let hasStarted = false;
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        async function startActivity() {
+            if (hasStarted) return;
+            hasStarted = true;
+            
+            try {
+                const response = await fetch('/api/start-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        enfant_id: enfantId,
+                        jeu: jeuName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    activiteId = data.activite_id;
+                    console.log('✅ Activité démarrée automatiquement, ID:', activiteId);
+                }
+            } catch (error) {
+                console.error('❌ Erreur démarrage:', error);
+            }
+        }
+        
+        async function endActivity() {
+            if (!activiteId) return;
+            
+            try {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                const score = reussi ? 75 : 50;
+                
+                const response = await fetch('/api/end-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        activite_id: activiteId,
+                        score: score,
+                        reussi: reussi
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Activité terminée automatiquement');
+                }
+            } catch (error) {
+                console.error('❌ Erreur fin activité:', error);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startActivity);
+        } else {
+            startActivity();
+        }
+        
+        window.addEventListener('beforeunload', function() {
+            if (activiteId) {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                
+                const data = JSON.stringify({
+                    activite_id: activiteId,
+                    score: reussi ? 75 : 50,
+                    reussi: reussi
+                });
+                
+                navigator.sendBeacon('/api/end-activity/', data);
+            }
+        });
+        
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                console.log('⏱️ Inactivité détectée');
+                endActivity();
+            }, 30000);
+        }
+        
+        ['click', 'keypress', 'touchstart', 'mousemove'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, { passive: true });
+        });
+        
+        resetInactivityTimer();
+    })();
+    </script>
+
+    <!-- SCRIPT DU JEU -->
     <script>
         const fruits = [
             { emoji: '🍎', name: 'Pomme' },
@@ -345,13 +488,10 @@
 
             const fruit = fruits[currentFruitIndex];
             
-            // Afficher l'emoji
             document.getElementById('fruitEmoji').textContent = fruit.emoji;
             
-            // Générer 4 réponses (1 bonne + 3 mauvaises)
             currentAnswers = [fruit.name];
             
-            // Ajouter 3 mauvaises réponses
             const wrongAnswers = allFruitNames.filter(name => name !== fruit.name);
             for (let i = 0; i < 3; i++) {
                 const randomIndex = Math.floor(Math.random() * wrongAnswers.length);
@@ -359,18 +499,15 @@
                 wrongAnswers.splice(randomIndex, 1);
             }
             
-            // Mélanger les réponses
             currentAnswers = currentAnswers.sort(() => Math.random() - 0.5);
             correctAnswerIndex = currentAnswers.indexOf(fruit.name);
             
-            // Afficher les réponses
             const buttons = document.querySelectorAll('.answer-btn');
             buttons.forEach((btn, index) => {
                 btn.textContent = currentAnswers[index];
                 btn.classList.remove('selected');
             });
             
-            // Réinitialiser
             selectedAnswer = null;
             document.getElementById('validateBtn').disabled = true;
             document.getElementById('feedback').style.display = 'none';

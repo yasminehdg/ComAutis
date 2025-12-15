@@ -166,10 +166,13 @@ def admin_user_detail(request, user_id):
 
 @admin_required
 def admin_approve_educator(request, user_id):
-    """Approuver un éducateur"""
+    """Approuver un éducateur + ENVOI EMAIL"""
+    from django.core.mail import send_mail
+    from django.conf import settings
+    
     user = get_object_or_404(User, id=user_id)
     
-    # Accepter GET et POST pour plus de flexibilité
+    # Activer le compte
     user.is_active = True
     user.save()
     
@@ -181,9 +184,52 @@ def admin_approve_educator(request, user_id):
         link='/dashboard/'
     )
     
-    messages.success(request, f"✅ L'éducateur {user.username} a été approuvé !")
-    return redirect('admin_dashboard')
+    # 📧 ENVOI D'EMAIL
+    try:
+        subject = "✅ Votre compte ComAutiste a été approuvé !"
+        message = f"""
+Bonjour {user.first_name or user.username},
 
+Bonne nouvelle ! 🎉
+
+Votre compte éducateur sur ComAutiste a été approuvé par notre équipe.
+
+Vous pouvez maintenant vous connecter à votre espace :
+👉 http://localhost:8000/login/
+
+Vos identifiants :
+📧 Nom d'utilisateur : {user.username}
+🔐 Mot de passe : celui que vous avez choisi lors de l'inscription
+
+Une fois connecté, vous pourrez :
+✅ Suivre les enfants qui vous sont assignés
+✅ Consulter leurs activités et progrès
+✅ Ajouter des observations
+✅ Accéder aux ressources pédagogiques
+
+Si vous avez des questions, n'hésitez pas à nous contacter.
+
+Bienvenue dans l'équipe ComAutiste ! 🌟
+
+---
+L'équipe ComAutiste
+support@comautiste.fr
+        """
+        
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        
+        messages.success(request, f"✅ L'éducateur {user.username} a été approuvé et l'email a été envoyé !")
+        
+    except Exception as e:
+        messages.warning(request, f"⚠️ {user.username} approuvé mais erreur d'envoi d'email : {str(e)}")
+    
+    return redirect('admin_dashboard')
 
 @admin_required
 def admin_deactivate_user(request, user_id):

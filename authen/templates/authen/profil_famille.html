@@ -317,6 +317,7 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -331,6 +332,7 @@
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            min-width: 140px;
         }
 
         .btn-edit {
@@ -351,6 +353,31 @@
         .btn-delete:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        /* 🆕 NOUVEAU : Bouton Observations */
+        .btn-observations {
+            background: linear-gradient(135deg, #a8e6cf 0%, #27ae60 100%);
+            color: white;
+            position: relative;
+        }
+
+        .btn-observations:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .obs-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
         }
 
         .empty-state {
@@ -400,6 +427,17 @@
             line-height: 1.6;
         }
 
+        .age-badge {
+            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(116, 185, 255, 0.3);
+        }
+
         @media (max-width: 768px) {
             nav {
                 flex-direction: column;
@@ -442,17 +480,14 @@
                 width: 100%;
                 justify-content: center;
             }
-        }
 
-        .age-badge {
-            background: linear-gradient(135deg, #a8e6cf 0%, #74b9ff 100%);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            display: inline-block;
-            box-shadow: 0 3px 10px rgba(116, 185, 255, 0.3);
+            .child-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -572,7 +607,15 @@
 
                         <div class="child-actions">
                             <a href="{% url 'modifier_enfant' enfant.id %}" class="btn btn-edit">✏️ Modifier</a>
-                            <a href="{% url 'supprimer_enfant' enfant.id %}" class="btn btn-delete">🗑️ Supprimer</a>
+                            <a href="{% url 'supprimer_enfant' enfant.id %}" class="btn btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer {{ enfant.prenom }} ?')">🗑️ Supprimer</a>
+                            
+                            <!-- 🆕 NOUVEAU : Bouton Observations -->
+                            <a href="{% url 'parent_voir_observations' enfant.id %}" class="btn btn-observations" style="position: relative;">
+                                📝 Observations
+                                {% if enfant.nb_observations > 0 %}
+                                <span class="obs-badge">{{ enfant.nb_observations }}</span>
+                                {% endif %}
+                            </a>
                         </div>
                     </div>
                     {% endfor %}

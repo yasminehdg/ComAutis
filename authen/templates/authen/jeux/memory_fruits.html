@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="enfant-id" content="{{ enfant.id }}">
     <title>🍎 Memory Fruits - ComAutiste</title>
     <style>
         * {
@@ -49,32 +50,6 @@
             color: #7f8c8d;
         }
 
-        .game-info {
-            display: flex;
-            justify-content: space-around;
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .info-item {
-            text-align: center;
-        }
-
-        .info-label {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
         .difficulty-selector {
             background: white;
             padding: 20px;
@@ -119,6 +94,32 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
         }
 
         #game-board {
@@ -356,14 +357,14 @@
 
         <div class="controls">
             <button class="btn btn-restart" onclick="startGame()">🔄 Nouvelle Partie</button>
-            <button class="btn btn-back" onclick="window.location.href='/jeux/'">⬅️ Retour</button>
+            <button class="btn btn-back" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/'">⬅️ Retour</button>
         </div>
     </div>
 
     <div class="victory-modal" id="victory-modal">
         <div class="victory-content">
             <div class="victory-emoji">🎉</div>
-            <h2>Bravo !</h2>
+            <h2>Bravo {{ enfant.prenom }} !</h2>
             <p>Tu as trouvé toutes les paires !</p>
             <div class="stars" id="stars"></div>
             <p><strong>⏱️ Temps :</strong> <span id="final-time"></span></p>
@@ -372,8 +373,148 @@
         </div>
     </div>
 
+    <!-- ✅ SCRIPT DE TRACKING AUTOMATIQUE -->
     <script>
-        // Chemins des images de fruits
+    (function() {
+        'use strict';
+        const urlParts = window.location.pathname.split('/');
+        let enfantId = null;
+        let jeuName = 'memory_fruits';
+        
+        const enfantIndex = urlParts.indexOf('enfant');
+        if (enfantIndex !== -1 && urlParts[enfantIndex + 1]) {
+            enfantId = urlParts[enfantIndex + 1];
+        }
+        
+        if (!enfantId) {
+            const metaEnfant = document.querySelector('meta[name="enfant-id"]');
+            if (metaEnfant) enfantId = metaEnfant.content;
+        }
+        
+        if (!enfantId || !jeuName) {
+            console.log('ℹ️ Tracking désactivé');
+            return;
+        }
+        
+        console.log('🎮 Auto-tracking activé:', jeuName, 'pour enfant', enfantId);
+        
+        let activiteId = null;
+        let startTime = Date.now();
+        let hasStarted = false;
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        async function startActivity() {
+            if (hasStarted) return;
+            hasStarted = true;
+            
+            try {
+                const response = await fetch('/api/start-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        enfant_id: enfantId,
+                        jeu: jeuName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    activiteId = data.activite_id;
+                    console.log('✅ Activité démarrée automatiquement, ID:', activiteId);
+                }
+            } catch (error) {
+                console.error('❌ Erreur démarrage:', error);
+            }
+        }
+        
+        async function endActivity() {
+            if (!activiteId) return;
+            
+            try {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                const score = reussi ? 75 : 50;
+                
+                const response = await fetch('/api/end-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        activite_id: activiteId,
+                        score: score,
+                        reussi: reussi
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Activité terminée automatiquement');
+                }
+            } catch (error) {
+                console.error('❌ Erreur fin activité:', error);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startActivity);
+        } else {
+            startActivity();
+        }
+        
+        window.addEventListener('beforeunload', function() {
+            if (activiteId) {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                
+                const data = JSON.stringify({
+                    activite_id: activiteId,
+                    score: reussi ? 75 : 50,
+                    reussi: reussi
+                });
+                
+                navigator.sendBeacon('/api/end-activity/', data);
+            }
+        });
+        
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                console.log('⏱️ Inactivité détectée');
+                endActivity();
+            }, 30000);
+        }
+        
+        ['click', 'keypress', 'touchstart', 'mousemove'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, { passive: true });
+        });
+        
+        resetInactivityTimer();
+    })();
+    </script>
+
+    <script>
         const fruitImages = [
             '/static/images/jeux/fruits/apple.png',
             '/static/images/jeux/fruits/banana.png',

@@ -1,9 +1,10 @@
 {% load static %}
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="enfant-id" content="{{ enfant.id }}">
     <title>🎮 Tous les Jeux - ComAutiste</title>
     <style>
         * {
@@ -230,7 +231,7 @@
 </head>
 <body>
     <div class="container">
-        <a href="/dashboard/" class="back-btn">⬅️ Retour au Dashboard</a>
+        <a href="/enfant/{{ enfant.id }}/dashboard/" class="back-btn">⬅️ Retour au Dashboard</a>
 
         <div class="header">
             <h1>🎮 Tous les Jeux 🎮</h1>
@@ -242,7 +243,7 @@
             <div class="category-section">
                 <h2 class="category-title">🧠 Jeux de Mémoire</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='/jeux/memory/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/memory/'">
                         <span class="badge-new">NOUVEAU</span>
                         <div class="game-icon">🎴</div>
                         <h3>Memory Animaux</h3>
@@ -250,14 +251,14 @@
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/memory-fruits/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/memory-fruits/'">
                         <div class="game-icon">🍎</div>
                         <h3>Memory Fruits</h3>
                         <p>Trouve les paires de fruits</p>
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/memory-couleurs/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/memory-couleurs/'">
                         <div class="game-icon">🎨</div>
                         <h3>Memory Couleurs</h3>
                         <p>Trouve les paires de couleurs</p>
@@ -270,14 +271,14 @@
             <div class="category-section">
                 <h2 class="category-title">🔢 Apprendre les Nombres</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='/jeux/compter-3/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/compter-3/'">
                         <div class="game-icon">1️⃣</div>
                         <h3>Compter jusqu'à 3</h3>
                         <p>Apprends à compter 1, 2, 3</p>
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/compter-10/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/compter-10/'">
                         <div class="game-icon">🔟</div>
                         <h3>Compter jusqu'à 10</h3>
                         <p>Compte les objets de 1 à 10</p>
@@ -298,21 +299,21 @@
             <div class="category-section">
                 <h2 class="category-title">🎨 Concepts de Base</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='/jeux/couleurs/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/couleurs/'">
                         <div class="game-icon">🌈</div>
                         <h3>Les Couleurs</h3>
                         <p>Apprends toutes les couleurs</p>
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/emotions/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/emotions/'">
                         <div class="game-icon">😊</div>
                         <h3>Les Émotions</h3>
                         <p>Reconnais les émotions</p>
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/animaux/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/animaux/'">
                         <div class="game-icon">🐘</div>
                         <h3>Les Animaux</h3>
                         <p>Découvre les animaux</p>
@@ -325,14 +326,14 @@
             <div class="category-section">
                 <h2 class="category-title">📅 Le Quotidien</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='/jeux/jours-semaine/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/jours-semaine/'">
                         <div class="game-icon">📆</div>
                         <h3>Jours de la Semaine</h3>
                         <p>Lundi, Mardi, Mercredi...</p>
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/saisons/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/saisons/'">
                         <div class="game-icon">🍂</div>
                         <h3>Les Saisons</h3>
                         <p>Printemps, Été, Automne, Hiver</p>
@@ -347,7 +348,7 @@
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/fruits/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/fruits/'">
                         <div class="game-icon">🍓</div>
                         <h3>Les Fruits</h3>
                         <p>Découvre les fruits</p>
@@ -360,14 +361,14 @@
             <div class="category-section">
                 <h2 class="category-title">🎯 Jeux d'Adresse</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='{% url 'jeu_puzzle' %}'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/puzzle/'">
                         <div class="game-icon">🧩</div>
                         <h3>Puzzle</h3>
                         <p>Assemble les pièces</p>
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/jeux/labyrinthe/'">
+                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/labyrinthe/'">
                         <div class="game-icon">🌀</div>
                         <h3>Labyrinthe</h3>
                         <p>Trouve le chemin</p>
@@ -385,5 +386,8 @@
             </div>
         </div>
     </div>
+
+    <!-- ✅ SCRIPT DE TRACKING AUTOMATIQUE -->
+    <script src="/static/js/auto-tracker.js"></script>
 </body>
 </html>

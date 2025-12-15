@@ -32,7 +32,7 @@ def end_activity(activite_id, score=None, reussi=True):
 
 def get_enfant_stats(enfant):
     """
-    Récupère les statistiques complètes d'un enfant
+    Récupère les statistiques complètes d'un enfant avec calculs sécurisés
     """
     # Toutes les activités de l'enfant
     activites = Activite.objects.filter(enfant=enfant)
@@ -52,6 +52,19 @@ def get_enfant_stats(enfant):
     # Calculer le total d'activités
     total_count = activites.count()
     
+    # ✅ Calcul sécurisé du temps passé
+    def calcul_temps_securise(queryset):
+        """Calcule le temps total en minutes de façon sécurisée"""
+        temps_total = 0
+        for act in queryset:
+            if act.duree_minutes and act.duree_minutes > 0:
+                temps_total += act.duree_minutes
+            elif act.date_fin and act.date_debut and act.date_fin > act.date_debut:
+                duree = (act.date_fin - act.date_debut).total_seconds() / 60
+                if 0 < duree < 1440:  # Entre 0 et 24h
+                    temps_total += duree
+        return int(temps_total)
+    
     # Stats globales
     stats = {
         # Nombres d'activités
@@ -60,26 +73,31 @@ def get_enfant_stats(enfant):
         'activites_week': activites_week.count(),
         'activites_month': activites_month.count(),
         
-        # Temps passé
-        'temps_total_minutes': activites.aggregate(Sum('duree_minutes'))['duree_minutes__sum'] or 0,
-        'temps_semaine_minutes': activites_week.aggregate(Sum('duree_minutes'))['duree_minutes__sum'] or 0,
-        'temps_aujourd_hui_minutes': activites_today.aggregate(Sum('duree_minutes'))['duree_minutes__sum'] or 0,
-        'temps_mois_minutes': activites_month.aggregate(Sum('duree_minutes'))['duree_minutes__sum'] or 0,
+        # Temps passé (en minutes)
+        'temps_total_minutes': calcul_temps_securise(activites),
+        'temps_semaine_minutes': calcul_temps_securise(activites_week),
+        'temps_aujourd_hui_minutes': calcul_temps_securise(activites_today),
+        'temps_mois_minutes': calcul_temps_securise(activites_month),
         
         # Temps moyen par session
-        'temps_moyen_minutes': activites.aggregate(Avg('duree_minutes'))['duree_minutes__avg'] or 0,
+        'temps_moyen_minutes': int(calcul_temps_securise(activites) / max(total_count, 1)),
         
-        # Jeux favoris (top 3)
-        'jeux_favoris': list(activites.values('jeu').annotate(
-            count=Count('jeu'),
-            nom_jeu=Count('jeu')
-        ).order_by('-count')[:3]),
+        # Jeux favoris (top 3) avec noms lisibles
+        'jeux_favoris': [
+            {
+                'jeu': dict(Activite.JEUX_CHOICES).get(j['jeu'], j['jeu']),
+                'count': j['count']
+            }
+            for j in activites.values('jeu').annotate(
+                count=Count('jeu')
+            ).order_by('-count')[:3]
+        ],
         
         # Taux de réussite
         'taux_reussite': round((activites.filter(reussi=True).count() * 100 / max(total_count, 1)), 1),
         
         # Score moyen (si applicable)
-        'score_moyen': activites.filter(score__isnull=False).aggregate(Avg('score'))['score__avg'] or 0,
+        'score_moyen': int(activites.filter(score__isnull=False).aggregate(Avg('score'))['score__avg'] or 0),
         
         # Activité récente (dernier jeu joué)
         'derniere_activite': activites.order_by('-date_debut').first(),
@@ -93,7 +111,7 @@ def get_enfant_stats(enfant):
 def get_activites_par_jour(enfant, jours=7):
     """
     Retourne le nombre d'activités par jour sur les X derniers jours
-    Format : [{'jour': '2025-01-10', 'count': 5}, ...]
+    Format : [{'jour': '15/12', 'date': date_obj, 'count': 5}, ...]
     """
     debut = timezone.now() - timedelta(days=jours)
     
@@ -106,27 +124,50 @@ def get_activites_par_jour(enfant, jours=7):
         count=Count('id')
     ).order_by('jour')
     
-    # Convertir en liste avec dates formatées
+    # ✅ Créer un dictionnaire avec tous les jours (même ceux sans activité)
     result = []
-    for item in activites_par_jour:
+    date_actuelle = debut.date()
+    activites_dict = {item['jour']: item['count'] for item in activites_par_jour}
+    
+    for i in range(jours):
+        jour_date = date_actuelle + timedelta(days=i)
         result.append({
-            'jour': item['jour'].strftime('%d/%m'),
-            'date': item['jour'],
-            'count': item['count']
+            'jour': jour_date.strftime('%d/%m'),
+            'date': jour_date,
+            'count': activites_dict.get(jour_date, 0)  # 0 si aucune activité ce jour
         })
     
     return result
 
 def get_temps_par_jeu(enfant, limit=5):
     """
-    Retourne le temps passé par jeu (top X jeux)
+    Retourne le temps passé par jeu (top X jeux) de façon sécurisée
     """
-    temps_par_jeu = Activite.objects.filter(enfant=enfant).values('jeu').annotate(
-        temps_total=Sum('duree_minutes'),
-        nb_sessions=Count('id')
-    ).order_by('-temps_total')[:limit]
+    activites = Activite.objects.filter(enfant=enfant)
     
-    return list(temps_par_jeu)
+    temps_par_jeu = {}
+    for act in activites:
+        jeu = act.jeu
+        if jeu not in temps_par_jeu:
+            temps_par_jeu[jeu] = {'temps_total': 0, 'nb_sessions': 0}
+        
+        # Calcul sécurisé du temps
+        if act.duree_minutes and act.duree_minutes > 0:
+            temps_par_jeu[jeu]['temps_total'] += act.duree_minutes
+        elif act.date_fin and act.date_debut and act.date_fin > act.date_debut:
+            duree = (act.date_fin - act.date_debut).total_seconds() / 60
+            if 0 < duree < 1440:
+                temps_par_jeu[jeu]['temps_total'] += int(duree)
+        
+        temps_par_jeu[jeu]['nb_sessions'] += 1
+    
+    # Trier et limiter
+    result = [
+        {'jeu': jeu, 'temps_total': data['temps_total'], 'nb_sessions': data['nb_sessions']}
+        for jeu, data in sorted(temps_par_jeu.items(), key=lambda x: x[1]['temps_total'], reverse=True)[:limit]
+    ]
+    
+    return result
 
 def calculer_streak(enfant):
     """

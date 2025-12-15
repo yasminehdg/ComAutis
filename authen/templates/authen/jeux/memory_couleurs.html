@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="enfant-id" content="{{ enfant.id }}">
     <title>Memory Couleurs - ComAutiste</title>
     <style>
         * {
@@ -225,7 +226,7 @@
 <body>
     <div class="game-container">
         <div class="game-header">
-            <a href="/jeux/" class="back-btn">← Retour</a>
+            <a href="/enfant/{{ enfant.id }}/jeux/" class="back-btn">← Retour</a>
             <div class="game-title">🎨 Memory Couleurs</div>
             <div class="stats">
                 <div class="stat-item">Coups: <span id="moves">0</span></div>
@@ -239,14 +240,158 @@
 
         <div class="end-screen" id="endScreen">
             <div class="end-icon">🎉</div>
-            <h2>Félicitations !</h2>
+            <h2>Félicitations {{ enfant.prenom }} !</h2>
             <p style="font-size: 20px; color: #7f8c8d;">Tu as trouvé toutes les paires !</p>
             <div class="final-stats">
                 Nombre de coups: <span id="finalMoves">0</span>
             </div>
             <button class="restart-btn" onclick="restartGame()">Rejouer</button>
+            <button class="restart-btn" style="background: #6c757d;" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/'">
+                Autres jeux
+            </button>
         </div>
     </div>
+
+    <!-- ✅ SCRIPT DE TRACKING AUTOMATIQUE -->
+    <script>
+    (function() {
+        'use strict';
+        const urlParts = window.location.pathname.split('/');
+        let enfantId = null;
+        let jeuName = 'memory_couleurs';
+        
+        const enfantIndex = urlParts.indexOf('enfant');
+        if (enfantIndex !== -1 && urlParts[enfantIndex + 1]) {
+            enfantId = urlParts[enfantIndex + 1];
+        }
+        
+        if (!enfantId) {
+            const metaEnfant = document.querySelector('meta[name="enfant-id"]');
+            if (metaEnfant) enfantId = metaEnfant.content;
+        }
+        
+        if (!enfantId || !jeuName) {
+            console.log('ℹ️ Tracking désactivé');
+            return;
+        }
+        
+        console.log('🎮 Auto-tracking activé:', jeuName, 'pour enfant', enfantId);
+        
+        let activiteId = null;
+        let startTime = Date.now();
+        let hasStarted = false;
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        async function startActivity() {
+            if (hasStarted) return;
+            hasStarted = true;
+            
+            try {
+                const response = await fetch('/api/start-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        enfant_id: enfantId,
+                        jeu: jeuName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    activiteId = data.activite_id;
+                    console.log('✅ Activité démarrée automatiquement, ID:', activiteId);
+                }
+            } catch (error) {
+                console.error('❌ Erreur démarrage:', error);
+            }
+        }
+        
+        async function endActivity() {
+            if (!activiteId) return;
+            
+            try {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                const score = reussi ? 75 : 50;
+                
+                const response = await fetch('/api/end-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        activite_id: activiteId,
+                        score: score,
+                        reussi: reussi
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Activité terminée automatiquement');
+                }
+            } catch (error) {
+                console.error('❌ Erreur fin activité:', error);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startActivity);
+        } else {
+            startActivity();
+        }
+        
+        window.addEventListener('beforeunload', function() {
+            if (activiteId) {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                
+                const data = JSON.stringify({
+                    activite_id: activiteId,
+                    score: reussi ? 75 : 50,
+                    reussi: reussi
+                });
+                
+                navigator.sendBeacon('/api/end-activity/', data);
+            }
+        });
+        
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                console.log('⏱️ Inactivité détectée');
+                endActivity();
+            }, 30000);
+        }
+        
+        ['click', 'keypress', 'touchstart', 'mousemove'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, { passive: true });
+        });
+        
+        resetInactivityTimer();
+    })();
+    </script>
 
     <script>
         const colors = [
@@ -265,12 +410,9 @@
         let canFlip = true;
 
         function initGame() {
-            // Créer les paires
             cards = [...colors, ...colors];
-            // Mélanger
             cards = cards.sort(() => Math.random() - 0.5);
             
-            // Créer les cartes
             const grid = document.getElementById('cardsGrid');
             grid.innerHTML = '';
             
@@ -288,7 +430,6 @@
                 grid.appendChild(card);
             });
             
-            // Réinitialiser
             flippedCards = [];
             matchedPairs = 0;
             moves = 0;
@@ -301,12 +442,10 @@
             
             const card = document.querySelector(`[data-index="${index}"]`);
             
-            // Empêcher de cliquer sur une carte déjà retournée
             if (card.classList.contains('flipped') || card.classList.contains('matched')) {
                 return;
             }
             
-            // Empêcher de retourner plus de 2 cartes
             if (flippedCards.length >= 2) return;
             
             card.classList.add('flipped');
@@ -325,7 +464,6 @@
             
             setTimeout(() => {
                 if (card1.color.name === card2.color.name) {
-                    // C'est une paire !
                     document.querySelector(`[data-index="${card1.index}"]`).classList.add('matched');
                     document.querySelector(`[data-index="${card2.index}"]`).classList.add('matched');
                     matchedPairs++;
@@ -335,7 +473,6 @@
                         setTimeout(showEndScreen, 500);
                     }
                 } else {
-                    // Pas une paire, retourner les cartes
                     document.querySelector(`[data-index="${card1.index}"]`).classList.remove('flipped');
                     document.querySelector(`[data-index="${card2.index}"]`).classList.remove('flipped');
                 }

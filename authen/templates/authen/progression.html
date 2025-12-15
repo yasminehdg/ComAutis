@@ -192,6 +192,7 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 12px;
+            height: 200px;
         }
 
         .chart-title {
@@ -383,7 +384,7 @@
                 {% if item.graphique_data %}
                 <div class="chart-container">
                     <div class="chart-title">📈 Activités des 7 derniers jours</div>
-                    <canvas id="chart-{{ item.enfant.id }}" height="150"></canvas>
+                    <canvas id="chart-{{ item.enfant.id }}"></canvas>
                 </div>
                 {% endif %}
 
@@ -402,7 +403,7 @@
 
                 <!-- Boutons d'action -->
                 <div class="action-buttons">
-                    <a href="/dashboard-enfant/{{ item.enfant.id }}/" class="btn btn-primary">
+                    <a href="/enfant/{{ item.enfant.id }}/dashboard/" class="btn btn-primary">
                         🎮 Jouer
                     </a>
                     <a href="/profil-famille/" class="btn btn-secondary">
@@ -423,55 +424,60 @@
     </div>
 
     <script>
-        // Créer les graphiques pour chaque enfant
+        // ✅ CORRECTION : Créer les graphiques proprement avec données Django
         {% for item in enfants_avec_stats %}
         {% if item.graphique_data %}
         (function() {
             const ctx = document.getElementById('chart-{{ item.enfant.id }}');
-            if (ctx) {
-                const data = {{ item.graphique_data|safe }};
-                
-                const labels = data.map(d => d.jour);
-                const values = data.map(d => d.count);
-                
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Activités',
-                            data: values,
-                            borderColor: '#74b9ff',
-                            backgroundColor: 'rgba(116, 185, 255, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#74b9ff',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
-                        }]
+            if (!ctx) return;
+            
+            // ✅ Construire les données directement depuis Django
+            const labels = [
+                {% for d in item.graphique_data %}'{{ d.jour }}'{% if not forloop.last %},{% endif %}{% endfor %}
+            ];
+            const values = [
+                {% for d in item.graphique_data %}{{ d.count }}{% if not forloop.last %},{% endif %}{% endfor %}
+            ];
+            
+            // ✅ Créer le graphique une seule fois
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Activités',
+                        data: values,
+                        borderColor: '#74b9ff',
+                        backgroundColor: 'rgba(116, 185, 255, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#74b9ff',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                precision: 0
                             }
                         }
                     }
-                });
-            }
+                }
+            });
         })();
         {% endif %}
         {% endfor %}

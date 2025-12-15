@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="enfant-id" content="{{ enfant.id }}">
     <title>🌀 Labyrinthe - ComAutiste</title>
     <style>
         * {
@@ -372,14 +373,14 @@
         <div class="controls">
             <button class="btn btn-restart" onclick="generateNewMaze()">🔄 Nouveau Labyrinthe</button>
             <button class="btn btn-hint" onclick="showHint()">💡 Indice</button>
-            <button class="btn btn-back" onclick="window.history.back()">⬅️ Retour</button>
+            <button class="btn btn-back" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/'">⬅️ Retour</button>
         </div>
     </div>
 
     <div class="victory-modal" id="victory-modal">
         <div class="victory-content">
             <div class="victory-emoji">🎉</div>
-            <h2>Bravo !</h2>
+            <h2>Bravo {{ enfant.prenom }} !</h2>
             <p>Tu as trouvé la sortie !</p>
             <div class="stars" id="stars"></div>
             <p><strong>⏱️ Temps :</strong> <span id="final-time"></span></p>
@@ -387,6 +388,147 @@
             <button class="btn btn-restart" onclick="nextLevel()">➡️ Niveau Suivant</button>
         </div>
     </div>
+
+    <!-- ✅ SCRIPT DE TRACKING AUTOMATIQUE -->
+    <script>
+    (function() {
+        'use strict';
+        const urlParts = window.location.pathname.split('/');
+        let enfantId = null;
+        let jeuName = 'labyrinthe';
+        
+        const enfantIndex = urlParts.indexOf('enfant');
+        if (enfantIndex !== -1 && urlParts[enfantIndex + 1]) {
+            enfantId = urlParts[enfantIndex + 1];
+        }
+        
+        if (!enfantId) {
+            const metaEnfant = document.querySelector('meta[name="enfant-id"]');
+            if (metaEnfant) enfantId = metaEnfant.content;
+        }
+        
+        if (!enfantId || !jeuName) {
+            console.log('ℹ️ Tracking désactivé');
+            return;
+        }
+        
+        console.log('🎮 Auto-tracking activé:', jeuName, 'pour enfant', enfantId);
+        
+        let activiteId = null;
+        let startTime = Date.now();
+        let hasStarted = false;
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        async function startActivity() {
+            if (hasStarted) return;
+            hasStarted = true;
+            
+            try {
+                const response = await fetch('/api/start-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        enfant_id: enfantId,
+                        jeu: jeuName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    activiteId = data.activite_id;
+                    console.log('✅ Activité démarrée automatiquement, ID:', activiteId);
+                }
+            } catch (error) {
+                console.error('❌ Erreur démarrage:', error);
+            }
+        }
+        
+        async function endActivity() {
+            if (!activiteId) return;
+            
+            try {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                const score = reussi ? 75 : 50;
+                
+                const response = await fetch('/api/end-activity/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        activite_id: activiteId,
+                        score: score,
+                        reussi: reussi
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Activité terminée automatiquement');
+                }
+            } catch (error) {
+                console.error('❌ Erreur fin activité:', error);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startActivity);
+        } else {
+            startActivity();
+        }
+        
+        window.addEventListener('beforeunload', function() {
+            if (activiteId) {
+                const durationMinutes = Math.round((Date.now() - startTime) / 1000 / 60);
+                const reussi = durationMinutes >= 2;
+                
+                const data = JSON.stringify({
+                    activite_id: activiteId,
+                    score: reussi ? 75 : 50,
+                    reussi: reussi
+                });
+                
+                navigator.sendBeacon('/api/end-activity/', data);
+            }
+        });
+        
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                console.log('⏱️ Inactivité détectée');
+                endActivity();
+            }, 30000);
+        }
+        
+        ['click', 'keypress', 'touchstart', 'mousemove'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, { passive: true });
+        });
+        
+        resetInactivityTimer();
+    })();
+    </script>
 
     <script>
         const canvas = document.getElementById('maze-canvas');
@@ -404,7 +546,6 @@
         let path = [];
         let showingHint = false;
 
-        // Couleurs
         const COLORS = {
             wall: '#2c3e50',
             path: '#ecf0f1',
@@ -414,14 +555,12 @@
             visited: '#e8f4f8'
         };
 
-        // Initialisation
         function init() {
             canvas.width = mazeSize * cellSize;
             canvas.height = mazeSize * cellSize;
             generateNewMaze();
         }
 
-        // Générer un nouveau labyrinthe
         function generateNewMaze() {
             steps = 0;
             timer = 0;
@@ -434,16 +573,14 @@
                 document.getElementById('time').textContent = timer + 's';
             }, 1000);
 
-            // Créer la grille
             maze = [];
             for (let y = 0; y < mazeSize; y++) {
                 maze[y] = [];
                 for (let x = 0; x < mazeSize; x++) {
-                    maze[y][x] = { visited: false, walls: [true, true, true, true] }; // haut, droite, bas, gauche
+                    maze[y][x] = { visited: false, walls: [true, true, true, true] };
                 }
             }
 
-            // Générer le labyrinthe avec l'algorithme de Prim
             const start = { x: 0, y: 0 };
             maze[start.y][start.x].visited = true;
             const walls = getWalls(start.x, start.y);
@@ -456,7 +593,6 @@
                 const [x1, y1, x2, y2, dir] = wall;
 
                 if (!maze[y2][x2].visited) {
-                    // Supprimer les murs
                     maze[y1][x1].walls[dir] = false;
                     maze[y2][x2].walls[(dir + 2) % 4] = false;
 
@@ -465,25 +601,20 @@
                 }
             }
 
-            // Position du joueur (en haut à gauche)
             player = { x: 0, y: 0 };
-            
-            // Position de la sortie (en bas à droite)
             exit = { x: mazeSize - 1, y: mazeSize - 1 };
 
-            // Calculer le chemin optimal
             calculatePath();
-
             draw();
         }
 
         function getWalls(x, y) {
             const walls = [];
             const directions = [
-                [0, -1, 0], // haut
-                [1, 0, 1],  // droite
-                [0, 1, 2],  // bas
-                [-1, 0, 3]  // gauche
+                [0, -1, 0],
+                [1, 0, 1],
+                [0, 1, 2],
+                [-1, 0, 3]
             ];
 
             for (const [dx, dy, dir] of directions) {
@@ -500,7 +631,6 @@
             return walls;
         }
 
-        // Calculer le chemin optimal (A*)
         function calculatePath() {
             const openSet = [{ x: player.x, y: player.y, g: 0, h: 0, parent: null }];
             const closedSet = new Set();
@@ -545,10 +675,10 @@
         function getNeighbors(x, y) {
             const neighbors = [];
             const directions = [
-                [0, -1, 0], // haut
-                [1, 0, 1],  // droite
-                [0, 1, 2],  // bas
-                [-1, 0, 3]  // gauche
+                [0, -1, 0],
+                [1, 0, 1],
+                [0, 1, 2],
+                [-1, 0, 3]
             ];
 
             for (const [dx, dy, dir] of directions) {
@@ -564,12 +694,10 @@
             return neighbors;
         }
 
-        // Dessiner le labyrinthe
         function draw() {
             ctx.fillStyle = COLORS.path;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Dessiner les murs
             ctx.strokeStyle = COLORS.wall;
             ctx.lineWidth = 3;
 
@@ -580,19 +708,19 @@
                     const py = y * cellSize;
 
                     ctx.beginPath();
-                    if (cell.walls[0]) { // haut
+                    if (cell.walls[0]) {
                         ctx.moveTo(px, py);
                         ctx.lineTo(px + cellSize, py);
                     }
-                    if (cell.walls[1]) { // droite
+                    if (cell.walls[1]) {
                         ctx.moveTo(px + cellSize, py);
                         ctx.lineTo(px + cellSize, py + cellSize);
                     }
-                    if (cell.walls[2]) { // bas
+                    if (cell.walls[2]) {
                         ctx.moveTo(px, py + cellSize);
                         ctx.lineTo(px + cellSize, py + cellSize);
                     }
-                    if (cell.walls[3]) { // gauche
+                    if (cell.walls[3]) {
                         ctx.moveTo(px, py);
                         ctx.lineTo(px, py + cellSize);
                     }
@@ -600,7 +728,6 @@
                 }
             }
 
-            // Dessiner l'indice si actif
             if (showingHint && path.length > 1) {
                 ctx.strokeStyle = COLORS.hint;
                 ctx.lineWidth = 5;
@@ -619,7 +746,6 @@
                 ctx.stroke();
             }
 
-            // Dessiner la sortie
             ctx.fillStyle = COLORS.exit;
             ctx.beginPath();
             ctx.arc(
@@ -636,7 +762,6 @@
             ctx.textBaseline = 'middle';
             ctx.fillText('🏁', exit.x * cellSize + cellSize / 2, exit.y * cellSize + cellSize / 2);
 
-            // Dessiner le joueur
             ctx.fillStyle = COLORS.player;
             ctx.beginPath();
             ctx.arc(
@@ -651,7 +776,6 @@
             ctx.fillText('😊', player.x * cellSize + cellSize / 2, player.y * cellSize + cellSize / 2);
         }
 
-        // Déplacer le joueur
         function movePlayer(direction) {
             const directions = {
                 up: [0, -1, 0],
@@ -679,7 +803,6 @@
             }
         }
 
-        // Contrôles clavier
         document.addEventListener('keydown', (e) => {
             const keyMap = {
                 'ArrowUp': 'up',
@@ -702,7 +825,6 @@
             }
         });
 
-        // Afficher un indice
         function showHint() {
             showingHint = true;
             draw();
@@ -712,7 +834,6 @@
             }, 3000);
         }
 
-        // Afficher la victoire
         function showVictory() {
             let stars = '⭐⭐⭐';
             const optimalSteps = path.length - 1;
@@ -726,7 +847,6 @@
             document.getElementById('victory-modal').style.display = 'flex';
         }
 
-        // Niveau suivant
         function nextLevel() {
             level++;
             document.getElementById('level').textContent = level;
@@ -734,7 +854,6 @@
             generateNewMaze();
         }
 
-        // Changer la difficulté
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
@@ -747,7 +866,6 @@
             });
         });
 
-        // Démarrer le jeu
         init();
     </script>
 </body>

@@ -137,7 +137,6 @@ class Notification(models.Model):
         return f"{self.user.username} - {self.get_notification_type_display()}"
 
 
-# ========== NOUVEAU MODÈLE ACTIVITÉ ==========
 class Activite(models.Model):
     """Enregistre chaque session de jeu/activité d'un enfant"""
     
@@ -192,3 +191,64 @@ class Activite(models.Model):
         verbose_name = "Activité"
         verbose_name_plural = "Activités"
         ordering = ['-date_debut']
+
+
+# ========================================
+# ✨ NOUVEAUX MODÈLES POUR LES ÉDUCATEURS
+# ========================================
+
+class EducateurEnfant(models.Model):
+    """Relation entre un éducateur et un enfant qu'il suit"""
+    educateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enfants_suivis')
+    enfant = models.ForeignKey(Enfant, on_delete=models.CASCADE, related_name='educateurs')
+    date_ajout = models.DateTimeField(auto_now_add=True)
+    
+    # Notes de l'éducateur
+    notes_privees = models.TextField(blank=True, null=True, help_text="Notes privées de l'éducateur")
+    objectifs = models.TextField(blank=True, null=True, help_text="Objectifs fixés pour cet enfant")
+    
+    # Statut
+    statut = models.CharField(max_length=20, default='actif', choices=[
+        ('actif', 'Actif'),
+        ('archive', 'Archivé'),
+    ])
+    
+    class Meta:
+        unique_together = ('educateur', 'enfant')
+        verbose_name = "Éducateur-Enfant"
+        verbose_name_plural = "Éducateurs-Enfants"
+        ordering = ['-date_ajout']
+    
+    def __str__(self):
+        return f"{self.educateur.username} suit {self.enfant.prenom}"
+
+
+class ObservationEducateur(models.Model):
+    """Observations de l'éducateur sur un enfant"""
+    educateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name='observations')
+    enfant = models.ForeignKey(Enfant, on_delete=models.CASCADE, related_name='observations')
+    
+    date_observation = models.DateTimeField(auto_now_add=True)
+    titre = models.CharField(max_length=200)
+    description = models.TextField()
+    
+    # Type d'observation
+    TYPE_CHOICES = [
+        ('progres', '📈 Progrès'),
+        ('difficulte', '⚠️ Difficulté'),
+        ('comportement', '😊 Comportement'),
+        ('reussite', '🎉 Réussite'),
+        ('autre', '📝 Autre'),
+    ]
+    type_observation = models.CharField(max_length=20, choices=TYPE_CHOICES, default='autre')
+    
+    # Visible par le parent ?
+    visible_parent = models.BooleanField(default=True, help_text="Le parent peut-il voir cette observation ?")
+    
+    class Meta:
+        verbose_name = "Observation Éducateur"
+        verbose_name_plural = "Observations Éducateur"
+        ordering = ['-date_observation']
+    
+    def __str__(self):
+        return f"{self.titre} - {self.enfant.prenom} ({self.date_observation.strftime('%d/%m/%Y')})"
