@@ -257,7 +257,8 @@
                     💳 Payer {{ jeu.prix }}€
                 </button>
 
-                <a href="/jeux/" class="btn-cancel">❌ Annuler</a>
+                <!-- ✅ CORRIGÉ : Lien avec enfant.id -->
+                <a href="/enfant/{{ enfant.id }}/jeux/" class="btn-cancel">❌ Annuler</a>
             </form>
         </div>
     </div>

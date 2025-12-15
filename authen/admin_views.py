@@ -1,3 +1,5 @@
+from paiement.models import Subscription, PaiementJeu, AccesJeu, JeuPremium
+from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
@@ -317,29 +319,90 @@ def admin_delete_post(request, post_id):
 
 
 # ========== GESTION DES ABONNEMENTS ==========
-@admin_required
+@login_required
+@user_passes_test(is_admin)
 def admin_subscriptions(request):
-    """Gestion des abonnements"""
+    """Page de gestion des jeux premium"""
     
-    try:
-        subscriptions = Subscription.objects.select_related('parent').order_by('-start_date')
-        
-        active_subs = subscriptions.filter(active=True).count()
-        expired_subs = subscriptions.filter(active=False).count()
-    except Exception as e:
-        # Si erreur, retourner des valeurs vides
-        subscriptions = []
-        active_subs = 0
-        expired_subs = 0
+    # ========================================
+    # RÉCUPÉRER TOUS LES ACHATS
+    # ========================================
+    achats_jeux = PaiementJeu.objects.select_related(
+        'parent', 'jeu_premium'
+    ).order_by('-date_paiement')
     
+    # ========================================
+    # RÉCUPÉRER LES ACCÈS ACTIFS
+    # ========================================
+    acces_actifs = AccesJeu.objects.filter(
+        actif=True
+    ).select_related('parent', 'jeu_premium').order_by('-date_achat')
+    
+    # ========================================
+    # CALCULER LES STATS
+    # ========================================
+    
+    # Total d'achats
+    total_achats = achats_jeux.count()
+    
+    # Achats réussis
+    achats_reussis = achats_jeux.filter(statut='reussi').count()
+    
+    # Revenu total (somme des paiements réussis)
+    revenu_total = achats_jeux.filter(statut='reussi').aggregate(
+        total=Sum('montant')
+    )['total'] or 0
+    
+    # Nombre de parents ayant acheté au moins 1 jeu
+    parents_ayant_achete = AccesJeu.objects.values('parent').distinct().count()
+    
+    # ========================================
+    # CONTEXTE
+    # ========================================
     context = {
-        'subscriptions': subscriptions,
-        'active_subs': active_subs,
-        'expired_subs': expired_subs,
+        'achats_jeux': achats_jeux,
+        'acces_actifs': acces_actifs,
+        'total_achats': total_achats,
+        'achats_reussis': achats_reussis,
+        'revenu_total': float(revenu_total),  # Convertir en float pour l'affichage
+        'parents_ayant_achete': parents_ayant_achete,
     }
     
     return render(request, 'authen/admin/subscriptions.html', context)
 
+@login_required
+@user_passes_test(is_admin)
+def admin_jeu_stats(request, jeu_id):
+    """Statistiques détaillées d'un jeu premium"""
+    
+    jeu = JeuPremium.objects.get(id=jeu_id)
+    
+    # Nombre d'achats
+    nb_achats = PaiementJeu.objects.filter(
+        jeu_premium=jeu, 
+        statut='reussi'
+    ).count()
+    
+    # Revenu généré
+    revenu = PaiementJeu.objects.filter(
+        jeu_premium=jeu, 
+        statut='reussi'
+    ).aggregate(total=Sum('montant'))['total'] or 0
+    
+    # Parents ayant acheté
+    parents = AccesJeu.objects.filter(
+        jeu_premium=jeu, 
+        actif=True
+    ).select_related('parent')
+    
+    context = {
+        'jeu': jeu,
+        'nb_achats': nb_achats,
+        'revenu': float(revenu),
+        'parents': parents,
+    }
+    
+    return render(request, 'admin/jeu_detail.html', context)
 
 # ========== STATISTIQUES AVANCÉES ==========
 @admin_required

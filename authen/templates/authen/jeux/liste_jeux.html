@@ -117,7 +117,7 @@
             overflow: hidden;
         }
 
-        /* ===== STYLE POUR JEUX PREMIUM ===== */
+        /* ===== JEUX PREMIUM (PAS ENCORE ACHETÉ) ===== */
         .game-card.premium {
             background: linear-gradient(135deg, #ffd89b 0%, #ff6b9d 100%);
         }
@@ -130,6 +130,22 @@
             transform: translate(-50%, -50%);
             font-size: 80px;
             opacity: 0.3;
+        }
+
+        /* ✅ JEUX DÉBLOQUÉS (DÉJÀ ACHETÉ) */
+        .game-card.premium-unlocked {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            cursor: pointer !important;
+            opacity: 1 !important;
+        }
+
+        .game-card.premium-unlocked::after {
+            content: '✅';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            opacity: 1;
         }
 
         .badge-premium {
@@ -146,6 +162,10 @@
             display: flex;
             align-items: center;
             gap: 5px;
+        }
+
+        .badge-unlocked {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
         }
 
         .game-card::before {
@@ -192,7 +212,8 @@
             margin-bottom: 10px;
         }
 
-        .game-card.premium h3 {
+        .game-card.premium h3,
+        .game-card.premium-unlocked h3 {
             color: white;
         }
 
@@ -202,7 +223,8 @@
             margin-bottom: 15px;
         }
 
-        .game-card.premium p {
+        .game-card.premium p,
+        .game-card.premium-unlocked p {
             color: rgba(255, 255, 255, 0.9);
         }
 
@@ -282,15 +304,28 @@
             <div class="category-section">
                 <h2 class="category-title">🧠 Jeux de Mémoire</h2>
                 <div class="games-grid">
-                    <!-- PREMIUM - Memory Animaux -->
-                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'memory' %}'">
-                        <span class="badge-premium">🔒 PREMIUM</span>
-                        <span class="badge-new">NOUVEAU</span>
-                        <div class="game-icon">🎴</div>
-                        <h3>Memory Animaux</h3>
-                        <p>Trouve les paires d'animaux</p>
-                        <span class="difficulty difficulty-facile">Facile</span>
-                    </div>
+                    <!-- ✅ Memory Animaux - Vérifie si acheté -->
+                    {% if 'memory' in jeux_achetes %}
+                        <!-- JEU DÉBLOQUÉ -->
+                        <div class="game-card premium-unlocked" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/memory/'">
+                            <span class="badge-premium badge-unlocked">✅ ACHETÉ</span>
+                            <span class="badge-new">NOUVEAU</span>
+                            <div class="game-icon">🎴</div>
+                            <h3>Memory Animaux</h3>
+                            <p>Trouve les paires d'animaux</p>
+                            <span class="difficulty difficulty-facile">Facile</span>
+                        </div>
+                    {% else %}
+                        <!-- JEU VERROUILLÉ -->
+                        <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'memory' %}'">
+                            <span class="badge-premium">🔒 PREMIUM</span>
+                            <span class="badge-new">NOUVEAU</span>
+                            <div class="game-icon">🎴</div>
+                            <h3>Memory Animaux</h3>
+                            <p>Trouve les paires d'animaux</p>
+                            <span class="difficulty difficulty-facile">Facile</span>
+                        </div>
+                    {% endif %}
 
                     <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/memory-fruits/'">
                         <div class="game-icon">🍎</div>
@@ -319,14 +354,24 @@
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <!-- PREMIUM - Compter jusqu'à 10 -->
-                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'compter_10' %}'">
-                        <span class="badge-premium">🔒 PREMIUM</span>
-                        <div class="game-icon">🔟</div>
-                        <h3>Compter jusqu'à 10</h3>
-                        <p>Compte les objets de 1 à 10</p>
-                        <span class="difficulty difficulty-moyen">Moyen</span>
-                    </div>
+                    <!-- ✅ Compter 10 - Vérifie si acheté -->
+                    {% if 'compter_10' in jeux_achetes %}
+                        <div class="game-card premium-unlocked" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/compter-10/'">
+                            <span class="badge-premium badge-unlocked">✅ ACHETÉ</span>
+                            <div class="game-icon">🔟</div>
+                            <h3>Compter jusqu'à 10</h3>
+                            <p>Compte les objets de 1 à 10</p>
+                            <span class="difficulty difficulty-moyen">Moyen</span>
+                        </div>
+                    {% else %}
+                        <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'compter_10' %}'">
+                            <span class="badge-premium">🔒 PREMIUM</span>
+                            <div class="game-icon">🔟</div>
+                            <h3>Compter jusqu'à 10</h3>
+                            <p>Compte les objets de 1 à 10</p>
+                            <span class="difficulty difficulty-moyen">Moyen</span>
+                        </div>
+                    {% endif %}
 
                     <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
                         <span class="badge-soon">Bientôt</span>
@@ -376,14 +421,24 @@
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <!-- PREMIUM - Les Saisons -->
-                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'saisons' %}'">
-                        <span class="badge-premium">🔒 PREMIUM</span>
-                        <div class="game-icon">🍂</div>
-                        <h3>Les Saisons</h3>
-                        <p>Printemps, Été, Automne, Hiver</p>
-                        <span class="difficulty difficulty-moyen">Moyen</span>
-                    </div>
+                    <!-- ✅ Saisons - Vérifie si acheté -->
+                    {% if 'saisons' in jeux_achetes %}
+                        <div class="game-card premium-unlocked" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/saisons/'">
+                            <span class="badge-premium badge-unlocked">✅ ACHETÉ</span>
+                            <div class="game-icon">🍂</div>
+                            <h3>Les Saisons</h3>
+                            <p>Printemps, Été, Automne, Hiver</p>
+                            <span class="difficulty difficulty-moyen">Moyen</span>
+                        </div>
+                    {% else %}
+                        <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'saisons' %}'">
+                            <span class="badge-premium">🔒 PREMIUM</span>
+                            <div class="game-icon">🍂</div>
+                            <h3>Les Saisons</h3>
+                            <p>Printemps, Été, Automne, Hiver</p>
+                            <span class="difficulty difficulty-moyen">Moyen</span>
+                        </div>
+                    {% endif %}
 
                     <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
                         <span class="badge-soon">Bientôt</span>
@@ -406,23 +461,43 @@
             <div class="category-section">
                 <h2 class="category-title">🎯 Jeux d'Adresse</h2>
                 <div class="games-grid">
-                    <!-- PREMIUM - Puzzle -->
-                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'puzzle' %}'">
-                        <span class="badge-premium">🔒 PREMIUM</span>
-                        <div class="game-icon">🧩</div>
-                        <h3>Puzzle</h3>
-                        <p>Assemble les pièces</p>
-                        <span class="difficulty difficulty-moyen">Moyen</span>
-                    </div>
+                    <!-- ✅ Puzzle - Vérifie si acheté -->
+                    {% if 'puzzle' in jeux_achetes %}
+                        <div class="game-card premium-unlocked" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/puzzle/'">
+                            <span class="badge-premium badge-unlocked">✅ ACHETÉ</span>
+                            <div class="game-icon">🧩</div>
+                            <h3>Puzzle</h3>
+                            <p>Assemble les pièces</p>
+                            <span class="difficulty difficulty-moyen">Moyen</span>
+                        </div>
+                    {% else %}
+                        <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'puzzle' %}'">
+                            <span class="badge-premium">🔒 PREMIUM</span>
+                            <div class="game-icon">🧩</div>
+                            <h3>Puzzle</h3>
+                            <p>Assemble les pièces</p>
+                            <span class="difficulty difficulty-moyen">Moyen</span>
+                        </div>
+                    {% endif %}
 
-                    <!-- PREMIUM - Labyrinthe -->
-                    <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'labyrinthe' %}'">
-                        <span class="badge-premium">🔒 PREMIUM</span>
-                        <div class="game-icon">🌀</div>
-                        <h3>Labyrinthe</h3>
-                        <p>Trouve le chemin</p>
-                        <span class="difficulty difficulty-difficile">Difficile</span>
-                    </div>
+                    <!-- ✅ Labyrinthe - Vérifie si acheté -->
+                    {% if 'labyrinthe' in jeux_achetes %}
+                        <div class="game-card premium-unlocked" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/labyrinthe/'">
+                            <span class="badge-premium badge-unlocked">✅ ACHETÉ</span>
+                            <div class="game-icon">🌀</div>
+                            <h3>Labyrinthe</h3>
+                            <p>Trouve le chemin</p>
+                            <span class="difficulty difficulty-difficile">Difficile</span>
+                        </div>
+                    {% else %}
+                        <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'labyrinthe' %}'">
+                            <span class="badge-premium">🔒 PREMIUM</span>
+                            <div class="game-icon">🌀</div>
+                            <h3>Labyrinthe</h3>
+                            <p>Trouve le chemin</p>
+                            <span class="difficulty difficulty-difficile">Difficile</span>
+                        </div>
+                    {% endif %}
 
                     <div class="game-card" onclick="alert('🔜 Bientôt disponible !')">
                         <span class="badge-soon">Bientôt</span>

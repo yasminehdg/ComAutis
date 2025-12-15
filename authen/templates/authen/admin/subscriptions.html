@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Abonnements - Admin</title>
+    <title>Gestion Jeux Premium - Admin</title>
     <style>
         * {
             margin: 0;
@@ -37,6 +37,9 @@
         .header h1 {
             font-size: 32px;
             color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .btn-back {
@@ -88,31 +91,56 @@
             margin-top: 10px;
         }
 
-        .stat-card.active {
+        .stat-card.premium {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .stat-card.premium .number,
+        .stat-card.premium .label {
+            color: white;
+        }
+
+        .stat-card.success {
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             color: white;
         }
 
-        .stat-card.active .number,
-        .stat-card.active .label {
+        .stat-card.success .number,
+        .stat-card.success .label {
             color: white;
         }
 
-        .stat-card.expired {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        .stat-card.info {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
             color: white;
         }
 
-        .stat-card.expired .number,
-        .stat-card.expired .label {
+        .stat-card.info .number,
+        .stat-card.info .label {
             color: white;
         }
 
-        .subscriptions-table {
+        .games-table {
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .table-header h2 {
+            font-size: 24px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         table {
@@ -155,18 +183,18 @@
             display: inline-block;
         }
 
-        .badge-active {
+        .badge-success {
             background: #2ecc71;
             color: white;
         }
 
-        .badge-expired {
-            background: #e74c3c;
+        .badge-pending {
+            background: #f39c12;
             color: white;
         }
 
-        .badge-level {
-            background: #3498db;
+        .badge-failed {
+            background: #e74c3c;
             color: white;
         }
 
@@ -182,17 +210,31 @@
             text-decoration: underline;
         }
 
-        .no-subscriptions {
+        .no-data {
             text-align: center;
             padding: 60px;
             color: #7f8c8d;
             font-size: 18px;
         }
 
+        .game-icon {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
                 gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
 
             table {
@@ -209,62 +251,124 @@
     <div class="container">
         <!-- HEADER -->
         <div class="header">
-            <h1>💳 Gestion des Abonnements</h1>
+            <h1>🎮 Gestion des Jeux Premium</h1>
             <a href="{% url 'admin_dashboard' %}" class="btn-back">⬅️ Retour Dashboard</a>
         </div>
 
         <!-- STATS -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="icon">💳</div>
-                <div class="number">{{ subscriptions|length }}</div>
-                <div class="label">Abonnements Total</div>
+            <div class="stat-card premium">
+                <div class="icon">🎮</div>
+                <div class="number">{{ total_achats }}</div>
+                <div class="label">Total Achats</div>
             </div>
 
-            <div class="stat-card active">
+            <div class="stat-card success">
                 <div class="icon">✅</div>
-                <div class="number">{{ active_subs }}</div>
-                <div class="label">Abonnements Actifs</div>
+                <div class="number">{{ achats_reussis }}</div>
+                <div class="label">Paiements Réussis</div>
             </div>
 
-            <div class="stat-card expired">
-                <div class="icon">❌</div>
-                <div class="number">{{ expired_subs }}</div>
-                <div class="label">Abonnements Expirés</div>
+            <div class="stat-card info">
+                <div class="icon">💰</div>
+                <div class="number">{{ revenu_total }}€</div>
+                <div class="label">Revenu Total</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <div class="number">{{ parents_ayant_achete }}</div>
+                <div class="label">Parents Ayant Acheté</div>
             </div>
         </div>
 
-        <!-- TABLEAU ABONNEMENTS -->
-        <div class="subscriptions-table">
-            {% if subscriptions %}
+        <!-- TABLEAU ACHATS -->
+        <div class="games-table">
+            <div class="table-header">
+                <h2>💳 Historique des Achats</h2>
+            </div>
+            {% if achats_jeux %}
             <table>
                 <thead>
                     <tr>
-                        <th>Utilisateur</th>
-                        <th>Niveau</th>
-                        <th>Date début</th>
-                        <th>Date fin</th>
+                        <th>Parent</th>
+                        <th>Jeu Acheté</th>
+                        <th>Prix</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Transaction ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for achat in achats_jeux %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'admin_user_detail' achat.parent.id %}" class="user-link">
+                                👤 {{ achat.parent.username }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="game-icon">{{ achat.jeu_premium.icone }}</span>
+                            {{ achat.jeu_premium.nom }}
+                        </td>
+                        <td class="price">{{ achat.montant }}€</td>
+                        <td>{{ achat.date_paiement|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if achat.statut == 'reussi' %}
+                                <span class="badge badge-success">✅ Réussi</span>
+                            {% elif achat.statut == 'en_attente' %}
+                                <span class="badge badge-pending">⏳ En attente</span>
+                            {% else %}
+                                <span class="badge badge-failed">❌ Échoué</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-family: monospace; font-size: 12px;">
+                            {{ achat.transaction_id|truncatechars:20 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-data">
+                <p>😕 Aucun achat de jeu premium pour le moment</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- TABLEAU ACCÈS ACTIFS -->
+        <div class="games-table">
+            <div class="table-header">
+                <h2>🔓 Accès Jeux Actifs</h2>
+            </div>
+            {% if acces_actifs %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parent</th>
+                        <th>Jeu Débloqué</th>
+                        <th>Date d'achat</th>
                         <th>Statut</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for sub in subscriptions %}
+                    {% for acces in acces_actifs %}
                     <tr>
                         <td>
-                            <a href="{% url 'admin_user_detail' sub.user.id %}" class="user-link">
-                                👤 {{ sub.user.username }}
+                            <a href="{% url 'admin_user_detail' acces.parent.id %}" class="user-link">
+                                👤 {{ acces.parent.username }}
                             </a>
                         </td>
                         <td>
-                            <span class="badge badge-level">{{ sub.level }}</span>
+                            <span class="game-icon">{{ acces.jeu_premium.icone }}</span>
+                            {{ acces.jeu_premium.nom }}
                         </td>
-                        <td>{{ sub.start_date|date:"d/m/Y" }}</td>
-                        <td>{{ sub.end_date|date:"d/m/Y" }}</td>
+                        <td>{{ acces.date_achat|date:"d/m/Y H:i" }}</td>
                         <td>
-                            {% if sub.active %}
-                                <span class="badge badge-active">✅ Actif</span>
+                            {% if acces.actif %}
+                                <span class="badge badge-success">✅ Actif</span>
                             {% else %}
-                                <span class="badge badge-expired">❌ Expiré</span>
+                                <span class="badge badge-failed">❌ Désactivé</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -272,8 +376,8 @@
                 </tbody>
             </table>
             {% else %}
-            <div class="no-subscriptions">
-                <p>😕 Aucun abonnement pour le moment</p>
+            <div class="no-data">
+                <p>😕 Aucun accès jeu actif pour le moment</p>
             </div>
             {% endif %}
         </div>

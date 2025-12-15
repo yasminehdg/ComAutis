@@ -575,7 +575,27 @@ def users_list(request):
 # ==========================================
 @login_required
 def liste_jeux(request, enfant_id):
-    return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/liste_jeux.html')
+    """Liste des jeux avec vérification des achats premium"""
+    enfant = get_object_or_404(Enfant, id=enfant_id, parent=request.user)
+    
+    # ✅ Récupérer TOUS les jeux premium achetés par ce parent
+    from paiement.models import AccesJeu
+    
+    jeux_achetes = AccesJeu.objects.filter(
+        parent=request.user,
+        actif=True
+    ).values_list('jeu_premium__jeu_code', flat=True)
+    
+    # Convertir en liste pour le template
+    jeux_achetes_list = list(jeux_achetes)
+    
+    context = {
+        'enfant': enfant,
+        'user': request.user,
+        'jeux_achetes': jeux_achetes_list,
+    }
+    
+    return render(request, 'authen/jeux/liste_jeux.html', context)
 
 @login_required
 def jeu_memory(request, enfant_id):

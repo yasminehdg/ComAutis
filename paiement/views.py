@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import JeuPremium, PaiementJeu, AccesJeu, Level, Subscription
+from authen.models import Enfant  # ✅ AJOUTÉ
 import uuid
 from datetime import datetime
 
@@ -127,6 +128,15 @@ def page_paiement(request, jeu_code):
     # Récupérer le jeu premium
     jeu = get_object_or_404(JeuPremium, jeu_code=jeu_code, actif=True)
     
+    # ✅ CORRIGÉ : Récupérer l'enfant sélectionné (dernier enfant ou premier enfant)
+    enfants = Enfant.objects.filter(parent=request.user)
+    if not enfants.exists():
+        messages.error(request, "Vous devez d'abord créer un profil enfant.")
+        return redirect('profil_famille')
+    
+    # Prendre le premier enfant par défaut
+    enfant = enfants.first()
+    
     # Vérifier si déjà acheté
     deja_achete = AccesJeu.objects.filter(
         parent=request.user,
@@ -136,10 +146,11 @@ def page_paiement(request, jeu_code):
     
     if deja_achete:
         messages.info(request, f"Vous avez déjà accès à {jeu.nom} !")
-        return redirect('jeu_' + jeu_code)
+        return redirect('liste_jeux', enfant_id=enfant.id)
     
     context = {
         'jeu': jeu,
+        'enfant': enfant,  # ✅ AJOUTÉ
     }
     
     return render(request, 'paiement/page_paiement.html', context)
@@ -150,10 +161,18 @@ def traiter_paiement(request, jeu_code):
     """Traite le paiement et débloque le jeu"""
     
     if request.method != 'POST':
-        return redirect('page_paiement', jeu_code=jeu_code)
+        return redirect('paiement:page_paiement', jeu_code=jeu_code)
     
     # Récupérer le jeu
     jeu = get_object_or_404(JeuPremium, jeu_code=jeu_code, actif=True)
+    
+    # ✅ CORRIGÉ : Récupérer l'enfant
+    enfants = Enfant.objects.filter(parent=request.user)
+    if not enfants.exists():
+        messages.error(request, "Vous devez d'abord créer un profil enfant.")
+        return redirect('profil_famille')
+    
+    enfant = enfants.first()
     
     # Récupérer les informations de la carte
     numero_carte = request.POST.get('numero_carte', '').replace(' ', '')
@@ -203,6 +222,7 @@ def traiter_paiement(request, jeu_code):
     if erreurs:
         context = {
             'jeu': jeu,
+            'enfant': enfant,  # ✅ AJOUTÉ
             'erreurs': erreurs,
             'numero_carte': numero_carte,
             'nom_carte': nom_carte,
@@ -249,12 +269,38 @@ def paiement_succes(request, jeu_code):
     
     jeu = get_object_or_404(JeuPremium, jeu_code=jeu_code)
     
-    # Convertir le code jeu pour l'URL (underscore -> tiret)
-    jeu_url = jeu_code.replace('_', '-')
+    # Récupérer l'enfant
+    enfants = Enfant.objects.filter(parent=request.user)
+    if not enfants.exists():
+        messages.error(request, "Vous devez d'abord créer un profil enfant.")
+        return redirect('profil_famille')
+    
+    enfant = enfants.first()
+    
+    # ✅ MAPPER LES CODES JEUX VERS LES NOMS D'URL DJANGO
+    mapping_jeux = {
+        'memory': 'jeu_memory',
+        'compter_10': 'jeu_compter_10',
+        'saisons': 'jeu_saisons',
+        'puzzle': 'jeu_puzzle',
+        'labyrinthe': 'labyrinthe',
+        'compter_3': 'jeu_compter_3',
+        'couleurs': 'jeu_couleurs',
+        'emotions': 'jeu_emotions',
+        'memory_fruits': 'jeu_memory_fruits',
+        'jours_semaine': 'jeu_jours_semaine',
+        'animaux': 'animaux_jeu',
+        'fruits': 'jeu_fruits',
+        'memory_couleurs': 'jeu_memory_couleurs',
+    }
+    
+    # Obtenir le nom de route Django correspondant
+    route_name = mapping_jeux.get(jeu_code, 'liste_jeux')
     
     context = {
         'jeu': jeu,
-        'jeu_url': jeu_url,
+        'enfant': enfant,
+        'route_name': route_name,  # ✅ Passer le nom de route au template
     }
     
     return render(request, 'paiement/paiement_succes.html', context)

@@ -201,11 +201,12 @@
             </ul>
         </div>
 
-        <a href="/jeux/{{ jeu_url }}/" class="btn-play">
+        <!-- ✅ SOLUTION 1 : Avec variable route_name (recommandé) -->
+        <a href="{% url route_name enfant_id=enfant.id %}" class="btn-play">
             🎮 Commencer à jouer
         </a>
 
-        <a href="/jeux/" class="btn-play btn-secondary">
+        <a href="{% url 'liste_jeux' enfant_id=enfant.id %}" class="btn-play btn-secondary">
             🎯 Voir tous les jeux
         </a>
     </div>
