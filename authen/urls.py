@@ -24,10 +24,11 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     
     # ========== GESTION FAMILLE ==========
+    # ========== GESTION PROFIL & FAMILLE ==========
     path('profil-famille/', views.profil_famille, name='profil_famille'),
     path('ajouter-enfant/', views.ajouter_enfant, name='ajouter_enfant'),
     path('modifier-enfant/<int:enfant_id>/', views.modifier_enfant, name='modifier_enfant'),
-    path('supprimer-enfant/<int:enfant_id>/', views.supprimer_enfant, name='supprimer_enfant'),
+    path('supprimer-enfant/<int:enfant_id>/', views.supprimer_enfant_view, name='supprimer_enfant_view'),
     path('selection-enfant/', views.selection_enfant, name='selection_enfant'),
     path('enfant/<int:enfant_id>/dashboard/', views.dashboard_enfant, name='dashboard_enfant'),
     
@@ -49,12 +50,33 @@ urlpatterns = [
     
     # ========== ACTIVITÉS ENFANT (AVEC TRACKING) ==========
     path('enfant/<int:enfant_id>/sons/', views.page_sons, name='page_sons'),
+    path('users/', views.users_list, name='users_list'),
+    
+    # ========== JEUX ==========
+    path('jeux/', views.liste_jeux, name='liste_jeux'),
+    path('jeux/memory/', views.jeu_memory, name='jeu_memory'),
+    path('jeux/compter-3/', views.jeu_compter_3, name='jeu_compter_3'),
+    path('jeux/couleurs/', views.jeu_couleurs, name='jeu_couleurs'),
+    path('jeux/emotions/', views.jeu_emotions, name='jeu_emotions'),
+    path('jeux/compter-10/', views.jeu_compter_10, name='jeu_compter_10'),
+    path('jeux/memory-fruits/', views.jeu_memory_fruits, name='jeu_memory_fruits'),
+    path('jeux/jours-semaine/', views.jeu_jours_semaine, name='jeu_jours_semaine'),
+    path('jeux/animaux/', views.animaux_jeu, name='animaux_jeu'),
+    path('jeux/fruits/', views.jeu_fruits, name='jeu_fruits'),
+    path('jeux/memory-couleurs/', views.jeu_memory_couleurs, name='jeu_memory_couleurs'),
+    path('jeux/saisons/', views.jeu_saisons, name='jeu_saisons'),
+    path('jeux/puzzle/', views.jeu_puzzle, name='jeu_puzzle'),
+    path('jeux/labyrinthe/', views.labyrinthe_jeu, name='jeu_labyrinthe'),
+    
+    # ========== ACTIVITÉS ENFANTS ==========
+    path('sons/', views.page_sons, name='page_sons'),
     path('enfant/<int:enfant_id>/pictogrammes/', views.pictogrammes_view, name='pictogrammes'),
     path('enfant/<int:enfant_id>/dessiner/', views.dessiner_view, name='dessiner'),
     path('enfant/<int:enfant_id>/videos/', views.videos_view, name='videos'),
     path('enfant/<int:enfant_id>/histoires/', views.histoires_view, name='histoires'),
     
     # ========== RESSOURCES ET PARAMÈTRES ==========
+    # ========== AUTRES PAGES ==========
     path('ressources/', views.ressources, name='ressources'),
     path('parametres/', views.parametres, name='parametres'),
     path('progression/', views.progression, name='progression'),
@@ -71,6 +93,7 @@ urlpatterns = [
     # ========== ✨ PARENT - OBSERVATIONS ==========
     path('enfant/<int:enfant_id>/observations/', views.parent_voir_observations, name='parent_voir_observations'),
     
+
     # ========== ADMIN DASHBOARD ==========
     path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
     path('admin-dashboard/users/', admin_users_list, name='admin_users_list'),
@@ -85,16 +108,16 @@ urlpatterns = [
     path('admin-dashboard/subscriptions/', admin_subscriptions, name='admin_subscriptions'),
     path('admin-dashboard/statistics/', admin_statistics, name='admin_statistics'),
     
-    # ========== API ENDPOINTS ==========
-    path('api/modifier-profil/', views.modifier_profil, name='modifier_profil'),
-    path('api/changer-mot-de-passe/', views.changer_mot_de_passe, name='changer_mot_de_passe'),
-    path('api/upload-photo-profil/', views.upload_photo_profil, name='upload_photo_profil'),
-    path('api/supprimer-enfant/<int:enfant_id>/', views.supprimer_enfant, name='supprimer_enfant'),
-    path('api/supprimer-compte/', views.supprimer_compte, name='supprimer_compte'),
     
-    path('users/', views.users_list, name='users_list'),
-
     # 🎮 API Tracking Activités
     path('api/start-activity/', views.start_activity_api, name='start_activity_api'),
     path('api/end-activity/', views.end_activity_api, name='end_activity_api'),
+
+    # ========== API ENDPOINTS (pour AJAX) ==========
+    path('api/modifier-profil/', views.modifier_profil, name='api_modifier_profil'),
+    path('api/changer-mot-de-passe/', views.changer_mot_de_passe, name='api_changer_mot_de_passe'),
+    path('api/upload-photo-profil/', views.upload_photo_profil, name='api_upload_photo_profil'),
+    path('api/supprimer-enfant/<int:enfant_id>/', views.api_supprimer_enfant, name='api_supprimer_enfant'),
+    path('api/update-preferences/', views.update_preferences, name='api_update_preferences'),
+    path('api/supprimer-compte/', views.supprimer_compte, name='api_supprimer_compte'),
 ]

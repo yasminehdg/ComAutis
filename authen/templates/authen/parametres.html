@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paramètres - ComAutiste</title>
+    
+
     <style>
         * {
             margin: 0;
@@ -217,6 +219,11 @@
             font-size: 30px;
         }
 
+        .setting-control {
+            display: flex;
+            gap: 10px;
+        }
+
         .add-child-btn {
             background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
@@ -228,23 +235,6 @@
             cursor: pointer;
             width: 100%;
             margin-top: 20px;
-        }
-
-        .save-btn {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            color: white;
-            padding: 18px 50px;
-            border: none;
-            border-radius: 25px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 30px;
-            width: 100%;
-            max-width: 400px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         /* Modal */
@@ -381,11 +371,71 @@
             }
         }
     </style>
+<style id="dynamic-preferences">
+   <script>
+    // Appliquer les préférences sauvegardées au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if preferences %}
+            // Thème
+            {% if preferences.theme == 'sombre' %}
+                appliquerThemeSombre();
+            {% elif preferences.theme == 'auto' %}
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) appliquerThemeSombre();
+            {% endif %}
+            
+            // Taille de police
+            {% if preferences.taille_police == 'petite' %}
+                document.body.style.fontSize = '14px';
+            {% elif preferences.taille_police == 'grande' %}
+                document.body.style.fontSize = '18px';
+            {% elif preferences.taille_police == 'tres_grande' %}
+                document.body.style.fontSize = '20px';
+            {% endif %}
+        {% endif %}
+    });
+    
+    function appliquerThemeSombre() {
+        const style = document.getElementById('dynamic-preferences');
+        style.textContent = `
+            body {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+            }
+            .setting-card, .welcome-section, .top-bar, .modal-content {
+                background: #2c3e50 !important;
+                color: #ecf0f1 !important;
+            }
+            .setting-info h3, .setting-header h2, .title, .welcome-section h1 {
+                color: #ecf0f1 !important;
+            }
+            .setting-info p, .welcome-section p {
+                color: #95a5a6 !important;
+            }
+            .child-item {
+                background: #34495e !important;
+                color: #ecf0f1 !important;
+            }
+            .form-group label {
+                color: #ecf0f1 !important;
+            }
+            .form-group input {
+                background: #34495e !important;
+                color: #ecf0f1 !important;
+                border-color: #7f8c8d !important;
+            }
+        `;
+    }
+</script>
+</style>
+
+
+
+
 </head>
 <body>
     <div class="container">
         <div class="top-bar">
-            <a href="/dashboard/" class="back-btn">⬅️ Retour</a>
+            <a href="{% url 'dashboard' %}" class="back-btn">⬅️ Retour</a>
             <div class="title">⚙️ Paramètres</div>
             <div style="width: 150px;"></div>
         </div>
@@ -427,15 +477,30 @@
                     <button class="edit-btn" onclick="openChangerMdp()">🔒 Changer</button>
                 </div>
 
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Photo de profil</h3>
-                        <p>Personnalisez votre avatar</p>
-                    </div>
-                    <button class="edit-btn" onclick="document.getElementById('photoInput').click()">📷 Modifier</button>
-                    <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="uploadPhoto()">
-                </div>
+                <<div class="setting-item">
+    <div class="setting-info">
+        <h3>Photo de profil</h3>
+        <p>Personnalisez votre avatar</p>
+        
+        <!-- ✅ Affichage de la photo actuelle -->
+        {% if user.profile.photo_profil %}
+        <div style="margin-top: 10px;">
+            <img id="photoPreview" 
+                 src="{{ user.profile.photo_profil.url }}" 
+                 alt="Photo de profil" 
+                 style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #667eea;">
+        </div>
+        {% else %}
+        <div id="photoPreview" style="margin-top: 10px;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: bold;">
+                {{ user.first_name.0|default:"?" }}
             </div>
+        </div>
+        {% endif %}
+    </div>
+    <button class="edit-btn" onclick="document.getElementById('photoInput').click()">📷 Modifier</button>
+    <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="uploadPhoto()">
+</div>
 
             <!-- GESTION DES ENFANTS -->
             <div class="setting-card">
@@ -446,23 +511,25 @@
 
                 <div class="child-list" id="childList">
                     {% for enfant in enfants %}
-                    <div class="child-item">
+                    <div class="child-item" data-enfant-id="{{ enfant.id }}">
                         <div class="child-info">
                             <div class="child-avatar">{{ enfant.prenom.0 }}</div>
                             <div class="child-details">
                                 <h4>{{ enfant.prenom }}</h4>
-                                <p>{{ enfant.age }} ans - Niveau {{ enfant.niveau }}</p>
+                                <p>{{ enfant.age }} ans - {{ enfant.get_niveau_autonomie_display }}</p>
                             </div>
                         </div>
                         <div class="setting-control">
-                            <button class="edit-btn" onclick="window.location.href='/enfant/{{ enfant.id }}/modifier/'">✏️ Modifier</button>
+                            <button class="edit-btn" onclick="window.location.href='{% url 'modifier_enfant' enfant.id %}'">✏️ Modifier</button>
                             <button class="edit-btn danger-btn" onclick="supprimerEnfant({{ enfant.id }}, '{{ enfant.prenom }}')">🗑️ Supprimer</button>
                         </div>
                     </div>
+                    {% empty %}
+                    <p style="text-align: center; color: #7f8c8d;">Aucun enfant enregistré</p>
                     {% endfor %}
                 </div>
 
-                <button class="add-child-btn" onclick="window.location.href='/ajouter-enfant/'">➕ Ajouter un enfant</button>
+                <button class="add-child-btn" onclick="window.location.href='{% url 'ajouter_enfant' %}'">➕ Ajouter un enfant</button>
             </div>
 
             <!-- NOTIFICATIONS -->
@@ -577,7 +644,6 @@
     </div>
 
     <!-- MODALS -->
-    <!-- Modal Modifier Nom -->
     <div id="modalNom" class="modal">
         <div class="modal-content">
             <h2>Modifier le nom</h2>
@@ -596,7 +662,6 @@
         </div>
     </div>
 
-    <!-- Modal Modifier Email -->
     <div id="modalEmail" class="modal">
         <div class="modal-content">
             <h2>Modifier l'email</h2>
@@ -611,7 +676,6 @@
         </div>
     </div>
 
-    <!-- Modal Changer Mot de Passe -->
     <div id="modalMdp" class="modal">
         <div class="modal-content">
             <h2>Changer le mot de passe</h2>
@@ -634,11 +698,9 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
     <script>
-        // Obtenir le CSRF token
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -656,7 +718,6 @@
 
         const csrftoken = getCookie('csrftoken');
 
-        // Toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -666,7 +727,6 @@
             }, 3000);
         }
 
-        // Modals
         function openModifierNom() {
             document.getElementById('modalNom').classList.add('active');
         }
@@ -683,7 +743,6 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        // Sauvegarder le nom
         async function saveNom() {
             const prenom = document.getElementById('inputPrenom').value;
             const nom = document.getElementById('inputNom').value;
@@ -711,7 +770,6 @@
             }
         }
 
-        // Sauvegarder l'email
         async function saveEmail() {
             const email = document.getElementById('inputEmail').value;
 
@@ -735,7 +793,6 @@
             }
         }
 
-        // Changer le mot de passe
         async function saveMdp() {
             const ancien = document.getElementById('inputAncienMdp').value;
             const nouveau = document.getElementById('inputNouveauMdp').value;
@@ -767,34 +824,50 @@
             }
         }
 
-        // Upload photo
         async function uploadPhoto() {
-            const input = document.getElementById('photoInput');
-            const file = input.files[0];
+    const input = document.getElementById('photoInput');
+    const file = input.files[0];
 
-            if (!file) return;
+    if (!file) return;
 
-            const formData = new FormData();
-            formData.append('photo', file);
+    const formData = new FormData();
+    formData.append('photo', file);
 
-            const response = await fetch('/api/upload-photo-profil/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                },
-                body: formData
-            });
+    try {
+        const response = await fetch('/api/upload-photo-profil/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            body: formData
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (data.success) {
-                showToast(data.message, 'success');
-            } else {
-                showToast(data.message, 'error');
+        if (data.success) {
+            showToast(data.message, 'success');
+            
+            // ✅ Mise à jour de l'aperçu de la photo
+            if (data.photo_url) {
+                const preview = document.getElementById('photoPreview');
+                preview.innerHTML = `
+                    <img src="${data.photo_url}" 
+                         alt="Photo de profil" 
+                         style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #667eea;">
+                `;
             }
+            
+            // Recharger la page après 1 seconde pour voir la photo partout
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast(data.message, 'error');
         }
+    } catch (error) {
+        showToast('Erreur lors de l\'upload', 'error');
+    }
+}
 
-        // Toggle préférences
+
         async function togglePref(element) {
             element.classList.toggle('active');
             const pref = element.getAttribute('data-pref');
@@ -810,24 +883,151 @@
             });
         }
 
-        // Update select préférences
-        async function updateSelectPref(select) {
-            const pref = select.getAttribute('data-pref');
-            const value = select.value;
+        // ========================================
+// AJOUTEZ CE CODE DANS LE <script> DE parametres.html
+// Remplacez la fonction updateSelectPref existante
+// ========================================
 
-            await fetch('/api/update-preferences/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken
-                },
-                body: JSON.stringify({ [pref]: value })
-            });
+async function updateSelectPref(select) {
+    const pref = select.getAttribute('data-pref');
+    const value = select.value;
 
+    try {
+        const response = await fetch('/api/update-preferences/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ [pref]: value })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
             showToast('Préférence enregistrée', 'success');
+            
+            // ✅ APPLIQUER LES CHANGEMENTS IMMÉDIATEMENT
+            appliquerPreferences(pref, value);
+        } else {
+            showToast(data.message || 'Erreur', 'error');
         }
+    } catch (error) {
+        showToast('Erreur de connexion', 'error');
+    }
+}
 
-        // Supprimer enfant
+// ✅ NOUVELLE FONCTION : Appliquer les préférences visuellement
+function appliquerPreferences(pref, value) {
+    switch(pref) {
+        case 'theme':
+            appliquerTheme(value);
+            break;
+        
+        case 'taille_police':
+            appliquerTaillePolice(value);
+            break;
+        
+        case 'langue':
+            showToast(`Langue changée : ${value}`, 'success');
+            // Pour la langue, il faudrait recharger la page avec la nouvelle langue
+            // Ou utiliser un système de traduction côté client
+            break;
+    }
+}
+
+// Appliquer le thème
+function appliquerTheme(theme) {
+    const body = document.body;
+    
+    if (theme === 'sombre') {
+        // Mode sombre
+        body.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+        document.querySelectorAll('.setting-card, .welcome-section, .top-bar, .modal-content').forEach(el => {
+            el.style.background = '#2c3e50';
+            el.style.color = '#ecf0f1';
+        });
+        document.querySelectorAll('.setting-info h3, .setting-header h2, .title').forEach(el => {
+            el.style.color = '#ecf0f1';
+        });
+        document.querySelectorAll('.setting-info p').forEach(el => {
+            el.style.color = '#95a5a6';
+        });
+        
+        showToast('Mode sombre activé', 'success');
+    } 
+    else if (theme === 'clair') {
+        // Mode clair (défaut)
+        body.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+        document.querySelectorAll('.setting-card, .welcome-section, .top-bar, .modal-content').forEach(el => {
+            el.style.background = 'white';
+            el.style.color = '#2c3e50';
+        });
+        document.querySelectorAll('.setting-info h3, .setting-header h2, .title').forEach(el => {
+            el.style.color = '#2c3e50';
+        });
+        document.querySelectorAll('.setting-info p').forEach(el => {
+            el.style.color = '#7f8c8d';
+        });
+        
+        showToast('Mode clair activé', 'success');
+    }
+    else if (theme === 'auto') {
+        // Détecter la préférence système
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        appliquerTheme(prefersDark ? 'sombre' : 'clair');
+        showToast('Mode automatique activé', 'success');
+    }
+}
+
+// Appliquer la taille de police
+function appliquerTaillePolice(taille) {
+    const body = document.body;
+    
+    switch(taille) {
+        case 'petite':
+            body.style.fontSize = '14px';
+            showToast('Taille de police : Petite', 'success');
+            break;
+        
+        case 'normale':
+            body.style.fontSize = '16px';
+            showToast('Taille de police : Normale', 'success');
+            break;
+        
+        case 'grande':
+            body.style.fontSize = '18px';
+            showToast('Taille de police : Grande', 'success');
+            break;
+        
+        case 'tres_grande':
+            body.style.fontSize = '20px';
+            showToast('Taille de police : Très grande', 'success');
+            break;
+    }
+}
+
+// ✅ CHARGER LES PRÉFÉRENCES AU CHARGEMENT DE LA PAGE
+window.addEventListener('DOMContentLoaded', function() {
+    // Récupérer les préférences actuelles depuis les selects
+    const themeSelect = document.querySelector('[data-pref="theme"]');
+    const tailleSelect = document.querySelector('[data-pref="taille_police"]');
+    
+    if (themeSelect) {
+        const theme = themeSelect.value;
+        if (theme !== 'clair') {  // Appliquer seulement si ce n'est pas le thème par défaut
+            appliquerTheme(theme);
+        }
+    }
+    
+    if (tailleSelect) {
+        const taille = tailleSelect.value;
+        if (taille !== 'normale') {  // Appliquer seulement si ce n'est pas la taille par défaut
+            appliquerTaillePolice(taille);
+        }
+    }
+});
+
         async function supprimerEnfant(id, prenom) {
             if (!confirm(`Êtes-vous sûr de vouloir supprimer le profil de ${prenom} ?`)) return;
 
@@ -842,13 +1042,12 @@
 
             if (data.success) {
                 showToast(data.message, 'success');
-                setTimeout(() => location.reload(), 1500);
+                document.querySelector(`[data-enfant-id="${id}"]`).remove();
             } else {
                 showToast(data.message, 'error');
             }
         }
 
-        // Supprimer compte
         function openSupprimerCompte() {
             const mdp = prompt('⚠️ Pour supprimer votre compte, entrez votre mot de passe :');
             if (!mdp) return;
@@ -877,3 +1076,6 @@
                 showToast(data.message, 'error');
             }
         }
+    </script>
+</body>
+</html>

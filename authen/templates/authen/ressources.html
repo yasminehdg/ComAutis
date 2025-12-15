@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ressources - ComAutiste</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -68,6 +70,7 @@
             text-align: center;
             margin-bottom: 40px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeInDown 0.6s ease-out;
         }
 
         .welcome-section h1 {
@@ -78,6 +81,36 @@
 
         .welcome-section p {
             font-size: 22px;
+            color: #7f8c8d;
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 30px auto 0;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
             color: #7f8c8d;
         }
 
@@ -115,10 +148,33 @@
 
         .tab-content {
             display: none;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .tab-content.active {
             display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .resources-grid {
@@ -135,6 +191,24 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transition: all 0.3s;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .resource-card:hover::before {
+            transform: scaleX(1);
         }
 
         .resource-card:hover {
@@ -146,6 +220,18 @@
             font-size: 60px;
             margin-bottom: 20px;
             text-align: center;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .resource-card:hover .resource-icon {
+            animation: none;
+            transform: scale(1.2);
+            transition: transform 0.3s;
         }
 
         .resource-card h3 {
@@ -172,6 +258,10 @@
             font-weight: bold;
             display: inline-block;
             transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
         }
 
         .resource-btn:hover {
@@ -194,6 +284,7 @@
             padding: 20px;
             border-bottom: 2px solid #f0f0f0;
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .link-item:last-child {
@@ -201,8 +292,9 @@
         }
 
         .link-item:hover {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 15px;
+            transform: translateX(10px);
         }
 
         .link-item h4 {
@@ -222,10 +314,116 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 16px;
+            transition: all 0.3s;
         }
 
         .link-item a:hover {
+            color: #764ba2;
             text-decoration: underline;
+        }
+
+        /* Modal pour afficher le contenu */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideDown 0.4s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 30px;
+            top: 30px;
+            font-size: 35px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #000;
+            transform: rotate(90deg);
+        }
+
+        .modal-content h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .modal-content h3 {
+            color: #667eea;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .modal-content ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content li {
+            margin-bottom: 10px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge-new {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: white;
+        }
+
+        .badge-popular {
+            background: linear-gradient(135deg, #ffd89b 0%, #ff6b9d 100%);
+            color: white;
         }
 
         @media (max-width: 768px) {
@@ -250,6 +448,11 @@
                 padding: 15px 25px;
                 font-size: 16px;
             }
+
+            .modal-content {
+                padding: 30px 20px;
+                margin: 10% auto;
+            }
         }
     </style>
 </head>
@@ -268,6 +471,10 @@
         <div class="welcome-section">
             <h1>📚 Centre de Ressources</h1>
             <p>Tous les outils pour vous accompagner au quotidien</p>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Rechercher une ressource..." onkeyup="filterResources()">
+                <span class="search-icon">🔍</span>
+            </div>
         </div>
 
         <!-- Onglets -->
@@ -289,46 +496,49 @@
         <!-- Contenu GUIDES PRATIQUES -->
         <div id="guides" class="tab-content active">
             <div class="resources-grid">
-                <div class="resource-card">
+                <div class="resource-card" data-title="Comprendre l'autisme">
                     <div class="resource-icon">🧩</div>
+                    <span class="badge badge-popular">Populaire</span>
                     <h3>Comprendre l'autisme</h3>
                     <p>Guide complet pour mieux comprendre les troubles du spectre autistique, les signes, les diagnostics et les approches thérapeutiques.</p>
-                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                    <button class="resource-btn" onclick="showGuideModal('autisme')">📖 Lire le guide</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Créer une routine efficace">
                     <div class="resource-icon">⏰</div>
+                    <span class="badge badge-new">Nouveau</span>
                     <h3>Créer une routine efficace</h3>
                     <p>Apprenez à mettre en place des routines quotidiennes structurées pour aider votre enfant à mieux s'organiser et réduire son anxiété.</p>
-                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                    <button class="resource-btn" onclick="showGuideModal('routine')">📖 Lire le guide</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Les pictogrammes">
                     <div class="resource-icon">🗣️</div>
                     <h3>Les pictogrammes : mode d'emploi</h3>
                     <p>Découvrez comment utiliser les pictogrammes pour faciliter la communication avec votre enfant au quotidien.</p>
-                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                    <button class="resource-btn" onclick="showGuideModal('pictogrammes')">📖 Lire le guide</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Gérer les crises">
                     <div class="resource-icon">😤</div>
+                    <span class="badge badge-popular">Populaire</span>
                     <h3>Gérer les crises et les émotions</h3>
                     <p>Stratégies concrètes pour anticiper, comprendre et gérer les crises émotionnelles de votre enfant.</p>
-                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                    <button class="resource-btn" onclick="showGuideModal('crises')">📖 Lire le guide</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="L'alimentation">
                     <div class="resource-icon">🍽️</div>
                     <h3>L'alimentation et l'autisme</h3>
                     <p>Conseils nutritionnels et astuces pour gérer les difficultés alimentaires souvent rencontrées.</p>
-                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                    <button class="resource-btn" onclick="showGuideModal('alimentation')">📖 Lire le guide</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Le sommeil">
                     <div class="resource-icon">🌙</div>
                     <h3>Le sommeil chez l'enfant autiste</h3>
                     <p>Comment améliorer la qualité du sommeil et mettre en place un rituel du coucher apaisant.</p>
-                    <a href="#" class="resource-btn">📖 Lire le guide</a>
+                    <button class="resource-btn" onclick="showGuideModal('sommeil')">📖 Lire le guide</button>
                 </div>
             </div>
         </div>
@@ -336,46 +546,41 @@
         <!-- Contenu DOCUMENTS -->
         <div id="documents" class="tab-content">
             <div class="resources-grid">
-                <div class="resource-card">
+                <div class="resource-card" data-title="Planning de routine">
                     <div class="resource-icon">📅</div>
                     <h3>Planning de routine vierge</h3>
                     <p>Planning visuel personnalisable pour organiser les routines quotidiennes de votre enfant.</p>
-                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                    <button class="resource-btn download-btn" onclick="downloadDocument('planning')">⬇️ Télécharger (PDF)</button>
                 </div>
 
-                <div class="resource-card">
-                    <div class="resource-icon">🖼️</div>
-                    <h3>Fiches de pictogrammes</h3>
-                    <p>Collection de pictogrammes à imprimer et découper pour faciliter la communication.</p>
-                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
-                </div>
+                
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Tableau de récompenses">
                     <div class="resource-icon">⭐</div>
                     <h3>Tableau de récompenses</h3>
                     <p>Système de récompenses visuelles pour encourager les comportements positifs.</p>
-                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                    <button class="resource-btn download-btn" onclick="downloadDocument('recompenses')">⬇️ Télécharger (PDF)</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Grille d'observation">
                     <div class="resource-icon">📊</div>
                     <h3>Grille d'observation</h3>
                     <p>Outil pour noter et suivre les comportements, progrès et difficultés de votre enfant.</p>
-                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                    <button class="resource-btn download-btn" onclick="downloadDocument('observation')">⬇️ Télécharger (PDF)</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Calendrier visuel">
                     <div class="resource-icon">📆</div>
                     <h3>Calendrier visuel</h3>
                     <p>Calendrier mensuel avec pictogrammes pour anticiper les événements importants.</p>
-                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                    <button class="resource-btn download-btn" onclick="downloadDocument('calendrier')">⬇️ Télécharger (PDF)</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Liste de tâches">
                     <div class="resource-icon">✅</div>
                     <h3>Liste de tâches illustrée</h3>
                     <p>Checklists visuelles pour rendre les tâches quotidiennes plus claires et motivantes.</p>
-                    <a href="#" class="resource-btn download-btn">⬇️ Télécharger (PDF)</a>
+                    <button class="resource-btn download-btn" onclick="downloadDocument('taches')">⬇️ Télécharger (PDF)</button>
                 </div>
             </div>
         </div>
@@ -383,46 +588,48 @@
         <!-- Contenu VIDÉOS -->
         <div id="videos" class="tab-content">
             <div class="resources-grid">
-                <div class="resource-card">
+                <div class="resource-card" data-title="Témoignages">
                     <div class="resource-icon">👨‍👩‍👧</div>
                     <h3>Témoignages de parents</h3>
                     <p>Des familles partagent leur expérience, leurs défis et leurs réussites au quotidien.</p>
-                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                    <button class="resource-btn" onclick="showVideoModal('temoignages')">▶️ Voir les vidéos</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Conseils professionnels">
                     <div class="resource-icon">👨‍⚕️</div>
+                    <span class="badge badge-popular">Populaire</span>
                     <h3>Conseils de professionnels</h3>
                     <p>Orthophonistes, psychologues et éducateurs spécialisés répondent à vos questions.</p>
-                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                    <button class="resource-btn" onclick="showVideoModal('professionnels')">▶️ Voir les vidéos</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Tutoriels">
                     <div class="resource-icon">🎓</div>
                     <h3>Tutoriels pour parents</h3>
                     <p>Apprenez des techniques pratiques en vidéo : ABA, TEACCH, Makaton et plus encore.</p>
-                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                    <button class="resource-btn" onclick="showVideoModal('tutoriels')">▶️ Voir les vidéos</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Scolarisation">
                     <div class="resource-icon">🏫</div>
                     <h3>Scolarisation et inclusion</h3>
                     <p>Comment préparer la rentrée scolaire et favoriser l'inclusion de votre enfant.</p>
-                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                    <button class="resource-btn" onclick="showVideoModal('scolarisation')">▶️ Voir les vidéos</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Activités adaptées">
                     <div class="resource-icon">🎨</div>
                     <h3>Activités adaptées</h3>
                     <p>Idées d'activités créatives et ludiques adaptées aux enfants autistes.</p>
-                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                    <button class="resource-btn" onclick="showVideoModal('activites')">▶️ Voir les vidéos</button>
                 </div>
 
-                <div class="resource-card">
+                <div class="resource-card" data-title="Autonomie">
                     <div class="resource-icon">💪</div>
+                    <span class="badge badge-new">Nouveau</span>
                     <h3>Autonomie et développement</h3>
                     <p>Vidéos pour développer l'autonomie de votre enfant dans les gestes du quotidien.</p>
-                    <a href="#" class="resource-btn">▶️ Voir les vidéos</a>
+                    <button class="resource-btn" onclick="showVideoModal('autonomie')">▶️ Voir les vidéos</button>
                 </div>
             </div>
         </div>
@@ -430,71 +637,397 @@
         <!-- Contenu LIENS UTILES -->
         <div id="liens" class="tab-content">
             <div class="link-list">
-                <div class="link-item">
+                <div class="link-item" data-title="Autisme Info Service">
                     <h4>🏥 Autisme Info Service</h4>
                     <p>Plateforme nationale d'écoute et d'information sur l'autisme</p>
                     <a href="https://www.autismeinfoservice.fr" target="_blank">🔗 Visiter le site</a>
                 </div>
 
-                <div class="link-item">
+                <div class="link-item" data-title="Autisme France">
                     <h4>🤝 Autisme France</h4>
                     <p>Association de parents pour la défense des droits des personnes autistes</p>
                     <a href="https://www.autisme-france.fr" target="_blank">🔗 Visiter le site</a>
                 </div>
 
-                <div class="link-item">
+                <div class="link-item" data-title="Numéro d'urgence">
                     <h4>📞 Numéro d'urgence - 0800 71 40 40</h4>
                     <p>Autisme Info Service - Gratuit et confidentiel du lundi au vendredi</p>
                     <a href="tel:0800714040">📞 Appeler maintenant</a>
                 </div>
 
-                <div class="link-item">
+                <div class="link-item" data-title="CRA">
                     <h4>🎓 CRA (Centres Ressources Autisme)</h4>
                     <p>Réseau national de centres spécialisés dans le diagnostic et l'accompagnement</p>
                     <a href="https://www.autisme.gouv.fr" target="_blank">🔗 Trouver un CRA près de chez vous</a>
                 </div>
 
-                <div class="link-item">
+                <div class="link-item" data-title="Applications">
                     <h4>📱 Applications recommandées</h4>
                     <p>ARASAAC, Niki Talk, Pictogrammes - Applications de communication par pictogrammes</p>
-                    <a href="#" target="_blank">🔗 Voir la liste complète</a>
+                    <a href="https://play.google.com/store/search?q=pictogrammes%20autisme&c=apps" target="_blank">🔗 Voir la liste complète</a>
                 </div>
 
-                <div class="link-item">
+                <div class="link-item" data-title="Livres">
                     <h4>📚 Livres recommandés</h4>
                     <p>Bibliothèque de livres essentiels pour comprendre et accompagner l'autisme</p>
-                    <a href="#" target="_blank">🔗 Voir les recommandations</a>
+                    <a href="https://www.amazon.fr/dp/2896081976" onclick="showBooksModal(); return false;">🔗 Voir les recommandations</a>
                 </div>
 
-                <div class="link-item">
+                <div class="link-item" data-title="Podcasts">
                     <h4>🎙️ Podcasts sur l'autisme</h4>
                     <p>"La voix des autistes", "Autisme, l'autre différence" et autres podcasts inspirants</p>
-                    <a href="#" target="_blank">🔗 Écouter les podcasts</a>
+                    <a href="https://open.spotify.com/show/3aB0u1XyG7XG4H1qQyQXw5" onclick="showPodcastsModal(); return false;">🔗 Écouter les podcasts</a>
                 </div>
 
-                <div class="link-item">
+                <div class="link-item" data-title="Groupes de soutien">
                     <h4>👥 Groupes de soutien locaux</h4>
                     <p>Trouvez des groupes de parents près de chez vous pour échanger et vous entraider</p>
-                    <a href="#" target="_blank">🔗 Trouver un groupe</a>
+                    <a href="https://www.gapas.fr/" onclick="showGroupsModal(); return false;">🔗 Trouver un groupe</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function showTab(tabName) {
-            // Masquer tous les contenus
-            const allContents = document.querySelectorAll('.tab-content');
-            allContents.forEach(content => content.classList.remove('active'));
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
 
-            // Désactiver tous les boutons
-            const allButtons = document.querySelectorAll('.tab-btn');
-            allButtons.forEach(btn => btn.classList.remove('active'));
+   <script>
+/* ================= ONGLET ================= */
+function showTab(tabName, event) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-            // Activer l'onglet sélectionné
-            document.getElementById(tabName).classList.add('active');
-            document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
+    document.getElementById(tabName).classList.add('active');
+    if(event) event.target.classList.add('active');
+}
+
+/* ================= RECHERCHE ================= */
+function filterResources() {
+    const filter = document.getElementById('searchInput').value.toUpperCase();
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
+
+    const items = activeTab.querySelectorAll('.resource-card, .link-item');
+    items.forEach(item => {
+        const title = item.getAttribute('data-title') || (item.querySelector('h3, h4') ? item.querySelector('h3, h4').textContent : '');
+        const text = item.textContent || item.innerText;
+        item.style.display = (title.toUpperCase().includes(filter) || text.toUpperCase().includes(filter)) ? '' : 'none';
+    });
+}
+
+/* ================= PDF ================= */
+const { jsPDF } = window.jspdf;
+
+function downloadDocument(type) {
+    const doc = new jsPDF();
+
+    switch(type) {
+        case 'planning': generatePlanningPDF(doc); break;
+        case 'pictogrammes': generatePictogrammesPDF(doc); break;
+        case 'recompenses': generateRecompensesPDF(doc); break;
+        case 'observation': generateObservationPDF(doc); break;
+        case 'calendrier': generateCalendrierPDF(doc); break;
+        case 'taches': generateTachesPDF(doc); break;
+    }
+
+    const messages = {
+        planning: 'Le planning de routine vierge est en cours de téléchargement...',
+        pictogrammes: 'Les fiches de pictogrammes sont en cours de téléchargement...',
+        recompenses: 'Le tableau de récompenses est en cours de téléchargement...',
+        observation: 'La grille d\'observation est en cours de téléchargement...',
+        calendrier: 'Le calendrier visuel est en cours de téléchargement...',
+        taches: 'La liste de tâches illustrée est en cours de téléchargement...'
+    };
+    alert(`✅ ${messages[type]}\n\n📁 Le document sera disponible dans votre dossier Téléchargements.`);
+}
+
+/* ===== PDF CONTENT ===== */
+function header(doc, title) {
+    doc.setFontSize(22);
+    doc.text(title, 105, 20, { align: 'center' });
+    doc.line(20, 25, 190, 25);
+}
+
+function generatePlanningPDF(doc) {
+    header(doc, 'Planning de routine quotidienne');
+    let y = 45;
+    ['Matin','Midi','Après-midi','Soir'].forEach(r => {
+        doc.text(r + ' :', 20, y);
+        doc.line(60, y, 190, y);
+        y += 20;
+    });
+    doc.save('Planning-Routine.pdf');
+}
+
+
+
+function generateRecompensesPDF(doc) {
+    header(doc, 'Tableau de récompenses');
+    let y = 45;
+    ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'].forEach(j => {
+        doc.text(j, 20, y);
+        doc.rect(60, y - 8, 120, 10);
+        y += 15;
+    });
+    doc.save('Tableau-Recompenses.pdf');
+}
+
+function generateObservationPDF(doc) {
+    header(doc, 'Grille d’observation');
+    let y = 45;
+    ['Date','Comportement','Contexte','Réaction','Objectifs'].forEach(t => {
+        doc.text(t + ' :', 20, y);
+        doc.line(60, y, 190, y);
+        y += 18;
+    });
+    doc.save('Grille-Observation.pdf');
+}
+
+function generateCalendrierPDF(doc) {
+    header(doc, 'Calendrier visuel');
+    let x = 20, y = 45;
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 7; c++) {
+            doc.rect(x + c * 25, y + r * 18, 25, 18);
         }
-    </script>
+    }
+    doc.save('Calendrier-Visuel.pdf');
+}
+
+function generateTachesPDF(doc) {
+    header(doc, 'Liste de tâches quotidiennes');
+    let y = 45;
+    ['Se lever','S’habiller','Petit-déjeuner','École','Temps calme','Se coucher']
+        .forEach(t => {
+            doc.rect(20, y - 6, 6, 6);
+            doc.text(t, 30, y);
+            y += 14;
+        });
+    doc.save('Liste-Taches.pdf');
+}
+
+/* ================= MODAL ================= */
+function closeModal() {
+    document.getElementById('myModal').style.display = 'none';
+}
+
+window.onclick = function(e) {
+    const modal = document.getElementById('myModal');
+    if (e.target === modal) modal.style.display = 'none';
+}
+
+/* ================= GUIDES ================= */
+const guidesContent = {
+    autisme: {
+        title: "🧩 Comprendre l'autisme",
+        content: `
+            <h3>Qu'est-ce que l'autisme ?</h3>
+            <p>L'autisme est un trouble du développement neurologique...</p>
+            <h3>Les signes de l'autisme</h3>
+            <ul>
+                <li>Communication : Retard ou absence de langage...</li>
+                <li>Interactions sociales : Difficultés à établir le contact visuel...</li>
+                <li>Comportements répétitifs : Gestes répétitifs, routines rigides...</li>
+                <li>Sensibilités sensorielles : Hypersensibilité ou hyposensibilité...</li>
+            </ul>
+            <h3>Le diagnostic</h3>
+            <p>Le diagnostic est posé par une équipe pluridisciplinaire...</p>
+            <h3>Les approches thérapeutiques</h3>
+            <ul>
+                <li>ABA</li>
+                <li>TEACCH</li>
+                <li>PECS</li>
+                <li>Makaton</li>
+            </ul>
+            <p>Chaque enfant est unique, l'accompagnement doit être personnalisé.</p>
+        `
+    },
+    routine: {
+        title: "⏰ Créer une routine efficace",
+        content: `
+            <h3>Pourquoi les routines sont importantes ?</h3>
+            <p>Les routines offrent un cadre rassurant...</p>
+            <h3>Étapes pour créer une routine</h3>
+            <ul>
+                <li>Identifier les moments clés</li>
+                <li>Décomposer en étapes simples</li>
+                <li>Utiliser des supports visuels</li>
+                <li>Rester cohérent</li>
+                <li>Introduire les changements progressivement</li>
+            </ul>
+            <h3>Exemple de routine du matin</h3>
+            <ul>
+                <li>🛏️ Se réveiller</li>
+                <li>🚽 Aller aux toilettes</li>
+                <li>👕 S'habiller</li>
+                <li>🥣 Petit-déjeuner</li>
+                <li>🪥 Se brosser les dents</li>
+                <li>🎒 Préparer le sac</li>
+                <li>🚗 Partir à l'école</li>
+            </ul>
+            <h3>Conseils pratiques</h3>
+            <p>• Utilisez un timer visuel<br>• Félicitez chaque étape<br>• Soyez patient<br>• Adaptez selon les besoins</p>
+        `
+    },
+    pictogrammes: {
+        title: "🗣️ Les pictogrammes : mode d'emploi",
+        content: `
+            <h3>Qu'est-ce qu'un pictogramme ?</h3>
+            <p>Un pictogramme est une image simple représentant un objet...</p>
+            <h3>Pourquoi utiliser les pictogrammes ?</h3>
+            <ul>
+                <li>Faciliter la communication</li>
+                <li>Rendre les routines claires</li>
+                <li>Réduire les frustrations</li>
+                <li>Développer l'autonomie</li>
+            </ul>
+            <h3>Comment les utiliser ?</h3>
+            <p>1. Communication<br>2. Routines visuelles<br>3. Emploi du temps<br>4. Règles et consignes</p>
+            <h3>Où trouver des pictogrammes ?</h3>
+            <ul>
+                <li>ARASAAC</li>
+                <li>Sclera</li>
+                <li>Applications mobiles</li>
+            </ul>
+        `
+    },
+    crises: {
+        title: "😤 Gérer les crises et les émotions",
+        content: `
+            <h3>Comprendre les crises</h3>
+            <p>Une crise n'est pas un caprice...</p>
+            <h3>Signes avant-coureurs</h3>
+            <ul>
+                <li>Agitation, hyperactivité</li>
+                <li>Comportements répétitifs accrus</li>
+                <li>Retrait, isolement</li>
+            </ul>
+            <h3>Pendant la crise</h3>
+            <p>Restez calme, sécurisez l'environnement, limitez les stimuli...</p>
+            <h3>Après la crise</h3>
+            <p>Laissez du temps de récupération, analysez, valorisez...</p>
+        `
+    },
+    alimentation: {
+        title: "🍽️ L'alimentation et l'autisme",
+        content: `
+            <h3>Difficultés alimentaires</h3>
+            <ul>
+                <li>Sélectivité alimentaire</li>
+                <li>Sensibilités sensorielles</li>
+                <li>Rituels alimentaires stricts</li>
+            </ul>
+            <h3>Stratégies</h3>
+            <p>Exposition progressive, toucher et sentir, cuisiner ensemble...</p>
+            <h3>Conseils</h3>
+            <ul>
+                <li>Respectez les préférences</li>
+                <li>Créez un environnement calme</li>
+                <li>Évitez les luttes de pouvoir</li>
+            </ul>
+        `
+    },
+    sommeil: {
+        title: "🌙 Le sommeil chez l'enfant autiste",
+        content: `
+            <h3>Les troubles du sommeil</h3>
+            <p>60-80% des enfants autistes présentent des troubles...</p>
+            <h3>Causes possibles</h3>
+            <ul>
+                <li>Anxiété et hypervigilance</li>
+                <li>Difficultés de régulation sensorielle</li>
+                <li>Troubles de la mélatonine</li>
+            </ul>
+            <h3>Créer un rituel du coucher</h3>
+            <ul>
+                <li>Horaires réguliers</li>
+                <li>Bain tiède, histoire calme, musique douce, massage léger</li>
+            </ul>
+        `
+    }
+};
+
+function showGuideModal(type) {
+    const guide = guidesContent[type];
+    document.getElementById('modalBody').innerHTML = `<h2>${guide.title}</h2>${guide.content}`;
+    document.getElementById('myModal').style.display = 'block';
+}
+
+/* ================= VIDEOS ================= */
+function showVideoModal(type) {
+    const videos = {
+        temoignages: {
+            title: '👨‍👩‍👧 Témoignages de parents',
+            list: [
+                '🎥 "Notre quotidien avec Léo" - Famille Dubois',
+                '🎥 "Les premiers pas de communication" - Famille Martin',
+                '🎥 "Gérer les crises au quotidien" - Témoignage de Sophie',
+                '🎥 "L\'inclusion scolaire de notre fille" - Famille Bernard'
+            ]
+        },
+        professionnels: {
+            title: '👨‍⚕️ Conseils de professionnels',
+            list: [
+                '🎥 "Comment établir une routine" - Dr. Lefebvre',
+                '🎥 "Les pictogrammes en pratique" - Marie Durand',
+                '🎥 "Gérer les troubles alimentaires" - nutritionniste spécialisé',
+                '🎥 "Favoriser la communication" - Émilie Laurent'
+            ]
+        },
+        tutoriels: {
+            title: '🎓 Tutoriels pour parents',
+            list: [
+                '🎥 "Introduction à la méthode ABA"',
+                '🎥 "Créer un emploi du temps visuel TEACCH"',
+                '🎥 "Initiation au Makaton"',
+                '🎥 "Utiliser le système PECS étape par étape"'
+            ]
+        },
+        scolarisation: {
+            title: '🏫 Scolarisation et inclusion',
+            list: [
+                '🎥 "Préparer la première rentrée scolaire"',
+                '🎥 "Collaborer avec l\'équipe enseignante"',
+                '🎥 "Les aménagements en classe"',
+                '🎥 "L\'AESH : rôle et collaboration"'
+            ]
+        },
+        activites: {
+            title: '🎨 Activités adaptées',
+            list: [
+                '🎥 "5 activités sensorielles à faire à la maison"',
+                '🎥 "Jeux pour développer la motricité fine"',
+                '🎥 "Activités créatives adaptées"',
+                '🎥 "Sport et autisme : idées d\'activités physiques"'
+            ]
+        },
+        autonomie: {
+            title: '💪 Autonomie et développement',
+            list: [
+                '🎥 "Apprendre à s\'habiller seul"',
+                '🎥 "Les gestes d\'hygiène quotidienne"',
+                '🎥 "Préparer à aller aux toilettes"',
+                '🎥 "Développer l\'autonomie dans les repas"'
+            ]
+        }
+    };
+
+    const videoList = videos[type];
+    let content = `<h2>${videoList.title}</h2><p>Voici une sélection de vidéos :</p><ul>`;
+    videoList.list.forEach(video => content += `<li style="margin-bottom:15px;font-size:18px;">${video}</li>`);
+    content += '</ul><p><strong>Note :</strong> Disponibles sur notre chaîne YouTube ComAutiste.</p>';
+
+    document.getElementById('modalBody').innerHTML = content;
+    document.getElementById('myModal').style.display = 'block';
+}
+</script>
+
+
+
 </body>
 </html>

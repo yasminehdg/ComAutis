@@ -616,6 +616,8 @@
                                 <span class="obs-badge">{{ enfant.nb_observations }}</span>
                                 {% endif %}
                             </a>
+
+                   <a href="{% url 'supprimer_enfant_view' enfant.id %}" class="btn btn-delete">🗑️ Supprimer</a>
                         </div>
                     </div>
                     {% endfor %}
