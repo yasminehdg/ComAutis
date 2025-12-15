@@ -282,11 +282,10 @@
             <div class="category-section">
                 <h2 class="category-title">🧠 Jeux de Mémoire</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/memory/'">
-                        <span class="badge-new">NOUVEAU</span>
-                    <!-- PREMIUM -->
+                    <!-- PREMIUM - Memory Animaux -->
                     <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'memory' %}'">
                         <span class="badge-premium">🔒 PREMIUM</span>
+                        <span class="badge-new">NOUVEAU</span>
                         <div class="game-icon">🎴</div>
                         <h3>Memory Animaux</h3>
                         <p>Trouve les paires d'animaux</p>
@@ -320,9 +319,7 @@
                         <span class="difficulty difficulty-facile">Facile</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/compter-10/'">
-
-                    <!-- PREMIUM -->
+                    <!-- PREMIUM - Compter jusqu'à 10 -->
                     <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'compter_10' %}'">
                         <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🔟</div>
@@ -379,9 +376,7 @@
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/saisons/'">
-
-                    <!-- PREMIUM -->
+                    <!-- PREMIUM - Les Saisons -->
                     <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'saisons' %}'">
                         <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🍂</div>
@@ -411,8 +406,7 @@
             <div class="category-section">
                 <h2 class="category-title">🎯 Jeux d'Adresse</h2>
                 <div class="games-grid">
-                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/puzzle/'">
-                    <!-- PREMIUM -->
+                    <!-- PREMIUM - Puzzle -->
                     <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'puzzle' %}'">
                         <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🧩</div>
@@ -421,9 +415,7 @@
                         <span class="difficulty difficulty-moyen">Moyen</span>
                     </div>
 
-                    <div class="game-card" onclick="window.location.href='/enfant/{{ enfant.id }}/jeux/labyrinthe/'">
-
-                    <!-- PREMIUM -->
+                    <!-- PREMIUM - Labyrinthe -->
                     <div class="game-card premium" onclick="window.location.href='{% url 'paiement:page_paiement' 'labyrinthe' %}'">
                         <span class="badge-premium">🔒 PREMIUM</span>
                         <div class="game-icon">🌀</div>

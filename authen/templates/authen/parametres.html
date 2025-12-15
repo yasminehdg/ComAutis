@@ -599,31 +599,8 @@
                     </select>
                 </div>
 
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Taille de police</h3>
-                        <p>Ajustez la taille du texte</p>
-                    </div>
-                    <select class="custom-select" data-pref="taille_police" onchange="updateSelectPref(this)">
-                        <option value="petite" {% if preferences.taille_police == 'petite' %}selected{% endif %}>Petite</option>
-                        <option value="normale" {% if preferences.taille_police == 'normale' %}selected{% endif %}>Normale</option>
-                        <option value="grande" {% if preferences.taille_police == 'grande' %}selected{% endif %}>Grande</option>
-                        <option value="tres_grande" {% if preferences.taille_police == 'tres_grande' %}selected{% endif %}>Très grande</option>
-                    </select>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <h3>Langue</h3>
-                        <p>Langue de l'interface</p>
-                    </div>
-                    <select class="custom-select" data-pref="langue" onchange="updateSelectPref(this)">
-                        <option value="fr" {% if preferences.langue == 'fr' %}selected{% endif %}>Français</option>
-                        <option value="en" {% if preferences.langue == 'en' %}selected{% endif %}>English</option>
-                        <option value="es" {% if preferences.langue == 'es' %}selected{% endif %}>Español</option>
-                    </select>
-                </div>
-            </div>
+                
+                
 
             <!-- DANGER ZONE -->
             <div class="setting-card" style="border: 3px solid #ff6b6b;">

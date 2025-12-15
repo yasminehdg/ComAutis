@@ -159,10 +159,6 @@ def dashboard(request):
         return redirect('admin_dashboard')
     
     # Récupérer le profil
-
-    if request.user.is_staff or request.user.is_superuser:
-        return redirect('admin_dashboard')
-    
     try:
         user_profile = request.user.profile
         user_type = user_profile.user_type
@@ -170,30 +166,12 @@ def dashboard(request):
         user_profile = UserProfile.objects.create(user=request.user, user_type='parent')
         user_type = 'parent'
     
- 
     # Notifications non lues
     unread_notifications = Notification.objects.filter(user=request.user, is_read=False).count()
     
     # ==========================================
     # 👨‍🏫 DASHBOARD ÉDUCATEUR
     # ==========================================
-
-    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).count()
-    enfants = Enfant.objects.filter(parent=request.user)
-    
-    from .activity_tracker import get_enfant_stats, get_activites_par_jour
-    enfants_avec_stats = []
-    
-    for enfant in enfants:
-        stats = get_enfant_stats(enfant)
-        activites_7jours = get_activites_par_jour(enfant, jours=7)
-        
-        enfants_avec_stats.append({
-            'enfant': enfant,
-            'stats': stats,
-            'graphique_data': activites_7jours,
-        })
-    
     if user_type == 'educator':
         # Récupérer les enfants suivis
         relations = EducateurEnfant.objects.filter(
@@ -297,10 +275,6 @@ def dashboard(request):
                 'graphique_data': activites_7jours,
             })
         
-
-            'unread_notifications': unread_notifications
-        })
-    else:
         return render(request, 'authen/dashboard_parent.html', {
             'user': request.user,
             'profile': user_profile,
@@ -615,85 +589,38 @@ def jeu_compter_3(request, enfant_id):
 def jeu_couleurs(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/couleurs.html')
 
-def liste_jeux(request):
-    return render(request, 'authen/jeux/liste_jeux.html')
-
-
-@login_required
-def jeu_memory(request):
-    return render(request, 'authen/jeux/memory.html')
-
-
-@login_required
-def jeu_compter_3(request):
-    return render(request, 'authen/jeux/compter_3.html')
-
-
-@login_required
-def jeu_couleurs(request):
-    return render(request, 'authen/jeux/couleurs.html')
-
-
 @login_required
 def jeu_emotions(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/emotions.html')
-def jeu_emotions(request):
-    return render(request, 'authen/jeux/emotions.html')
-
 
 @login_required
 def jeu_compter_10(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/compter_10.html')
-def jeu_compter_10(request):
-    return render(request, 'authen/jeux/compter_10.html')
-
 
 @login_required
 def jeu_memory_fruits(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/memory_fruits.html')
-def jeu_memory_fruits(request):
-    return render(request, 'authen/jeux/memory_fruits.html')
-
 
 @login_required
 def jeu_jours_semaine(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/jours_semaine.html')
 
-def jeu_jours_semaine(request):
-    return render(request, 'authen/jeux/jours_semaine.html')
-
-
 @login_required
 def animaux_jeu(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/animaux_jeu.html')
 
-def animaux_jeu(request):
-    return render(request, 'authen/jeux/animaux_jeu.html')
-
-
 @login_required
 def jeu_fruits(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/fruits.html')
-
-def jeu_fruits(request):
-    return render(request, 'authen/jeux/fruits.html')
 
 
 @login_required
 def jeu_memory_couleurs(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/memory_couleurs.html')
 
-def jeu_memory_couleurs(request):
-    return render(request, 'authen/jeux/memory_couleurs.html')
-
-
 @login_required
 def jeu_saisons(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/jeux/saisons.html')
-
-def jeu_saisons(request):
-    return render(request, 'authen/jeux/saisons.html')
-
 
 @login_required
 def jeu_puzzle(request, enfant_id):
@@ -714,28 +641,6 @@ def page_sons(request, enfant_id):
 @login_required
 def pictogrammes_view(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/pictogrammes.html')
-
-@login_required
-
-def jeu_puzzle(request):
-    return render(request, 'authen/jeux/puzzle.html')
-
-
-@login_required
-def labyrinthe_jeu(request):
-    return render(request, 'authen/jeux/labyrinthe.html')
-
-
-@login_required
-def page_sons(request):
-    return render(request, 'authen/sons.html')
-
-
-def pictogrammes_view(request, enfant_id):
-    enfant = Enfant.objects.get(id=enfant_id)
-    context = {'enfant': enfant}
-    return render(request, 'authen/pictogrammes.html', context)
-
 
 def dessiner_view(request, enfant_id):
     return render_jeu_avec_tracking(request, enfant_id, 'authen/dessiner.html')
@@ -1026,8 +931,6 @@ def upload_photo_profil(request):
             'message': f'Erreur : {str(e)}'
         }, status=500)
     
-
-
 @login_required
 @require_POST
 def supprimer_enfant(request, enfant_id):
@@ -1039,16 +942,6 @@ def supprimer_enfant(request, enfant_id):
         'success': True,
         'message': f'Le profil de {prenom} a été supprimé'
     })
-
-
-
-@login_required
-@require_POST
-def supprimer_compte(request):
-    data = json.loads(request.body)
-    mot_de_passe = data.get('mot_de_passe')
-    
-    if not request.user.check_password(mot_de_passe):
 
 def api_supprimer_enfant(request, enfant_id):
     """API - Supprimer un enfant"""
