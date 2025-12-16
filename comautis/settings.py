@@ -17,7 +17,6 @@ DEBUG = True
 # ALLOWED_HOSTS pour le local UNIQUEMENT
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1', 'comautis-10.onrender.com']
 
-
 # Applications installées
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,6 +35,7 @@ INSTALLED_APPS = [
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -169,9 +169,11 @@ DEFAULT_FROM_EMAIL = 'ComAutiste <yassoudz213p@gmail.com>'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'Root',
+    'CLOUD_NAME': 'dmfct4gmxot',
     'API_KEY': '469353993888491',
     'API_SECRET': 'MOG97gVd3VRDaVPvTL9Rh_ztSU8',
 }
 
 MEDIA_URL = '/media/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
