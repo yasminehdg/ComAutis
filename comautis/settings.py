@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     'authen',
     'forum',
     'paiement',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # Middleware
@@ -162,3 +164,13 @@ DEFAULT_FROM_EMAIL = 'ComAutiste <yassoudz213p@gmail.com>'
 # ============================================
 # ✅ C'EST TOUT ! Sauvegarde le fichier.
 # ============================================
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'Root',
+    'API_KEY': '469353993888491',
+    'API_SECRET': 'MOG97gVd3VRDaVPvTL9Rh_ztSU8',
+}
+
+MEDIA_URL = '/media/'
