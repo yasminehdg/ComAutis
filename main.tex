@@ -1,0 +1,2134 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage{pgf-umlcd}
+\usepackage{float}
+
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Cahier des charges - ComAutiste},
+    pdfpagemode=FullScreen,
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Projet Web - ComAutiste}
+
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\color{blue!70!black}}
+{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+\begin{document}
+
+% ========== PAGE DE GARDE ==========
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    {\huge\bfseries Université Paris Nanterre\par}
+    \vspace{0.5cm}
+    {\Large Licence 3 Informatique\par}
+    \vspace{2cm}
+    
+    {\Huge\bfseries CAHIER DES CHARGES\par}
+    \vspace{1cm}
+    {\LARGE\bfseries Projet ComAutiste\par}
+    \vspace{0.5cm}
+    {\Large Plateforme Éducative pour Enfants Autistes\par}
+    
+    \vspace{3cm}
+    
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        {\Large\textbf{Réalisé par :}\par}
+        \vspace{0.3cm}
+        {\large Yasmine HADDAG\par}
+        {\large Nesrine MELAHI\par}
+    \end{minipage}
+    
+    \vspace{1.5cm}
+    
+    {\Large\textbf{Encadré par :}\par}
+    \vspace{0.3cm}
+    {\large Mme Hela Jedida\par}
+    
+    \vfill
+    
+    {\large Année Universitaire 2024-2025\par}
+\end{titlepage}
+
+% ========== TABLE DES MATIÈRES ==========
+\tableofcontents
+\newpage
+
+% ========== CHAPITRE 1 : CONTEXTE GÉNÉRAL ==========
+\chapter{CONTEXTE GÉNÉRAL DU PROJET}
+
+\section{Introduction}
+
+Ce chapitre vise à introduire le projet ComAutiste ainsi que le contexte universitaire dans lequel il a été conçu. Nous commencerons par une présentation du projet et de ses objectifs, avant de décrire en détail les enjeux liés à l'accompagnement éducatif des enfants autistes. Une analyse du contexte actuel viendra appuyer la pertinence de cette initiative. Par la suite, les choix méthodologiques adoptés pour piloter le projet seront exposés. L'ensemble de cette section a pour objectif d'offrir une vue claire et cohérente, posant ainsi les fondements nécessaires à une compréhension approfondie du travail accompli.
+
+\section{Présentation du projet}
+
+\subsection{Contexte académique}
+
+Ce projet s'inscrit dans le cadre d'un projet universitaire de Licence 3 Informatique à l'Université Paris Nanterre, sous la direction de Mme Hela Jedida. Il est réalisé par une équipe de deux étudiants sur une période de trois mois.
+
+\subsection{Présentation générale de ComAutiste}
+
+ComAutiste est une plateforme web éducative spécialement conçue pour accompagner les enfants autistes dans leur apprentissage. Le projet vise à créer un environnement numérique adapté, ludique et sécurisé, permettant aux enfants de progresser à leur rythme tout en offrant aux parents et éducateurs des outils de suivi et d'accompagnement personnalisés.
+
+La plateforme propose une approche multi-acteurs impliquant les enfants, les parents, les éducateurs et les administrateurs, chacun disposant d'un espace dédié avec des fonctionnalités adaptées à leurs besoins spécifiques.
+
+\subsection{Objectifs du projet}
+
+Les principaux objectifs de ComAutiste sont :
+
+\begin{itemize}
+    \item Offrir un espace d'apprentissage ludique et adapté aux enfants autistes
+    \item Faciliter le suivi de la progression par les parents et éducateurs
+    \item Favoriser la communication entre les acteurs
+    \item Proposer des activités éducatives variées (jeux, sons, vidéos, dessins)
+    \item Permettre un accompagnement personnalisé grâce aux observations des éducateurs
+    \item Créer une communauté d'entraide entre parents via un forum dédié
+\end{itemize}
+
+\section{Analyse de l'existant}
+
+\subsection{État des lieux}
+
+Actuellement, les ressources éducatives pour enfants autistes sont souvent dispersées entre différentes plateformes, applications ou supports physiques. Les parents et éducateurs doivent naviguer entre plusieurs outils sans vision globale de la progression de l'enfant. De plus, la communication entre les différents acteurs (parents, éducateurs, thérapeutes) reste fragmentée et peu structurée.
+
+\subsection{Critique de l'existant}
+
+Les solutions existantes présentent plusieurs limitations majeures :
+
+\begin{itemize}
+    \item \textbf{Manque de centralisation} : Les outils éducatifs sont dispersés, sans plateforme unifiée
+    \item \textbf{Absence de suivi personnalisé} : Pas de système permettant aux éducateurs de suivre précisément la progression de chaque enfant
+    \item \textbf{Communication limitée} : Peu d'outils facilitent les échanges
+    \item \textbf{Contenu générique} : Les activités proposées ne sont pas toujours adaptées aux spécificités de l'autisme
+    \item \textbf{Manque de ressources communautaires} : Absence d'espaces d'échange entre parents
+    \item \textbf{Accessibilité limitée} : Interfaces souvent complexes, non adaptées aux besoins spécifiques
+\end{itemize}
+
+\subsection{Problématique}
+
+Face à la dispersion des ressources éducatives et au manque d'outils de suivi adaptés, les familles et éducateurs d'enfants autistes rencontrent des difficultés pour assurer un accompagnement cohérent et personnalisé. Notre question essentielle est :
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+\textbf{Comment concevoir et mettre en œuvre une plateforme web centralisée, ludique et collaborative permettant d'optimiser l'apprentissage des enfants autistes, tout en garantissant un suivi rigoureux, une traçabilité complète et une communication efficace entre tous les acteurs ?}
+\end{minipage}}
+\end{center}
+
+\subsection{Solution proposée}
+
+Pour remédier aux problématiques identifiées, ComAutiste propose une solution complète et intégrée comprenant :
+
+\begin{itemize}
+    \item \textbf{Espace Enfant} : Interface ludique avec jeux éducatifs, sons, vidéos, dessins animés et activités interactives
+    \item \textbf{Espace Parent} : Gestion des enfants, consultation des observations, suivi de progression, forum communautaire
+    \item \textbf{Espace Éducateur} : Attribution d'élèves, ajout d'observations, suivi détaillé de la progression
+    \item \textbf{Espace Administrateur} : Gestion globale de la plateforme, validation des éducateurs, modération
+    \item \textbf{Système de gamification} : Badges, notifications et récompenses pour encourager la progression
+    \item \textbf{Contenu Premium} : Jeux avancés accessibles via paiement pour financer le développement
+\end{itemize}
+
+\section{Choix méthodologique}
+
+\subsection{Comparaison des approches}
+
+Deux approches sont couramment utilisées en gestion de projet : l'approche traditionnelle et l'approche agile. Le tableau suivant présente une comparaison synthétique :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Catégorie} & \textbf{Approche Agile} & \textbf{Approche Traditionnelle} \\
+\hline
+Description & Approche itérative et adaptative, idéale pour les projets évolutifs & Approche séquentielle et structurée, adaptée aux projets avec besoins clairement définis \\
+\hline
+Avantages & Flexibilité, livraison continue, meilleure réactivité, collaboration accrue & Processus bien documenté, visibilité globale, gestion facilitée \\
+\hline
+Inconvénients & Moins adaptée aux grandes équipes, risque de dérive, documentation parfois insuffisante & Manque d'adaptabilité, délais longs, difficultés pour intégrer les changements \\
+\hline
+\end{tabular}
+\caption{Comparaison entre les approches Agile et Traditionnelle}
+\end{table}
+
+\subsection{Choix de la méthodologie Agile}
+
+Dans le cadre de ce projet, la méthodologie Agile a été adoptée pour sa capacité à s'adapter aux besoins évolutifs et à assurer une progression continue. Ce choix repose sur plusieurs avantages concrets :
+
+\begin{enumerate}
+    \item Permet de mieux gérer les imprévus et les changements de besoins
+    \item Facilite la livraison progressive de versions fonctionnelles
+    \item Favorise l'implication régulière de l'encadrante
+    \item Permet une amélioration continue de la qualité
+\end{enumerate}
+
+\subsection{Choix de la méthode Scrum}
+
+Parmi les méthodes agiles, Scrum a été retenue pour structurer le développement de ComAutiste. Scrum est un cadre agile, itératif et adaptable, favorisant la collaboration d'équipe et la livraison continue de solutions de qualité. Il s'organise autour de sprints — des cycles courts de 2 à 4 semaines — durant lesquels des fonctionnalités prioritaires sont développées, testées et livrées.
+
+\subsubsection{Avantages de Scrum pour ComAutiste}
+
+\begin{itemize}
+    \item \textbf{Sprints courts} : Permettent une validation régulière avec l'encadrante
+    \item \textbf{Rôles clairs} : Product Owner, Scrum Master, équipe de développement
+    \item \textbf{Rituels structurants} : Daily stand-up, sprint review, rétrospective
+    \item \textbf{Backlog priorisé} : Focus sur les fonctionnalités à forte valeur ajoutée
+    \item \textbf{Adaptabilité} : Ajustements possibles entre chaque sprint
+\end{itemize}
+
+\section{Mise en place du projet avec Scrum}
+
+\subsection{Les rôles dans Scrum}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Rôle} & \textbf{Responsabilités} \\
+\hline
+Product Owner & Yasmine et Nesrine  - Définit les besoins, priorise le backlog, valide les livrables \\
+\hline
+Scrum Master &  Veille à l'application de Scrum, facilite la communication \\
+\hline
+Équipe de développement & Yasmine et Nesrine  - Développement, intégration, tests \\
+\hline
+\end{tabular}
+\caption{Répartition des rôles Scrum}
+\end{table}
+
+\subsection{Répartition des tâches dans l'équipe}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Développeur} & \textbf{Modules gérés} \\
+\hline
+Yasmine HADDAG & Admin, Éducateur, Parent, Enfant, Progression, Authentification, Jeux/Sons/Activités \\
+\hline
+Nesrine MELAHI & Forum, Paiement, Ressources, Paramètres \\
+\hline
+\end{tabular}
+\caption{Répartition des modules par développeur}
+\end{table}
+
+\subsection{Artefacts Scrum}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Artefact} & \textbf{Description} \\
+\hline
+Backlog produit & Liste évolutive des fonctionnalités et besoins, ajustée selon les priorités \\
+\hline
+Backlog de sprint & Sous-ensemble du backlog produit sélectionné pour un sprint donné \\
+\hline
+Incrément & Partie du produit livrable à l'issue d'un sprint, répondant aux critères de qualité \\
+\hline
+\end{tabular}
+\caption{Artefacts Scrum du projet}
+\end{table}
+
+\subsection{Événements Scrum}
+
+Les événements Scrum structurent le processus de développement :
+
+\begin{itemize}
+    \item \textbf{Sprint} : Période de 3 semaines durant laquelle un ensemble de tâches est réalisé
+    \item \textbf{Sprint Planning} : Réunion de planification en début de sprint pour définir les objectifs
+    \item \textbf{Daily Stand-up} : Point quotidien rapide (15min) sur l'avancement et les obstacles
+    \item \textbf{Sprint Review} : Démonstration du travail accompli à l'encadrante en fin de sprint
+    \item \textbf{Sprint Retrospective} : Analyse interne pour identifier les axes d'amélioration
+\end{itemize}
+
+\subsection{Langage de modélisation}
+
+Pour modéliser ComAutiste, nous utilisons le langage UML (Unified Modeling Language), un standard graphique permettant de représenter de façon claire les composants, les interactions et les processus d'un système. Il facilite la compréhension globale et la documentation fonctionnelle du projet.
+
+\section{Conclusion}
+
+Ce premier chapitre a permis de poser les bases du projet ComAutiste. Nous avons présenté le contexte universitaire, identifié les défis liés à l'accompagnement des enfants autistes et proposé une solution adaptée. Le choix de la méthodologie Scrum nous permettra d'avancer de manière structurée et agile sur les trois mois du projet. Nous sommes maintenant prêts à entamer la phase d'analyse et de spécification des besoins détaillée dans le chapitre suivant.
+
+\newpage
+
+% ========== CHAPITRE 2 : SPRINT 0 ==========
+\chapter{SPRINT 0 : ANALYSE ET SPÉCIFICATION DES BESOINS}
+
+\section{Introduction}
+
+Ce sprint initial, également appelé Sprint 0, constitue la phase de cadrage du projet. Il permet d'identifier les acteurs, d'analyser les besoins fonctionnels et non fonctionnels, de définir l'architecture technique et de planifier les sprints de développement. Cette phase est cruciale car elle pose les fondations solides sur lesquelles reposera l'ensemble du projet ComAutiste.
+
+\section{Analyse et identification des besoins}
+
+\subsection{Identification des acteurs}
+
+Le système ComAutiste implique quatre acteurs principaux, chacun ayant un rôle bien défini :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{11cm}|}
+\hline
+\textbf{Acteur} & \textbf{Rôle dans le système} \\
+\hline
+Administrateur & Supervise la gestion globale de la plateforme, valide les inscriptions d'éducateurs, attribue les enfants aux éducateurs, modère le forum, gère les observations, analyse les statistiques, désactive des comptes \\
+\hline
+Éducateur & S'inscrit et attend validation, consulte la liste de ses élèves, suit leur progression, ajoute des observations (visibles ou non par les parents), reçoit notifications et badges \\
+\hline
+Parent & S'inscrit, gère ses enfants (ajout/modification/suppression), consulte les observations, suit la progression, participe au forum, accède aux paramètres, paie pour les jeux premium \\
+\hline
+Enfant & Joue aux jeux éducatifs, écoute des sons et berceuses, regarde des vidéos et dessins animés, communique via des images, télécharge des dessins à colorier \\
+\hline
+\end{tabular}
+\caption{Identification des acteurs du système}
+\end{table}
+
+\subsection{Besoins fonctionnels}
+
+Les besoins fonctionnels représentent les fonctionnalités principales que la plateforme doit offrir. Ils sont organisés par acteur :
+
+\subsubsection{Besoins fonctionnels - Administrateur}
+
+\begin{itemize}
+    \item Gestion des utilisateurs (suppression, désactivation)
+    \item Validation des inscriptions d'éducateurs (envoi d'email de confirmation)
+    \item Attribution d'enfants aux éducateurs
+    \item Consultation de la liste complète des enfants
+    \item Gestion des observations (suppression, rendre visible/invisible aux parents)
+    \item Modération du forum parents
+    \item Analyse de la plateforme via tableaux de bord et statistiques
+    \item Gestion des paiements
+    \item Accès au dashboard admin personnalisé
+    \item Accès à l'interface d'administration Django
+\end{itemize}
+
+\subsubsection{Besoins fonctionnels - Éducateur}
+
+\begin{itemize}
+    \item Inscription en tant qu'éducateur
+    \item Réception d'un email de validation après approbation par l'admin
+    \item Connexion au système après activation du compte
+    \item Consultation de la liste des élèves attribués
+    \item Suivi de la progression des élèves (temps de jeu, taux de réussite)
+    \item Ajout d'observations visibles par les parents
+    \item Ajout d'observations non visibles (notes privées)
+    \item Réception de notifications et badges (compte activé, nouvel enfant attribué)
+    \item Consultation des activités récentes de ses élèves
+\end{itemize}
+
+\subsubsection{Besoins fonctionnels - Parent}
+
+\begin{itemize}
+    \item Inscription en tant que parent
+    \item Gestion de ses enfants (ajout, modification, suppression)
+    \item Consultation des observations des éducateurs
+    \item Suivi de la progression de ses enfants
+    \item Sélection de l'enfant qui va jouer
+    \item Accès aux jeux et activités de l'espace enfant
+    \item Participation au forum parents (publication, commentaires)
+    \item Modification des informations de profil et paramètres
+    \item Changement de mot de passe
+    \item Paiement pour accès aux jeux premium
+    \item Réception de notifications et badges (nouveau parent, nouvelle observation)
+\end{itemize}
+
+\subsubsection{Besoins fonctionnels - Enfant}
+
+\begin{itemize}
+    \item Accès aux jeux éducatifs par catégories
+    \item Jeux de mémoire (Memory Animaux, Fruits, Couleurs)
+    \item Jeux d'apprentissage des nombres (Compter jusqu'à 3, jusqu'à 10)
+    \item Jeux sur les concepts de base (Couleurs, Émotions, Animaux)
+    \item Jeux sur le quotidien (Jours de la semaine, Saisons, Fruits)
+    \item Jeux d'adresse (Puzzle, Labyrinthe - premium)
+    \item Écoute de sons éducatifs
+    \item Visionnage de dessins animés
+    \item Visionnage de vidéos éducatives
+    \item Communication via des images (pictogrammes)
+    \item Téléchargement de dessins à colorier
+    \item Écoute de contes
+    \item Écoute de berceuses
+\end{itemize}
+
+\subsection{Besoins non fonctionnels}
+
+Au-delà des fonctionnalités, ComAutiste doit répondre à des critères qualitatifs essentiels :
+
+\begin{itemize}
+    \item \textbf{Ergonomie} : Interface intuitive, colorée et ludique, adaptée aux enfants autistes avec navigation simple et claire
+    \item \textbf{Accessibilité} : Design adapté aux besoins spécifiques de l'autisme (pictogrammes, boutons larges, pas de surcharge visuelle)
+    \item \textbf{Sécurité} : Protection des données personnelles des enfants, authentification sécurisée, respect du RGPD
+    \item \textbf{Performance} : Chargement rapide des jeux et vidéos, fluidité des animations
+    \item \textbf{Maintenabilité} : Code structuré et documenté facilitant les évolutions futures
+    
+\end{itemize}
+
+
+\section{Backlog général}
+
+Le backlog produit regroupe l'ensemble des User Stories du projet, organisées par fonctionnalités et priorisées selon la méthode MoSCoW (Must have, Should have, Could have, Won't have). Chaque User Story est évaluée avec la suite de Fibonacci pour estimer la complexité.
+
+\textit{Légende des estimations :}
+\begin{itemize}
+    \item 1 : Très facile
+    \item 2 : Facile
+    \item 3 : Normal
+    \item 5 : Assez difficile
+    \item 8 : Difficile
+    \item 13 : Très complexe
+\end{itemize}
+
+\begin{longtable}{|p{0.5cm}|p{3cm}|p{6cm}|p{1cm}|p{1cm}|p{1.5cm}|}
+\hline
+\textbf{N°} & \textbf{Feature} & \textbf{User Story} & \textbf{Val} & \textbf{Pts} & \textbf{Sprint} \\
+\hline
+\endfirsthead
+\hline
+\textbf{N°} & \textbf{Feature} & \textbf{User Story} & \textbf{Val} & \textbf{Pts} & \textbf{Sprint} \\
+\hline
+\endhead
+
+% SPRINT 1 : Authentification + Admin
+1 & Authentification & En tant qu'utilisateur, je peux me connecter avec mes identifiants & H & 5 & Sprint 1 \\
+\hline
+2 & Authentification & En tant qu'utilisateur, je peux modifier mon mot de passe & H & 3 & Sprint 1 \\
+\hline
+3 & Inscription & En tant que parent, je peux créer mon compte & H & 5 & Sprint 1 \\
+\hline
+4 & Inscription & En tant qu'éducateur, je peux m'inscrire et attendre validation & H & 5 & Sprint 1 \\
+\hline
+5 & Gestion Admin & En tant qu'admin, je peux valider l'inscription d'un éducateur & H & 3 & Sprint 1 \\
+\hline
+6 & Gestion Admin & En tant qu'admin, je peux désactiver un compte utilisateur & H & 3 & Sprint 1 \\
+\hline
+7 & Gestion Admin & En tant qu'admin, je peux supprimer un utilisateur & H & 3 & Sprint 1 \\
+\hline
+8 & Dashboard Admin & En tant qu'admin, je peux accéder à mon tableau de bord & H & 5 & Sprint 1 \\
+\hline
+
+% SPRINT 2 : Gestion Enfants + Éducateurs
+9 & Gestion Enfants & En tant que parent, je peux ajouter un enfant & H & 3 & Sprint 2 \\
+\hline
+10 & Gestion Enfants & En tant que parent, je peux modifier les infos de mon enfant & M & 3 & Sprint 2 \\
+\hline
+11 & Gestion Enfants & En tant que parent, je peux supprimer un enfant & M & 3 & Sprint 2 \\
+\hline
+12 & Attribution & En tant qu'admin, je peux attribuer un enfant à un éducateur & H & 5 & Sprint 2 \\
+\hline
+13 & Gestion Admin & En tant qu'admin, je peux voir la liste complète des enfants & M & 2 & Sprint 2 \\
+\hline
+14 & Espace Éducateur & En tant qu'éducateur, je peux voir mes élèves attribués & H & 3 & Sprint 2 \\
+\hline
+15 & Observations & En tant qu'éducateur, je peux ajouter une observation visible & H & 5 & Sprint 2 \\
+\hline
+16 & Observations & En tant qu'éducateur, je peux ajouter une observation privée & M & 3 & Sprint 2 \\
+\hline
+17 & Observations & En tant que parent, je peux consulter les observations & H & 3 & Sprint 2 \\
+\hline
+18 & Gestion Admin & En tant qu'admin, je peux gérer les observations & M & 3 & Sprint 2 \\
+\hline
+
+% SPRINT 3 : Jeux + Progression
+19 & Jeux Enfant & En tant qu'enfant, je peux jouer au Memory Animaux (Premium) & H & 8 & Sprint 3 \\
+\hline
+20 & Jeux Enfant & En tant qu'enfant, je peux jouer au Memory Fruits & H & 5 & Sprint 3 \\
+\hline
+21 & Jeux Enfant & En tant qu'enfant, je peux jouer au Memory Couleurs & H & 5 & Sprint 3 \\
+\hline
+22 & Jeux Enfant & En tant qu'enfant, je peux apprendre à compter jusqu'à 3 & H & 5 & Sprint 3 \\
+\hline
+23 & Jeux Enfant & En tant qu'enfant, je peux apprendre à compter jusqu'à 10 (Premium) & H & 5 & Sprint 3 \\
+\hline
+24 & Jeux Enfant & En tant qu'enfant, je peux apprendre les couleurs & M & 5 & Sprint 3 \\
+\hline
+25 & Jeux Enfant & En tant qu'enfant, je peux apprendre les émotions & M & 5 & Sprint 3 \\
+\hline
+26 & Jeux Enfant & En tant qu'enfant, je peux apprendre les animaux & M & 3 & Sprint 3 \\
+\hline
+27 & Jeux Enfant & En tant qu'enfant, je peux apprendre les jours de la semaine & M & 3 & Sprint 3 \\
+\hline
+28 & Jeux Enfant & En tant qu'enfant, je peux apprendre les saisons (Premium) & M & 3 & Sprint 3 \\
+\hline
+29 & Jeux Enfant & En tant qu'enfant, je peux apprendre les fruits & M & 3 & Sprint 3 \\
+\hline
+30 & Jeux enfant & En tant qu'enfant, je peux jouer au Puzzle (premium) & M & 8 & Sprint 3 \\
+\hline
+31 & Jeux enfant & En tant qu'enfant, je peux jouer au Labyrinthe (premium) & M & 8 & Sprint 3 \\
+\hline
+32 & Progression & En tant qu'éducateur, je peux suivre la progression (temps, taux) & H & 8 & Sprint 3 \\
+\hline
+33 & Progression & En tant que parent, je peux suivre la progression de mon enfant & H & 5 & Sprint 3 \\
+\hline
+34 & Contenus & En tant qu'enfant, je peux écouter des sons éducatifs & M & 3 & Sprint 3 \\
+\hline
+35 & Contenus & En tant qu'enfant, je peux regarder des vidéos éducatives & M & 5 & Sprint 3 \\
+\hline
+36 & Contenus & En tant qu'enfant, je peux regarder des dessins animés & M & 3 & Sprint 3 \\
+\hline
+37 & Communication & En tant qu'enfant, je peux communiquer avec des images & B & 5 & Sprint 3 \\
+\hline
+
+% SPRINT 4 : Forum + Paiement + Ressources
+38 & Forum & En tant que parent, je peux publier sur le forum & M & 5 & Sprint 4 \\
+\hline
+39 & Forum & En tant que parent, je peux commenter des posts & M & 3 & Sprint 4 \\
+\hline
+40 & Forum & En tant qu'admin, je peux modérer le forum & M & 5 & Sprint 4 \\
+\hline
+41 & Paiement & En tant que parent, je peux payer pour les jeux premium & H & 8 & Sprint 4 \\
+\hline
+42 & Gestion Admin & En tant qu'admin, je peux gérer les paiements & M & 5 & Sprint 4 \\
+\hline
+43 & Activités & En tant qu'enfant, je peux télécharger des dessins à colorier & B & 3 & Sprint 4 \\
+\hline
+44 & Activités & En tant qu'enfant, je peux écouter des contes & B & 3 & Sprint 4 \\
+\hline
+45 & Activités & En tant qu'enfant, je peux écouter des berceuses & B & 3 & Sprint 4 \\
+\hline
+46 & Paramètres & En tant que parent, je peux modifier mes informations & M & 3 & Sprint 4 \\
+\hline
+47 & Paramètres & En tant que parent, je peux changer mon mot de passe & M & 2 & Sprint 4 \\
+\hline
+48 & Paramètres & En tant qu'éducateur, je peux modifier mes informations & M & 2 & Sprint 4 \\
+\hline
+49 & Notifications & En tant qu'utilisateur, je peux recevoir des notifications & M & 5 & Sprint 4 \\
+\hline
+50 & Badges & En tant qu'utilisateur, je peux recevoir des badges & B & 5 & Sprint 4 \\
+\hline
+51 & Espace Parent & En tant que parent, je peux sélectionner l'enfant qui va jouer & H & 3 & Sprint 4 \\
+\hline
+52 & Activités & En tant qu'éducateur, je peux voir les activités récentes & M & 3 & Sprint 4 \\
+\hline
+
+\caption{Backlog général du projet ComAutiste (Total : 228 points)}
+\end{longtable}
+
+\textbf{Légende des priorités :}
+\begin{itemize}
+    \item H (High) : Priorité haute - Fonctionnalité essentielle
+    \item M (Medium) : Priorité moyenne - Fonctionnalité importante
+    \item B (Basic) : Priorité basse - Fonctionnalité bonus
+\end{itemize}
+
+\section{Planification de la release (découpage en sprints)}
+
+Le projet est organisé en 4 sprints , avec une vélocité moyenne estimée à 57 points par sprint.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{2cm}|p{3cm}|p{8cm}|p{1.5cm}|}
+\hline
+\textbf{Sprint} & \textbf{Durée} & \textbf{Objectifs principaux} & \textbf{Points} \\
+\hline
+Sprint 1 & 3 semaines & Authentification, Inscription, Validation éducateurs, Dashboard Admin & 37 \\
+\hline
+Sprint 2 & 3 semaines & Gestion enfants, Attribution, Observations, Espace éducateur & 37 \\
+\hline
+Sprint 3 & 3 semaines & Tous les jeux éducatifs, Progression, Contenus (sons, vidéos), Communication & 80 \\
+\hline
+Sprint 4 & 3 semaines & Forum, Paiement, Ressources, Paramètres, Notifications, Badges & 74 \\
+\hline
+\multicolumn{3}{|r|}{\textbf{Total}} & \textbf{228} \\
+\hline
+\end{tabular}
+\caption{Planification des 4 sprints}
+\end{table}
+
+\section{Architecture générale}
+
+\subsection{Architecture logique - Modèle MVT (Django)}
+
+ComAutiste utilise l'architecture MVT (Model-View-Template) de Django, une variante du pattern MVC adaptée au framework :
+
+\begin{itemize}
+    \item \textbf{Model (Modèle)} : Définit la structure des données (utilisateurs, enfants, jeux, observations, etc.) et gère les interactions avec la base de données
+    \item \textbf{View (Vue)} : Contient la logique métier, traite les requêtes HTTP, interagit avec les modèles et renvoie les réponses
+    \item \textbf{Template} : Gère l'affichage et la présentation HTML/CSS/JavaScript, avec système de templates Django
+\end{itemize}
+
+\subsection{Architecture physique (architecture trois tiers)}
+
+L'application suit une architecture trois tiers classique :
+
+\begin{enumerate}
+    \item \textbf{Tier 1 - Client (Navigateur web)} : Interface utilisateur HTML/CSS/JavaScript, affichage des templates Django
+    \item \textbf{Tier 2 - Serveur applicatif (Django)} : Traitement de la logique métier, gestion des requêtes, authentification
+    \item \textbf{Tier 3 - Base de données (SQLite)} : Stockage persistant des données utilisateurs, jeux, progressions
+\end{enumerate}
+
+\subsection{Choix technologiques}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Technologie} & \textbf{Justification du choix} \\
+\hline
+Django & Framework Python complet, admin intégré, ORM puissant, sécurité native \\
+\hline
+PostgreSQL & Base de données relationnelle robuste, performante, open-source \\
+\hline
+HTML/CSS/JS & Standards web pour interfaces riches et interactives \\
+\hline
+Bootstrap & Framework CSS pour responsive design et composants UI \\
+\hline
+Git/GitHub & Gestion de version collaborative \\
+\hline
+\end{tabular}
+\caption{Technologies utilisées}
+\end{table}
+
+\section{Environnement de développement}
+
+\subsection{Outils et logiciels}
+
+\begin{itemize}
+    \item \textbf{IDE} : Visual Studio Code 
+    \item \textbf{Gestionnaire de paquets} : pip (Python)
+    \item \textbf{Environnement virtuel} : venv
+    \item \textbf{Navigateurs de test} : Chrome, Firefox, Safari
+    \item \textbf{Outils de modélisation} : Draw.io, StarUML
+    \item \textbf{Documentation} : Overleaf (LaTeX)
+\end{itemize}
+
+\subsection{Configuration matérielle minimale}
+
+\begin{itemize}
+    \item Processeur : Intel Core i5 ou équivalent
+    \item RAM : 8 Go minimum
+    \item Stockage : 256 Go SSD
+    \item Connexion internet stable
+\end{itemize}
+
+\section{Conclusion}
+
+Ce chapitre a permis d'établir les fondations du projet ComAutiste. L'identification précise des quatre acteurs et de leurs besoins a conduit à la création d'un backlog complet de 52 User Stories. La planification en 4 sprints de 3 semaines assure une progression structurée. Les choix architecturaux (MVT Django, architecture trois tiers) et technologiques (Django, PostgreSQL) sont adaptés aux contraintes du projet. La phase de réalisation peut désormais débuter avec le Sprint 1.
+
+\newpage
+
+% ========== CHAPITRE 3 : SPRINT 1 ==========
+\chapter{RÉALISATION DU SPRINT 1}
+
+\section{Introduction}
+
+Ce chapitre décrit la réalisation du premier sprint du projet ComAutiste. Il présente les User Stories sélectionnées, la conception détaillée des fonctionnalités d'authentification et d'administration, ainsi que les interfaces développées. Le Sprint 1 constitue la base technique du projet en mettant en place les mécanismes d'accès et de gestion des utilisateurs.
+
+\section{Objectif du Sprint 1}
+
+L'objectif principal du Sprint 1 est d'implémenter les fonctionnalités fondamentales permettant aux utilisateurs d'accéder à la plateforme de manière sécurisée et à l'administrateur de gérer le système. Ces fonctionnalités incluent :
+
+\begin{itemize}
+    \item Connexion sécurisée avec identifiants
+    \item Inscription des parents et éducateurs
+    \item Validation des comptes éducateurs par l'admin
+    \item Gestion des utilisateurs (désactivation, suppression)
+    \item Dashboard administrateur avec statistiques
+\end{itemize}
+
+\section{Backlog du Sprint 1}
+
+\begin{longtable}{|p{0.5cm}|p{6cm}|p{6cm}|p{1.5cm}|}
+\hline
+\textbf{N°} & \textbf{User Story} & \textbf{Tâches} & \textbf{Durée} \\
+\hline
+\endfirsthead
+\hline
+\textbf{N°} & \textbf{User Story} & \textbf{Tâches} & \textbf{Durée} \\
+\hline
+\endhead
+
+1 & En tant qu'utilisateur, je peux me connecter avec mes identifiants & Création modèle User, Vue login, Template, Tests & 2 jours \\
+\hline
+2 & En tant qu'utilisateur, je peux réinitialiser mon mot de passe & Vue reset password, Email config, Template, Tests & 1.5 jour \\
+\hline
+3 & En tant que parent, je peux créer mon compte & Vue inscription parent, Formulaire, Validation, Tests & 2 jours \\
+\hline
+4 & En tant qu'éducateur, je peux m'inscrire & Vue inscription éducateur, Workflow validation, Tests & 2 jours \\
+\hline
+5 & En tant qu'admin, je peux valider un éducateur & Vue validation, Email notification, Tests & 1.5 jour \\
+\hline
+6 & En tant qu'admin, je peux désactiver un compte & Vue désactivation, Tests & 1 jour \\
+\hline
+7 & En tant qu'admin, je peux supprimer un utilisateur & Vue suppression avec confirmation, Tests & 1 jour \\
+\hline
+8 & En tant qu'admin, j'accède à mon dashboard & Dashboard avec stats, Graphiques, Tests & 3 jours \\
+\hline
+
+\caption{Backlog détaillé Sprint 1}
+\end{longtable}
+
+\section{Authentification}
+
+\subsection{Description textuelle - Se connecter}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Connexion d'un utilisateur \\
+\hline
+\textbf{Acteur principal} & Utilisateur (Admin, Éducateur, Parent) \\
+\hline
+\textbf{Pré-conditions} & L'utilisateur possède un compte actif \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'utilisateur accède à la page de connexion
+2. Il saisit son email
+3. Il saisit son mot de passe
+4. Le système vérifie les identifiants
+5. Le système identifie le rôle de l'utilisateur
+6. L'utilisateur est redirigé vers son espace dédié \\
+\hline
+\textbf{Scénario alternatif} & 
+4a. Identifiants incorrects : message d'erreur
+4b. Compte désactivé : message informatif \\
+\hline
+\textbf{Post-conditions} & L'utilisateur est authentifié et accède à son espace \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Se connecter}
+\end{table}
+
+\subsection{Réalisation - Interface de connexion}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.7  \textwidth]{1.png} 
+\caption{Page de connexion avec champs id/mot de passe et bouton "Se connecter"}
+\label{fig:page_connexion}
+\end{figure}
+
+\section{Inscription}
+
+\subsection{Inscription Parent}
+
+\subsubsection{Description textuelle}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Inscription d'un parent \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Aucune \\
+\hline
+\textbf{Scénario nominal} & 
+1. Le parent accède au formulaire d'inscription
+2. Il saisit nom, prénom, email, mot de passe
+3. Il confirme le mot de passe
+4. Le système valide les données
+5. Le compte est créé et activé automatiquement
+6. Le parent reçoit un email de confirmation \\
+\hline
+\textbf{Scénario alternatif} & 
+4a. Email déjà utilisé : message d'erreur
+4b. Mots de passe non identiques : message d'erreur
+4c. Format email invalide : message d'erreur \\
+\hline
+\textbf{Post-conditions} & Le parent peut se connecter immédiatement \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Inscription parent}
+\end{table}
+
+\subsection{Inscription Éducateur}
+
+\subsubsection{Description textuelle}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Inscription d'un éducateur \\
+\hline
+\textbf{Acteur principal} & Éducateur \\
+\hline
+\textbf{Pré-conditions} & Aucune \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'éducateur accède au formulaire d'inscription
+2. Il saisit nom, prénom, email, mot de passe, spécialité
+3. Il soumet sa demande
+4. Le système crée le compte en statut "En attente"
+5. L'admin reçoit une notification
+6. L'éducateur reçoit un message l'informant d'attendre la validation \\
+\hline
+\textbf{Scénario alternatif} & 
+4a. Email déjà utilisé : message d'erreur \\
+\hline
+\textbf{Post-conditions} & Le compte éducateur est créé mais non actif \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Inscription éducateur}
+\end{table}
+
+\section{Gestion Admin}
+
+\subsection{Validation d'un éducateur}
+
+\subsubsection{Description textuelle}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Validation d'un compte éducateur \\
+\hline
+\textbf{Acteur principal} & Administrateur \\
+\hline
+\textbf{Pré-conditions} & Un éducateur a soumis sa demande d'inscription \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'admin accède à la liste des demandes en attente
+2. Il consulte le profil de l'éducateur
+3. Il clique sur "Approuver"
+4. Le système active le compte
+5. Un email de confirmation est envoyé à l'éducateur
+6. L'éducateur peut désormais se connecter \\
+\hline
+\textbf{Scénario alternatif} & 
+3a. L'admin refuse la demande : le compte est supprimé et un email est envoyé \\
+\hline
+\textbf{Post-conditions} & Le compte éducateur est actif \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Validation éducateur}
+\end{table}
+
+\subsubsection{Réalisation - Interface Inscription}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{2.png} 
+\caption{Page d'inscription }
+\label{fig:page_inscription}
+\end{figure}
+
+\subsection{Dashboard Administrateur}
+
+Le dashboard admin constitue le centre de contrôle de la plateforme. Il affiche :
+
+\begin{itemize}
+    \item Nombre total d'utilisateurs (parents, éducateurs, enfants)
+    \item Nombre de demandes d'inscription en attente
+    \item Statistiques d'utilisation des jeux
+    \item Activité récente sur la plateforme
+    \item Graphiques de progression globale
+    \item Accès rapides aux fonctions de gestion
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{3.png} 
+\caption{Dashboard Admin }
+\label{fig:page_connexion}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{4.png} 
+\caption{Validation d'un éducateur}
+\label{fig:page_connexion}
+\end{figure}
+
+
+\section{Tests et validation}
+
+\subsection{Tests unitaires}
+
+Des tests unitaires ont été réalisés pour chaque fonctionnalité :
+
+\begin{itemize}
+    \item Test de création de compte (parent, éducateur)
+    \item Test d'authentification (succès, échec)
+    \item Test de validation par admin
+    \item Test de désactivation de compte
+\end{itemize}
+
+\subsection{Tests d'intégration}
+
+Vérification des workflows complets :
+\begin{itemize}
+    \item Inscription éducateur → Validation admin → Connexion
+    \item Inscription parent → Connexion immédiate
+    \item Oubli mot de passe → Email → Réinitialisation → Connexion
+\end{itemize}
+
+\section{Conclusion}
+
+Le Sprint 1 a permis de mettre en place l'infrastructure de base de ComAutiste. Les mécanismes d'authentification, d'inscription différenciée selon les rôles, et de gestion administrative sont opérationnels. Le système de validation des éducateurs garantit la qualité des intervenants sur la plateforme. Le dashboard admin offre une vision globale nécessaire au pilotage. Ces fondations solides permettent d'aborder sereinement le Sprint 2 dédié à la gestion des enfants et aux observations pédagogiques.
+
+\newpage
+
+% ========== CHAPITRE 4 : SPRINT 2 ==========
+\chapter{RÉALISATION DU SPRINT 2}
+
+\section{Introduction}
+
+Le Sprint 2 se concentre sur la gestion des enfants et la mise en place du système d'observations pédagogiques. Il permet aux parents d'enregistrer leurs enfants dans la plateforme, à l'administrateur d'attribuer des enfants aux éducateurs, et à ces derniers de documenter leurs observations.
+
+\section{Objectif du Sprint 2}
+
+Les objectifs principaux sont :
+\begin{itemize} 
+    \item Permettre la gestion complète des profils enfants (CRUD)
+    \item Implémenter le système d'attribution enfant-éducateur
+    \item Développer le module d'observations (visibles et privées)
+    \item Créer l'espace éducateur avec liste d'élèves
+    \item Mettre en place la consultation d'observations par les parents
+\end{itemize}
+
+\section{Backlog du Sprint 2}
+
+\begin{longtable}{|p{0.5cm}|p{6cm}|p{6cm}|p{1.5cm}|}
+\hline
+\textbf{N°} & \textbf{User Story} & \textbf{Tâches} & \textbf{Durée} \\
+\hline
+\endfirsthead
+\hline
+\textbf{N°} & \textbf{User Story} & \textbf{Tâches} & \textbf{Durée} \\
+\hline
+\endhead
+
+9 & En tant que parent, je peux ajouter un enfant & Création modèle Enfant, Vue ajout, Formulaire, Validation, Tests & 2 jours \\
+\hline
+10 & En tant que parent, je peux modifier les informations de mon enfant & Vue modification, Formulaire prérempli, Validation, Tests & 1.5 jour \\
+\hline
+11 & En tant que parent, je peux supprimer un enfant & Vue suppression avec confirmation, Cascade delete, Tests & 1 jour \\
+\hline
+12 & En tant que parent, je peux consulter la liste de mes enfants & Vue liste enfants, Affichage cards, Tests & 1 jour \\
+\hline
+13 & En tant qu'admin, je peux attribuer un enfant à un éducateur & Vue attribution, Sélection éducateurs disponibles, Notification, Tests & 2 jours \\
+\hline
+14 & En tant qu'admin, je peux modifier une attribution & Vue modification attribution, Historique, Tests & 1.5 jour \\
+\hline
+15 & En tant qu'éducateur, je peux voir mes enfants attribués & Dashboard éducateur, Liste enfants, Filtres, Tests & 2 jours \\
+\hline
+16 & En tant qu'éducateur, je peux ajouter une observation visible & Formulaire observation, Type visible/privée, Tests & 2 jours \\
+\hline
+17 & En tant qu'éducateur, je peux ajouter une observation privée & Formulaire observation privée, Gestion visibilité, Tests & 1.5 jour \\
+\hline
+18 & En tant que parent, je peux consulter les observations de mon enfant & Vue observations, Filtre par enfant, Affichage chronologique, Tests & 2 jours \\
+\hline
+
+\caption{Backlog détaillé Sprint 2}
+\end{longtable}
+
+\section{Gestion des enfants}
+
+\subsection{Ajout d'un enfant}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Ajout d'un enfant par un parent \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Le parent est connecté à son compte \\
+\hline
+\textbf{Scénario nominal} & 
+1. Le parent accède à son espace personnel
+2. Il clique sur "Ajouter un enfant"
+3. Il saisit le nom, prénom, date de naissance, genre
+4. Il peut ajouter une photo (optionnel)
+5. Il soumet le formulaire
+6. Le système valide les données
+7. L'enfant est enregistré dans la base de données
+8. Un message de confirmation s'affiche \\
+\end{tabular}
+\caption{Description textuelle - Ajout d'un enfant}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{5.png} 
+\caption{Formulaire d'ajout d'un enfant}
+\label{fig:ajout_enfant}
+\end{figure}
+
+\subsection{Modification d'un enfant}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Modification des informations d'un enfant \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & L'enfant existe dans le système et appartient au parent \\
+\hline
+\textbf{Scénario nominal} & 
+1. Le parent accède à la liste de ses enfants
+2. Il sélectionne l'enfant à modifier
+3. Il clique sur "Modifier"
+4. Le formulaire s'affiche prérempli avec les données actuelles
+5. Il modifie les informations souhaitées
+6. Il soumet le formulaire
+7. Le système valide les modifications
+8. Les données sont mises à jour
+9. Un message de confirmation s'affiche \\
+\hline
+\textbf{Scénario alternatif} & 
+7a. Données invalides : message d'erreur spécifique \\
+\hline
+\textbf{Post-conditions} & Les informations de l'enfant sont mises à jour \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Modification d'un enfant}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{6.png} 
+\caption{Formulaire de modification d'un enfant}
+\label{fig:modification_enfant}
+\end{figure}
+
+\subsection{Suppression d'un enfant}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Suppression d'un enfant \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & L'enfant existe et appartient au parent \\
+\hline
+\textbf{Scénario nominal} & 
+1. Le parent accède à la liste de ses enfants
+2. Il sélectionne l'enfant à supprimer
+3. Il clique sur "Supprimer"
+4. Une fenêtre modale de confirmation s'affiche
+5. Le parent confirme la suppression
+6. Le système supprime l'enfant et toutes ses données associées
+7. Un message de confirmation s'affiche
+8. La liste est mise à jour \\
+\hline
+\textbf{Scénario alternatif} & 
+5a. Le parent annule : retour à la liste sans suppression \\
+\hline
+\textbf{Post-conditions} & L'enfant et ses données sont supprimés du système \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Suppression d'un enfant}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{7.png} 
+\caption{Confirmation de suppression d'un enfant}
+\label{fig:suppression_enfant}
+\end{figure}
+
+\subsection{Liste des enfants}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Consultation de la liste des enfants \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Le parent est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+1. Le parent accède à son espace personnel
+2. Il consulte la section "Mes enfants"
+3. Le système affiche tous ses enfants sous forme de cards
+4. Chaque card affiche : photo, nom, prénom, âge
+5. Des boutons d'action sont disponibles (Modifier, Supprimer, Voir détails) \\
+\hline
+\textbf{Scénario alternatif} & 
+3a. Aucun enfant enregistré : message informatif avec bouton "Ajouter un enfant" \\
+\hline
+\textbf{Post-conditions} & Le parent visualise tous ses enfants \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Liste des enfants}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{8.png} 
+\caption{Liste des enfants du parent}
+\label{fig:liste_enfants}
+\end{figure}
+
+\section{Attribution enfant-éducateur}
+
+\subsection{Attribution par l'administrateur}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Attribution d'un enfant à un éducateur \\
+\hline
+\textbf{Acteur principal} & Administrateur \\
+\hline
+\textbf{Pré-conditions} & 
+- L'enfant est enregistré dans le système
+- Des éducateurs validés sont disponibles \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'admin accède à l'interface d'attribution
+2. Il sélectionne un enfant dans la liste
+3. Le système affiche les éducateurs 
+4. L'admin sélectionne un éducateur
+5. Il confirme l'attribution
+6. Le système enregistre l'attribution 
+7. Une notification est envoyée à l'éducateur
+8. Un message de confirmation s'affiche \\
+\hline
+\textbf{Scénario alternatif} & 
+3a. Aucun éducateur disponible : message informatif
+7a. L'enfant est déjà attribué : message de confirmation de changement \\
+\hline
+\textbf{Post-conditions} & L'enfant est attribué à l'éducateur et visible dans son espace \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Attribution enfant-éducateur}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{9.png} 
+\caption{Interface d'attribution enfant-éducateur}
+\label{fig:attribution_enfant}
+\end{figure}
+
+\subsection{Modification d'une attribution}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Modification d'une attribution existante \\
+\hline
+\textbf{Acteur principal} & Administrateur \\
+\hline
+\textbf{Pré-conditions} & Une attribution existe déjà pour l'enfant \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'admin accède à la liste des attributions
+2. Il sélectionne l'attribution à modifier
+3. Il sélectionne un nouvel éducateur
+4. Il confirme la modification
+5. La nouvelle attribution est enregistrée
+\end{tabular}
+\caption{Description textuelle - Modification d'attribution}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{10.png} 
+\caption{Modification d'une attribution avec historique}
+\label{fig:modification_attribution}
+\end{figure}
+
+\section{Espace éducateur}
+
+\subsection{Dashboard éducateur}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Consultation des enfants attribués \\
+\hline
+\textbf{Acteur principal} & Éducateur \\
+\hline
+\textbf{Pré-conditions} & L'éducateur est connecté et validé \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'éducateur accède à son dashboard
+2. Le système affiche tous les enfants qui lui sont attribués
+3. Pour chaque enfant, il visualise leurs informations
+6. Il peut accéder au profil détaillé de chaque enfant
+7. Il peut ajouter une observation directement depuis cette interface \\
+\hline
+\textbf{Scénario alternatif} & 
+2a. Aucun enfant attribué : message informatif \\
+\hline
+\textbf{Post-conditions} & L'éducateur visualise tous ses enfants attribués \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Dashboard éducateur}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{11.png} 
+\caption{Dashboard de l'éducateur}
+\label{fig:dashboard_educateur}
+\end{figure}
+
+\section{Système d'observations}
+
+\subsection{Ajout d'observation visible}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Ajout d'une observation visible par les parents \\
+\hline
+\textbf{Acteur principal} & Éducateur \\
+\hline
+\textbf{Pré-conditions} & L'éducateur a des enfants attribués \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'éducateur sélectionne un enfant
+2. Il clique sur "Ajouter une observation"
+3. Il sélectionne le type "Visible"
+4. Il choisit une catégorie (Comportement, Apprentissage, Social, Santé, Autre)
+5. Il rédige son observation
+6. Il peut ajouter des photos ou documents (optionnel)
+7. Il soumet l'observation
+8. Le système enregistre l'observation 
+9. Une notification est envoyée au parent
+10. Un message de confirmation s'affiche \\
+\hline
+\textbf{Scénario alternatif} & 
+5a. Observation vide : message d'erreur
+6a. Fichier trop volumineux : message d'erreur \\
+\hline
+\textbf{Post-conditions} & L'observation est visible par le parent dans son espace \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Ajout observation visible}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{12.png} 
+\caption{Formulaire d'ajout d'observation visible}
+\label{fig:observation_visible}
+\end{figure}
+
+\subsection{Ajout d'observation privée}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Ajout d'une observation privée (usage interne) \\
+\hline
+\textbf{Acteur principal} & Éducateur \\
+\hline
+\textbf{Pré-conditions} & L'éducateur a des enfants attribués \\
+\hline
+\textbf{Scénario nominal} & 
+1. L'éducateur sélectionne un enfant
+2. Il clique sur "Ajouter une observation"
+3. Il sélectionne le type "Privée"
+4. Il choisit une catégorie
+5. Il rédige son observation (notes personnelles, alertes internes)
+6. Il soumet l'observation
+7. Le système enregistre l'observation
+8. L'observation est visible uniquement par l'éducateur et l'admin
+10. Un message de confirmation s'affiche \\
+\hline
+\textbf{Scénario alternatif} & 
+5a. Observation vide : message d'erreur \\
+\hline
+\textbf{Post-conditions} & L'observation privée est enregistrée et invisible pour les parents \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Ajout observation privée}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{13.png} 
+\caption{Formulaire d'observation privée}
+\label{fig:observation_privee}
+\end{figure}
+
+\subsection{Consultation par les parents}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Consultation des observations par un parent \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & 
+- Le parent est connecté
+- Des observations visibles existent pour ses enfants \\
+\hline
+\textbf{Scénario nominal} & 
+1. Le parent accède à son espace
+2. Il sélectionne un de ses enfants
+3. Il accède à l'onglet "Observations"
+4. Le système affiche toutes les observations visibles par ordre chronologique
+5. Chaque observation affiche : date, auteur, catégorie, contenu,
+\textbf{Scénario alternatif} & 
+4a. Aucune observation disponible : message informatif \\
+\hline
+\textbf{Post-conditions} & Le parent a consulté les observations de son enfant \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Consultation observations par parent}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{14.png} 
+\caption{Interface de consultation des observations pour les parents}
+\label{fig:consultation_observations}
+\end{figure}
+
+\section{Conclusion Sprint 2}
+
+Le Sprint 2 a permis de mettre en place les fonctionnalités essentielles de gestion des enfants et le système d'observations. Les réalisations incluent :
+
+\begin{itemize}
+\item Gestion complète du CRUD des enfants par les parents
+\item Système d'attribution enfant-éducateur avec historique
+\item Dashboard éducateur avec liste des enfants attribués
+\item Système d'observations avec deux niveaux de visibilité (visible/privée)
+\item Interface de consultation des observations pour les parents
+\item Notifications automatiques pour toutes les actions importantes
+\end{itemize}
+
+Ces fonctionnalités constituent le cœur du système de suivi éducatif et préparent le terrain pour le Sprint 3 qui se concentrera sur les jeux éducatifs, la progression et les contenus multimédias.
+\newpage
+
+% ========== CHAPITRE 5 : SPRINT 3 ==========
+\chapter{Réalisation du Sprint 3}
+Introduction
+Le Sprint 3 constitue le cœur éducatif de la plateforme ComAutiste. Il se concentre sur le développement de tous les jeux éducatifs, la mise en place du système de suivi de progression, l'intégration des contenus multimédias (sons, vidéos, contes, berceuses) et le module de communication par pictogrammes. Ce sprint est le plus volumineux avec 80 points de complexité.
+Objectif du Sprint 3
+Les objectifs principaux sont :
+\begin{itemize}
+\item Développer 13 jeux éducatifs adaptés aux enfants autistes
+\item Implémenter le système de progression avec statistiques détaillées
+\item Intégrer les contenus multimédias (sons, vidéos, dessins animés)
+\item Créer le module de communication par images
+\item Mettre en place le système de téléchargement de dessins à colorier
+\item Développer l'espace berceuses et contes
+\end{itemize}
+Backlog du Sprint 3
+\begin{longtable}{|p{0.5cm}|p{6cm}|p{6cm}|p{1.5cm}|}
+\hline
+\textbf{N°} & \textbf{User Story} & \textbf{Tâches} & \textbf{Durée} \
+\hline
+\endfirsthead
+\hline
+\textbf{N°} & \textbf{User Story} & \textbf{Tâches} & \textbf{Durée} \
+\hline
+\endhead
+19 & En tant qu'enfant, je peux jouer au Memory Animaux (Premium) & Logique jeu, Interface, Sons, Animations, Sauvegarde progression, Tests & 3 jours \
+\hline
+20 & En tant qu'enfant, je peux jouer au Memory Fruits & Logique jeu, Interface, Assets fruits, Tests & 2 jours \
+\hline
+21 & En tant qu'enfant, je peux jouer au Memory Couleurs & Logique jeu, Interface, Gestion couleurs, Tests & 2 jours \
+\hline
+22 & En tant qu'enfant, je peux apprendre à compter jusqu'à 3 & Interface interactive, Logique validation, Sons nombres, Tests & 2 jours \
+\hline
+23 & En tant qu'enfant, je peux apprendre à compter jusqu'à 10 (Premium) & Interface avancée, Progression niveaux, Tests & 2 jours \
+\hline
+24 & En tant qu'enfant, je peux apprendre les couleurs & Quiz interactif, Reconnaissance couleurs, Feedback visuel, Tests & 2 jours \
+\hline
+25 & En tant qu'enfant, je peux apprendre les émotions & Interface émotions, Pictogrammes, Quiz, Tests & 2 jours \
+\hline
+26 & En tant qu'enfant, je peux apprendre les animaux & Quiz animaux, Sons cris, Images, Tests & 1.5 jour \
+\hline
+27 & En tant qu'enfant, je peux apprendre les jours de la semaine & Interface calendrier, Quiz, Animations, Tests & 1.5 jour \
+\hline
+28 & En tant qu'enfant, je peux apprendre les saisons (Premium) & Quiz saisons, Images thématiques, Tests & 1.5 jour \
+\hline
+29 & En tant qu'enfant, je peux apprendre les fruits & Quiz fruits, Images, Sons, Tests & 1.5 jour \
+\hline
+30 & En tant qu'enfant, je peux jouer au Puzzle (Premium) & Logique puzzle, Drag and drop, Niveaux difficulté, Tests & 3 jours \
+\hline
+31 & En tant qu'enfant, je peux jouer au Labyrinthe (Premium) & Génération labyrinthes, Contrôles, Niveaux, Tests & 3 jours \
+\hline
+32 & En tant qu'éducateur, je peux suivre la progression (temps, taux) & Dashboard progression, Graphiques, Statistiques détaillées, Export, Tests & 3 jours \
+\hline
+33 & En tant que parent, je peux suivre la progression de mon enfant & Interface progression parent, Graphiques simplifiés, Historique, Tests & 2 jours \
+\hline
+34 & En tant qu'enfant, je peux écouter des sons éducatifs & Bibliothèque sons, Player audio, Catégories, Tests & 1.5 jour \
+\hline
+35 & En tant qu'enfant, je peux regarder des vidéos éducatives & Bibliothèque vidéos, Player vidéo, Catégories, Tests & 2 jours \
+\hline
+36 & En tant qu'enfant, je peux regarder des dessins animés & Bibliothèque dessins animés, Player, Favoris, Tests & 1.5 jour \
+\hline
+37 & En tant qu'enfant, je peux communiquer avec des images & Interface pictogrammes, Sélection images, Affichage, Tests & 2 jours \
+\hline
+\caption{Backlog détaillé Sprint 3}
+\end{longtable}
+Jeux éducatifs - Jeux de mémoire
+Memory Animaux (Premium)
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Jeu Memory Animaux \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & 
+L'enfant est connecté via le compte parent \newline
+Le jeu premium est débloqué (paiement effectué) \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant accède à la section "Jeux" \newline
+Il sélectionne "Memory Animaux" \newline
+Le jeu affiche une grille de cartes retournées (12 cartes - 6 paires) \newline
+L'enfant clique sur une première carte (elle se retourne avec animation) \newline
+Il clique sur une deuxième carte \newline
+Si les cartes correspondent : elles restent visibles + son de victoire \newline
+Si elles ne correspondent pas : elles se retournent après 1 seconde \newline
+Le jeu continue jusqu'à trouver toutes les paires \newline
+Un écran de félicitations s'affiche avec le temps et le nombre de coups \newline
+La progression est enregistrée automatiquement \\
+\hline
+\textbf{Scénario alternatif} & 
+2a. Jeu non débloqué : redirection vers page de paiement \\
+\hline
+\textbf{Post-conditions} & La session de jeu est enregistrée dans la progression \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Memory Animaux}
+\end{table}
+
+% =====================================
+% Jeux Memory
+% =====================================
+
+% Memory Fruits
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Jeu Memory Fruits \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant sélectionne "Memory Fruits" \newline
+Une grille de 12 cartes avec 6 paires de fruits s'affiche \newline
+Même mécanisme que Memory Animaux \newline
+Sons de fruits lors des paires trouvées \newline
+Enregistrement automatique de la progression \\
+\hline
+\textbf{Post-conditions} & Session enregistrée \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Memory Fruits}
+\end{table}
+
+% Memory Couleurs
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Jeu Memory Couleurs \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant sélectionne "Memory Couleurs" \newline
+Grille de 12 cartes avec paires de couleurs \newline
+Prononciation du nom de la couleur lors des clics \newline
+Animations colorées lors des succès \\
+\hline
+\textbf{Post-conditions} & Progression enregistrée \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Memory Couleurs}
+\end{table}
+
+% =====================================
+% Jeux Compter
+% =====================================
+
+% Compter jusqu'à 3
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre à compter jusqu'à 3 \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant accède au jeu "Compter jusqu'à 3" \newline
+Une image affiche 1, 2 ou 3 objets (fruits, animaux, jouets) \newline
+Trois boutons numérotés 1, 2, 3 s'affichent \newline
+L'enfant clique sur le nombre correspondant \newline
+Si correct : animation de félicitations + son "Bravo!" + prochain exercice \newline
+Si incorrect : encouragement "Essaie encore!" sans pénalité \newline
+Séries de 10 exercices par session \newline
+Écran de résumé avec score \\
+\hline
+\textbf{Post-conditions} & Résultats enregistrés dans la progression \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Compter jusqu'à 3}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{compter_3.png}
+\caption{Interface du jeu Compter jusqu'à 3}
+\label{fig:compter_3}
+\end{figure}
+
+% Compter jusqu'à 10 (Premium)
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre à compter jusqu'à 10 \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté et le contenu premium est débloqué \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant sélectionne "Compter jusqu'à 10" \newline
+Système de niveaux progressifs (niveau 1: 1-5, niveau 2: 1-10) \newline
+Mêmes mécaniques que "Compter jusqu'à 3" avec plus d'objets \newline
+Difficulté croissante avec objets dispersés ou groupés \\
+\hline
+\textbf{Post-conditions} & Progression et niveau enregistrés \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Compter jusqu'à 10}
+\end{table}
+
+% =====================================
+% Jeux d'apprentissage
+% =====================================
+
+% Apprendre les couleurs
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre les couleurs \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant accède au jeu des couleurs \newline
+Le jeu affiche un objet coloré (pomme rouge, ballon bleu, etc.) \newline
+Une voix demande "Quelle est cette couleur?" \newline
+Quatre boutons de couleurs s'affichent \newline
+L'enfant sélectionne une couleur \newline
+Si correct : félicitations + prononciation du nom de la couleur \newline
+Si incorrect : "Non, c'est [couleur correcte]" + réessai \newline
+Série de 8 exercices par session \\
+\hline
+\textbf{Post-conditions} & Score enregistré \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Apprendre les couleurs}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{couleurs.png}
+\caption{Interface du jeu des couleurs}
+\label{fig:couleurs}
+\end{figure}
+% =====================================
+% Jeux d'apprentissage (suite)
+% =====================================
+
+% Apprendre les émotions
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre les émotions \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant accède au jeu des émotions \newline
+Un visage exprime une émotion (joie, tristesse, colère, peur, surprise) \newline
+Question: "Comment se sent cette personne?" \newline
+Quatre pictogrammes d'émotions s'affichent \newline
+L'enfant sélectionne l'émotion correspondante \newline
+Feedback avec explication simple de l'émotion \newline
+Série de 10 exercices avec visages variés \\
+\hline
+\textbf{Post-conditions} & Résultats enregistrés \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Apprendre les émotions}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{emotions.png}
+\caption{Interface du jeu des émotions}
+\label{fig:emotions}
+\end{figure}
+
+% Apprendre les animaux
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre les animaux \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant sélectionne le jeu des animaux \newline
+Une image d'animal s'affiche \newline
+Un son du cri de l'animal est joué \newline
+Question: "Quel est cet animal?" \newline
+Trois ou quatre options avec noms et images \newline
+L'enfant sélectionne sa réponse \newline
+Si correct : cri de l'animal + "Oui, c'est un [animal]!" \newline
+Série de 10 animaux communs \\
+\hline
+\textbf{Post-conditions} & Score enregistré \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Apprendre les animaux}
+\end{table}
+
+% Jeux sur le quotidien
+% Jours de la semaine
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre les jours de la semaine \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant accède au jeu \newline
+Mode 1: Remettre les jours dans l'ordre (drag and drop) \newline
+Mode 2: "Quel jour vient après Mardi?" - choix multiples \newline
+Mode 3: Associer activités aux jours (école, weekend) \newline
+Animations calendrier pour visualiser la semaine \newline
+Prononciation des jours \\
+\hline
+\textbf{Post-conditions} & Progression enregistrée \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Jours de la semaine}
+\end{table}
+
+% Saisons (Premium)
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre les saisons \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté et contenu premium débloqué \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant sélectionne le jeu des saisons \newline
+Images représentant les 4 saisons \newline
+Associer éléments aux saisons (neige → hiver, fleurs → printemps) \newline
+Quiz sur caractéristiques des saisons \newline
+Animations visuelles pour chaque saison \\
+\hline
+\textbf{Post-conditions} & Résultats enregistrés \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Saisons}
+\end{table}
+
+% Apprendre les fruits
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Apprendre les fruits \\
+\hline
+\textbf{Acteur principal} & Enfant \\
+\hline
+\textbf{Pré-conditions} & L'enfant est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'enfant accède au jeu des fruits \newline
+Images de fruits colorés et réalistes \newline
+Question: "Quel est ce fruit?" \newline
+Choix multiples avec noms et images \newline
+Prononciation du nom du fruit \newline
+Informations simples (couleur, goût) \\
+\hline
+\textbf{Post-conditions} & Score enregistré \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Fruits}
+\end{table}
+\section*{Conclusion Sprint 3}
+
+Le Sprint 3 a permis de créer le cœur éducatif de ComAutiste avec :
+
+\begin{itemize}
+\item 3 jeux Memory : Animaux (premium), Fruits, Couleurs
+\item 2 jeux de comptage : jusqu'à 3 et jusqu'à 10 (premium)
+\item 6 jeux d'apprentissage : couleurs, émotions, animaux, jours, saisons (premium), fruits
+\item 2 jeux d'adresse premium : Puzzle et Labyrinthe
+\item Système de suivi de progression : pour éducateurs (détaillé) et parents (simplifié)
+\item Bibliothèques multimédias : sons, vidéos, dessins animés
+\item Module de communication par pictogrammes
+\end{itemize}
+
+Cette première version de la plateforme fournit désormais un ensemble complet d’outils éducatifs adaptés.  
+Le Sprint 4 se concentrera sur les aspects communautaires (forum), la monétisation (paiement), les ressources complémentaires et la gamification.
+
+\newpage
+\chapter{Réalisation du Sprint 4}
+
+\section*{Introduction}
+Le Sprint 4 finalise la plateforme ComAutiste en développant les fonctionnalités communautaires, de monétisation et de gamification. Il met en place le forum parents, le système de paiement pour contenus premium, les ressources téléchargeables (dessins à colorier, contes, berceuses), la gestion des paramètres utilisateurs, et les systèmes de notifications et badges.
+
+\section*{Objectif du Sprint 4}
+Les objectifs principaux sont :
+\begin{itemize}
+\item Créer un forum d'entraide entre parents
+\item Implémenter le système de paiement sécurisé pour jeux premium
+\item Mettre en place la gestion complète des paramètres utilisateurs
+\item Créer le système de notifications en temps réel
+\item Implémenter la gamification avec badges et récompenses
+\item Finaliser la sélection d'enfant pour l'espace de jeu
+\end{itemize}
+
+% ==========================
+% Forum Parents
+% ==========================
+\section*{Forum Parents}
+
+% Publication d'un post
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Création d'un post sur le forum \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Le parent est connecté et a au moins un enfant enregistré \\
+\hline
+\textbf{Scénario nominal} & 
+Le parent accède à la section "Forum" \newline
+Il clique sur "Créer un nouveau post" \newline
+Il saisit un titre (obligatoire) \newline
+Il sélectionne une catégorie : Questions générales, Témoignages, Conseils éducatifs, Ressources, Activités \newline
+Il rédige son message (éditeur riche) \newline
+Il soumet le post \newline
+Le système valide les données \newline
+Le post est publié et visible par tous les parents \newline
+Le parent reçoit une confirmation \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Publication post forum}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{forum_post.png}
+\caption{Interface de création d'un post forum}
+\label{fig:forum_post}
+\end{figure}
+
+% Commentaires
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Commenter un post du forum \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Le parent est connecté et accède à un post \\
+\hline
+\textbf{Scénario nominal} & 
+Le parent lit un post qui l'intéresse \newline
+Il clique sur "Commenter" \newline
+Il rédige son commentaire \newline
+Il soumet le commentaire \newline
+Le commentaire s'affiche immédiatement \newline
+Possibilité de répondre à un commentaire (fil de discussion) \\
+\hline
+\textbf{Scénario alternatif} & Commentaire vide : message d'erreur \\
+\hline
+\textbf{Post-conditions} & Le commentaire est publié et visible \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Commentaire forum}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{forum_commentaires.png}
+\caption{Système de commentaires avec fils de discussion}
+\label{fig:forum_commentaires}
+\end{figure}
+
+% Modération
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Modération du forum \\
+\hline
+\textbf{Acteur principal} & Administrateur \\
+\hline
+\textbf{Pré-conditions} & L'admin est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'admin accède à l'interface de modération \newline
+Il visualise : posts signalés, commentaires suspects, statistiques d'activité \newline
+Pour chaque contenu signalé : lire, décider (Approuver/Supprimer/Avertir l'auteur) \newline
+Actions disponibles : supprimer post/commentaire \\
+\hline
+\textbf{Post-conditions} & Le forum reste un espace sain et bienveillant \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Modération forum}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{moderation_forum.png}
+\caption{Interface de modération du forum}
+\label{fig:moderation_forum}
+\end{figure}
+
+% ==========================
+% Système de paiement
+% ==========================
+\section*{Système de paiement}
+
+% Paiement premium
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Achat de l'accès premium \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Le parent est connecté et possède au moins un enfant \\
+\hline
+\textbf{Scénario nominal} & 
+Le parent accède à la page "Premium" \newline
+Affichage de l'offre : liste des jeux premium, prix, avantages \newline
+Il clique sur "Acheter Premium" \newline
+Redirection vers page de paiement Stripe sécurisée \newline
+Il entre ses informations bancaires et valide \newline
+Stripe traite la transaction \newline
+Le compte est automatiquement upgradé en Premium \newline
+Les jeux premium sont immédiatement débloqués \\
+\hline
+\textbf{Scénario alternatif} & 
+Paiement refusé : message d'erreur et possibilité de réessayer \newline
+Problème technique : email au support avec référence \\
+\hline
+\textbf{Post-conditions} & Le parent a accès permanent aux contenus premium \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Paiement premium}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{paiement_premium.png}
+\caption{Page de présentation de l'offre premium}
+\label{fig:paiement_premium}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{stripe_checkout.png}
+\caption{Interface de paiement Stripe}
+\label{fig:stripe_checkout}
+\end{figure}
+
+% Gestion par l'admin
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Gestion administrative des paiements \\
+\hline
+\textbf{Acteur principal} & Administrateur \\
+\hline
+\textbf{Pré-conditions} & L'admin est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+L'admin accède au dashboard "Paiements" \newline
+Statistiques affichées : revenus totaux, abonnements premium, graphique ventes, taux de conversion \newline
+Liste de toutes les transactions : date, parent, montant, statut, détails \newline
+Actions possibles : consulter transaction, émettre remboursement, exporter données, voir utilisateurs premium \\
+\hline
+\textbf{Post-conditions} & L'admin a une vision complète de l'activité financière \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Gestion paiements admin}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{gestion_paiements.png}
+\caption{Dashboard administrateur des paiements}
+\label{fig:gestion_paiements}
+\end{figure}
+
+% ==========================
+% Gestion des paramètres
+% ==========================
+\section*{Gestion des paramètres}
+
+% Paramètres parent
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Modification des paramètres parent \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Le parent est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+Le parent accède à "Paramètres" \newline
+Onglets disponibles : Informations personnelles, Mot de passe, Notifications, Préférences \newline
+Informations modifiables : Nom, Prénom, Email, Numéro de téléphone, Photo de profil, Adresse (optionnel) \newline
+Le parent modifie les champs souhaités \newline
+Il valide les modifications \newline
+Le système vérifie les données \newline
+Confirmation de mise à jour \\
+\hline
+\textbf{Scénario alternatif} & 
+Email déjà utilisé : message d'erreur \newline
+Format invalide : message d'erreur \\
+\hline
+\textbf{Post-conditions} & Les informations sont mises à jour \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Paramètres parent}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{parametres_parent.png}
+\caption{Interface de paramètres parent}
+\label{fig:parametres_parent}
+\end{figure}
+
+% ==========================
+% Notifications
+% ==========================
+\section*{Système de notifications}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Réception et gestion des notifications \\
+\hline
+\textbf{Acteur principal} & Tous les utilisateurs \\
+\hline
+\textbf{Pré-conditions} & L'utilisateur est connecté \\
+\hline
+\textbf{Scénario nominal} & 
+Le système génère des notifications pour divers événements \newline
+Types de notifications par rôle : 
+\textbf{Parent :} Nouvelle observation de l'éducateur, Commentaire sur un post du forum, Badge débloqué par l'enfant, Rappel d'activité \newline
+\textbf{Éducateur :} Nouvel enfant attribué, Compte validé par l'admin, Activité importante d'un élève \newline
+\textbf{Admin :} Nouvelle demande d'inscription éducateur, Signalement sur le forum, Nouveau paiement \newline
+Icône de notification dans la barre de navigation (compteur) \newline
+L'utilisateur clique sur l'icône \newline
+Liste déroulante des notifications récentes, chaque notification avec : Icône du type, Message, Date/heure, Statut lu/non lu \newline
+Clic sur une notification : redirection vers contenu concerné \newline
+Bouton "Tout marquer comme lu" \newline
+Historique des notifications dans une page dédiée \\
+\hline
+\textbf{Post-conditions} & L'utilisateur est informé des événements importants \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Système de notifications}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{notifications.png}
+\caption{Centre de notifications}
+\label{fig:notifications}
+\end{figure}
+
+
+% ==========================
+% Sélection enfant
+% ==========================
+\section*{Sélection de l'enfant}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Sélection de l'enfant actif pour jouer \\
+\hline
+\textbf{Acteur principal} & Parent \\
+\hline
+\textbf{Pré-conditions} & Le parent est connecté et a plusieurs enfants enregistrés \\
+\hline
+\textbf{Scénario nominal} & 
+Le parent se connecte à son compte \newline
+Interface de sélection s'affiche automatiquement si non défini \newline
+Cards de tous ses enfants avec photos et prénoms \newline
+Le parent clique sur l'enfant qui va jouer \newline
+Une session active est créée pour cet enfant \newline
+Le parent est redirigé vers l'espace enfant personnalisé \newline
+Nom de l'enfant affiché en haut de l'interface \newline
+Possibilité de changer d'enfant via menu \newline
+Toutes les activités sont enregistrées pour l'enfant actif \\
+\hline
+\textbf{Scénario alternatif} & 
+Un seul enfant : sélection automatique, redirection directe \\
+\hline
+\textbf{Post-conditions} & L'enfant sélectionné peut accéder aux jeux, sa progression est suivie \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Sélection enfant}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{selection_enfant.png}
+\caption{Interface de sélection de l'enfant}
+\label{fig:selection_enfant}
+\end{figure}
+
+% ==========================
+% Activités récentes éducateur
+% ==========================
+\section*{Activités récentes - Éducateur}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Titre} & Consultation des activités récentes des élèves \\
+\hline
+\textbf{Acteur principal} & Éducateur \\
+\hline
+\textbf{Pré-conditions} & L'éducateur a des enfants attribués avec activité \\
+\hline
+\textbf{Scénario nominal} & 
+L'éducateur accède à "Activités récentes" \newline
+Timeline chronologique inversée affichant : Date et heure, Nom de l'enfant, Type d'activité, Détails, Icône correspondante \newline
+Filtres disponibles : par enfant, type d'activité, période (aujourd'hui, cette semaine, ce mois) \newline
+Clic sur une activité : détails complets de la session \newline
+Possibilité d'ajouter une observation directement \newline
+Export possible en PDF pour rapport \\
+\hline
+\textbf{Post-conditions} & L'éducateur a une vue claire de l'activité de ses élèves \\
+\hline
+\end{tabular}
+\caption{Description textuelle - Activités récentes}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{activites_recentes.png}
+\caption{Timeline des activités récentes}
+\label{fig:activites_recentes}
+\end{figure}
+
+% ==========================
+% Conclusion Sprint 4
+% ==========================
+\section*{Conclusion Sprint 4}
+Le Sprint 4 a finalisé la plateforme ComAutiste avec des fonctionnalités essentielles pour l'engagement et la monétisation. Les réalisations incluent :
+\begin{itemize}
+\item Forum communautaire complet avec système de posts, commentaires et modération
+\item Intégration Stripe pour paiements sécurisés des contenus premium
+\item Dashboard administrateur de gestion financière
+\item Bibliothèques de ressources (dessins à colorier, contes audio, berceuses)
+\item Gestion complète des paramètres utilisateurs
+\item Système de notifications temps réel multi-utilisateurs
+\item Gamification avec 15+ badges motivants
+\item Interface de sélection d'enfant intuitive
+\item Timeline d'activités pour éducateurs
+\end{itemize}
+La plateforme ComAutiste est maintenant complète et fonctionnelle avec ses 4 espaces utilisateurs, 13 jeux éducatifs, système de suivi, contenus multimédias, forum communautaire et monétisation. Elle répond aux besoins identifiés en Sprint 0 et offre une solution centralisée pour l'accompagnement des enfants autistes.
+
+\newpage
+
+
+\section*{Conclusion générale}
+
+Le projet ComAutiste a pour objectif de proposer une plateforme complète pour accompagner les enfants autistes et leurs familles, en combinant apprentissage, suivi et interaction communautaire. Grâce aux différents Sprints, et en particulier le Sprint 4, la plateforme dispose désormais de fonctionnalités essentielles :
+
+\begin{itemize}
+\item Un forum communautaire permettant aux parents d’échanger et de partager des conseils, avec un système de modération efficace.
+\item Un système de paiement sécurisé pour accéder aux contenus premium et un tableau de bord administratif pour gérer les transactions.
+\item Des ressources téléchargeables et multimédias (dessins à colorier, contes audio, berceuses) adaptées aux besoins des enfants.
+\item Une gestion complète des paramètres utilisateurs, incluant la modification des informations et le changement de mot de passe.
+\item Un système de notifications en temps réel et une gamification motivante via l’attribution de badges.
+\item Une interface intuitive pour la sélection de l’enfant et le suivi des activités, ainsi qu’une timeline dédiée pour les éducateurs.
+\end{itemize}
+
+Ainsi, ComAutiste constitue une solution centralisée, sécurisée et interactive, répondant aux besoins identifiés dès le Sprint 0. Elle favorise l’apprentissage des enfants, facilite la communication avec les parents et éducateurs, et offre un environnement stimulant et engageant grâce aux mécanismes de gamification. Le projet peut désormais évoluer vers l’intégration de nouvelles fonctionnalités et l’amélioration continue de l’expérience utilisateur.
+
+
+
+\end{document}
