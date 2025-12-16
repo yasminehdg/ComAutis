@@ -15,7 +15,8 @@ SECRET_KEY = 'django-insecure-b)e1g_9kl9ig@=(hs&xpq%y8==hl*)04vxptjg1e8ro(!8ohre
 DEBUG = True
 
 # ALLOWED_HOSTS pour le local UNIQUEMENT
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1', 'comautis-10.onrender.com']
+
 
 # Applications installées
 INSTALLED_APPS = [
